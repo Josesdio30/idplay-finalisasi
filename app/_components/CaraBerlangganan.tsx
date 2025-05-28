@@ -1,37 +1,48 @@
 import React from 'react';
+import Image from 'next/image';
 
 const CaraBerlangganan: React.FC = () => {
   const steps = [
     {
-      step: 'Langkah 1',
-      description: 'Deskripsi langkah pertama untuk berlangganan.',
+      step: 'Pilih Lokasi & Paket Langganan',
+      description: 'Temukan paket yang sesuai dengan kebutuhan Anda dan pilih lokasi layanan yang tersedia.',
+      icon: '/icons/location-plan.png',
     },
     {
-      step: 'Langkah 2',
-      description: 'Deskripsi langkah kedua untuk berlangganan.',
+      step: 'Isi Formulir & Tunggu Konfirmasi',
+      description: 'Lengkapi data pendaftaran, lalu tunggu konfirmasi dari tim kami.',
+      icon: '/icons/form-confirmation.png',
     },
     {
-      step: 'Langkah 3',
-      description: 'Deskripsi langkah ketiga untuk berlangganan.',
-    },
-    {
-      step: 'Langkah 4',
-      description: 'Deskripsi langkah keempat untuk berlangganan.',
+      step: 'Instalasi',
+      description: 'Teknisi profesional idPlay akan melaksanakan pemasangan dan memastikan semuanya siap digunakan.',
+      icon: '/icons/installation.png',
     },
   ];
 
   return (
     <section className="py-16 bg-white">
-      <div className="container mx-auto px-4 text-center">
-        <h2 className="text-3xl font-bold mb-12 text-gray-800">Cara Berlangganan</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+      <div className="container mx-auto px-4">
+        <h2 className="text-3xl font-bold text-center mb-12 text-orange-500">Cara Berlangganan</h2>
+        <div className="flex flex-col md:flex-row justify-center items-stretch gap-8 md:gap-4">
           {steps.map((item, index) => (
             <div
               key={index}
-              className="bg-gray-100 p-6 rounded-lg shadow-md flex flex-col items-center text-center transform transition-transform hover:scale-105 hover:shadow-lg cursor-pointer"
+              className="relative flex flex-col items-center text-center group h-full"
             >
-              <div className="text-2xl font-bold mb-2 text-orange-500">{item.step}</div>
-              <p className="text-gray-700 text-sm">{item.description}</p>
+              <div className="w-48 h-48 mb-4 overflow-hidden rounded-lg">
+                <Image
+                  src={item.icon}
+                  alt={item.step}
+                  width={192}
+                  height={192}
+                  className="object-cover"
+                />
+              </div>
+              <div className="bg-green-50 p-6 rounded-lg shadow-md w-full max-w-xs flex-1 flex flex-col justify-between transition-all duration-300 group-hover:shadow-lg group-hover:-translate-y-1">
+                <h3 className="text-xl font-semibold mb-2 text-gray-800">{item.step}</h3>
+                <p className="text-gray-700 text-sm flex-grow">{item.description}</p>
+              </div>
             </div>
           ))}
         </div>
@@ -40,4 +51,4 @@ const CaraBerlangganan: React.FC = () => {
   );
 };
 
-export default CaraBerlangganan; 
+export default CaraBerlangganan;

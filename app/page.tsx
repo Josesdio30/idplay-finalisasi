@@ -1,6 +1,5 @@
 import Image from "next/image";
 import CountingAnimation from "@/app/_components/CountingAnimation";
-import CekCoverage from "@/app/_components/CekCoverage";
 import Promosi from "@/app/_components/Promosi";
 import PaketInternet from "@/app/_components/PaketInternet";
 import KeunggulanLayanan from "@/app/_components/KeunggulanLayanan";
@@ -47,7 +46,6 @@ export default function Home() {
           <p className="text-3xl mt-6 font-semibold text-orange-400 tracking-wide">#PAKEBIZNET</p>
         </div>
       </section>
-
       <section className="bg-gray-50 py-8 px-20 flex justify-center items-center">
         <div className="flex items-center space-x-6">
           <h2 className="text-xl font-semibold text-orange-500 whitespace-nowrap">

@@ -9,26 +9,26 @@ const KeunggulanLayanan: React.FC = () => {
       description: 'Pengalaman streaming dan gaming super lancar tanpa buffering dengan koneksi cepat dan stabil',
     },
     {
-      icon: '/placeholder-icon.png',
+      icon: '/true-unlimited.png',
       title: 'True Unlimited',
       description: 'Tanpa batasan kuota, bebas browsing, streaming, dan gaming sepuasnya tanpa khawatir kuota habis',
     },
     {
-      icon: '/placeholder-icon.png',
+      icon: '/support-24.png',
       title: 'Support 24/7',
       description: 'Hadir dengan layanan customer service 24/7 yang responsif untuk pengalaman tanpa hambatan',
     },
     {
-      icon: '/placeholder-icon.png',
+      icon: '/fiber-optic.png',
       title: '100% Fiber Optic',
       description: 'Koneksi 100% fiber optic sampai rumah, bikin internet super cepat, super stabil, dan tahan cuaca ekstrem',
     },
   ];
 
   return (
-    <section className="py-16 bg-gray-50">
+    <section className="py-16 bg-teal-500">
       <div className="container mx-auto px-4 text-center">
-        <h2 className="text-3xl font-bold mb-12 text-orange-500">Kenapa Memilih idPlay?</h2>
+        <h2 className="text-3xl font-bold mb-12 text-white">Kenapa Memilih idPlay?</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
           {services.map((service, index) => (
             <div

@@ -11,9 +11,8 @@ const Promosi: React.FC = () => {
   ];
 
   return (
-    <section className="py-16 bg-gray-100">
+    <section className="py-16 pt-20 bg-white">
       <div className="container mx-auto px-4 text-center">
-        <h2 className="text-3xl font-bold mb-12 text-gray-800">Promosi Menarik</h2>
         <div className="max-w-none mx-auto">
           <Carousel slides={promotions} />
         </div>

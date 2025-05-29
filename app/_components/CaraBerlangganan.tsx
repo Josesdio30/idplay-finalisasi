@@ -6,17 +6,17 @@ const CaraBerlangganan: React.FC = () => {
     {
       step: 'Pilih Lokasi & Paket Langganan',
       description: 'Temukan paket yang sesuai dengan kebutuhan Anda dan pilih lokasi layanan yang tersedia.',
-      icon: '/icons/location-plan.png',
+      icon: '/icons/subs-1.jpg',
     },
     {
       step: 'Isi Formulir & Tunggu Konfirmasi',
       description: 'Lengkapi data pendaftaran, lalu tunggu konfirmasi dari tim kami.',
-      icon: '/icons/form-confirmation.png',
+      icon: '/icons/subs-2.jpg',
     },
     {
       step: 'Instalasi',
       description: 'Teknisi profesional idPlay akan melaksanakan pemasangan dan memastikan semuanya siap digunakan.',
-      icon: '/icons/installation.png',
+      icon: '/icons/subs-3.jpg',
     },
   ];
 

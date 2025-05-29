@@ -12,7 +12,7 @@ export default function Home() {
   return (
     <div className="min-h-screen font-sans">
       <section className="relative h-[320px] xs:h-[400px] md:h-[800px] mt-0 overflow-hidden">
-        <nav className="fixed top-0 left-0 w-full bg-transparent shadow-md py-3 px-4 md:px-8 flex justify-between items-center z-50">
+        <nav className="fixed top-0 left-0 w-full bg-black/40 backdrop-blur-sm shadow-md py-3 px-4 md:px-8 flex justify-between items-center z-50">
           <div className="flex items-center">
             <Image
               src="/imgs/logo-idplay.png"
@@ -23,7 +23,7 @@ export default function Home() {
               className="w-[100px] md:w-[120px] h-auto"
             />
           </div>
-          <div className="hidden md:flex space-x-4 lg:space-x-8 text-white text-sm font-medium">
+          <div className="hidden md:flex space-x-4 lg:space-x-8 text-white text-sm font-medium drop-shadow-md">
             <a href="#" className="hover:text-orange-500 transition-colors">Produk</a>
             <a href="#" className="hover:text-orange-500 transition-colors">Promo</a>
             <a href="#" className="hover:text-orange-500 transition-colors">Berita & Acara</a>
@@ -33,7 +33,7 @@ export default function Home() {
             <a href="#" className="hover:text-orange-500 transition-colors">Pusat Kontak</a>
           </div>
           <div className="flex items-center space-x-2">
-            <select className="border-none outline-none bg-transparent text-white text-sm">
+            <select className="border-none outline-none bg-transparent text-white text-sm drop-shadow-md">
               <option>ID</option>
               <option>EN</option>
             </select>
@@ -114,9 +114,9 @@ export default function Home() {
       </section>
       <div className="px-2 md:px-0">
         <CountingAnimation />
-        <KeunggulanLayanan />
         <Promosi />
         <PaketInternet /> 
+        <KeunggulanLayanan />
         <CaraBerlangganan />
         <TestimoniPelanggan />
         <FAQ />

@@ -76,14 +76,14 @@ const PaketInternet: React.FC = () => {
         >
           {images.map((img, idx) => (
             <SwiperSlide key={idx}>
-              <div className="relative w-full h-[43rem] md:h-[25rem] lg:h-[40rem] rounded-lg overflow-hidden shadow-md">
+              <div className="relative w-full h-auto max-h-[50rem] md:max-h-[30rem] lg:max-h-[40rem] rounded-lg overflow-hidden shadow-md">
                 <Image
                   src={img}
-                  alt={`Paket ${img.replace('.jpg', '').replace('/', '')}`}
-                  fill
+                  alt="..."
+                  layout="responsive"
+                  width={800}
+                  height={600}
                   className="object-cover"
-                  sizes="(max-width: 768px) 100vw, 25vw"
-                  priority={idx === 0}
                 />
               </div>
             </SwiperSlide>

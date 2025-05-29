@@ -39,7 +39,7 @@ const CaraBerlangganan: React.FC = () => {
                   className="object-cover"
                 />
               </div>
-              <div className="bg-green-50 p-6 rounded-lg shadow-md w-full max-w-xs flex-1 flex flex-col justify-between transition-all duration-300 group-hover:shadow-lg group-hover:-translate-y-1">
+              <div className="bg-green-50 p-6 rounded-lg shadow-md w-72 min-h-[200px] flex-1 flex flex-col justify-between transition-all duration-300 group-hover:shadow-lg group-hover:-translate-y-1">
                 <h3 className="text-xl font-semibold mb-2 text-gray-800">{item.step}</h3>
                 <p className="text-gray-700 text-sm flex-grow">{item.description}</p>
               </div>

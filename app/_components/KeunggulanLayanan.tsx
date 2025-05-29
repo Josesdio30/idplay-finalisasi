@@ -33,21 +33,21 @@ const KeunggulanLayanan: React.FC = () => {
           {services.map((service, index) => (
             <div
               key={index}
-              className="group bg-white p-6 rounded-lg shadow-md flex flex-col items-center text-center transform transition-transform hover:scale-105 hover:shadow-lg cursor-pointer h-full"
+              className="group bg-white p-6 rounded-lg shadow-md flex flex-col items-center text-center transition-transform hover:scale-105 hover:shadow-lg cursor-pointer relative h-64"
             >
               <Image
                 src={service.icon}
                 alt={service.title}
                 width={60}
                 height={60}
-                className="mb-4"
+                className="mb-4 z-10"
               />
-              <h3 className="text-xl font-semibold mb-4 text-gray-800">{service.title}</h3>
-              <div className="overflow-hidden transition-all duration-300 ease-in-out max-h-0 group-hover:max-h-screen opacity-0 group-hover:opacity-100">
-                 <p className="text-gray-600 text-sm mb-4">{service.description}</p>
-                 <button className="bg-orange-500 text-white font-bold py-2 px-4 rounded-full text-sm hover:bg-orange-600 transition-colors">
-                   Beli Sekarang
-                 </button>
+              <h3 className="text-xl font-semibold mb-2 text-gray-800 z-10 pb-6">{service.title}</h3>
+              <div className="absolute bottom-0 left-0 right-0 px-4 pb-6 pt-4 bg-white bg-opacity-95 rounded-b-lg z-0 transform translate-y-full opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 ease-in-out">
+                <p className="text-gray-600 text-sm mb-4 pt-4">{service.description}</p>
+                <button className="bg-orange-500 text-white font-bold py-2 px-4 rounded-full text-sm hover:bg-orange-600 transition-colors">
+                  Beli Sekarang
+                </button>
               </div>
             </div>
           ))}

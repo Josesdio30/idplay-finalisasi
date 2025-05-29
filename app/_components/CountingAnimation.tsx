@@ -61,27 +61,29 @@ const CountingAnimation: React.FC = () => {
     { end: 186, label: 'Kota/Kabupaten' },
     { end: 3603, label: 'Kelurahan' },
     { end: 8817, label: 'Gedung/Area' },
-    { end: 2636358, label: 'Homepass' },
+    { end: 20000, label: 'Homepass' },
   ];
 
   return (
     <section className="bg-black text-white py-16">
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 text-center">
-          {counts.map((item, index) => (
-            <div key={index} className="flex flex-col items-center">
-              <div className="text-4xl md:text-6xl font-bold mb-2">
-                <CountUp end={item.end} duration={2000} /> {/* Duration in milliseconds */}
+        <div className="overflow-x-auto">
+          <div className="grid grid-cols-4 gap-2 text-center">
+            {counts.map((item, index) => (
+              <div key={index} className="flex flex-col items-center p-2">
+                <div className="text-base md:text-6xl font-bold mb-1 md:mb-2">
+                  <CountUp end={item.end} duration={2000} />
+                </div>
+                <div className="text-xs md:text-base text-gray-400">
+                  {item.label}
+                </div>
               </div>
-              <div className="text-sm md:text-base text-gray-400">
-                {item.label}
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
     </section>
   );
 };
 
-export default CountingAnimation; 
+export default CountingAnimation;

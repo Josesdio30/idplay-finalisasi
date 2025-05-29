@@ -4,7 +4,7 @@ const FAQ: React.FC = () => {
   const faqItems = [
     {
       question: 'Bagaimana cara mendaftar layanan idPlay?',
-      answer: 'Anda dapat mendaftar melalui website kami, menghubungi pusat kontak, atau mengunjungi lokasi Biznet terdekat.',
+      answer: 'Anda dapat mendaftar melalui website kami, menghubungi pusat kontak, atau mengunjungi lokasi IdPlAy terdekat.',
     },
     {
       question: 'Apa saja pilihan paket internet yang tersedia?',

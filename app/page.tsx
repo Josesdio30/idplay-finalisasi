@@ -57,7 +57,6 @@ export default function Home() {
             Langganan Sekarang
           </button>
         </div>
-        {/* Section Temukan Harga Terbaik di dalam video untuk desktop */}
         <section className="md:block absolute bottom-20 left-10 w-full bg-transparent py-6 px-8 z-30 hidden md:flex">
           <div className="flex flex-row items-center w-full max-w-5xl gap-x-4">
             <h2 className="text-3xl font-semibold bg-gradient-to-r from-orange-500 via-yellow-400 to-green-500 bg-clip-text text-transparent whitespace-nowrap text-left animate-gradient-x">
@@ -86,8 +85,6 @@ export default function Home() {
           </div>
         </section>
       </section>
-
-      {/* Section Temukan Harga Terbaik di luar video untuk mobile */}
       <section className="md:hidden bg-black py-4 px-4">
         <div className="flex flex-col items-center w-full gap-y-4">
           <h2 className="text-lg xs:text-xl font-semibold bg-gradient-to-r from-orange-500 via-yellow-400 to-green-500 bg-clip-text text-transparent whitespace-nowrap text-center animate-gradient-x w-full mb-2">

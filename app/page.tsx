@@ -198,7 +198,7 @@ export default function Home() {
           </div>
         </div>
         <div className="text-center py-4">
-          Copyright © 2025 IdPlay
+          Copyright © {new Date().getFullYear()} IdPlay
         </div>
       </footer>
     </div>

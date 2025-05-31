@@ -50,11 +50,11 @@ export default function Home() {
         />
         <div className="absolute inset-0 bg-gradient-to-r from-black/50 to-transparent"></div>
         <div className="absolute bottom-0 left-0 w-full h-40 md:h-60 bg-gradient-to-b from-transparent to-black z-20"></div>
-        <div className="relative z-30 flex flex-col items-start justify-center h-full px-4 md:px-20 text-white max-w-full md:max-w-3xl">
-          <h1 className="text-2xl xs:text-3xl md:text-5xl font-bold leading-tight tracking-tight">
+        <div className="relative z-30 flex flex-col items-start justify-center h-full pt-6 md:pt-0 px-4 md:px-20 text-white max-w-full md:max-w-3xl">
+          <h1 className="text-xl xs:text-3xl md:text-5xl font-bold leading-tight tracking-tight">
             Internet Cepat & Stabil,<br />Tanpa Drama
           </h1>
-          <button className="mt-4 md:mt-6 bg-orange-400 hover:bg-orange-500 text-white font-semibold px-4 py-2 md:px-6 md:py-3 rounded-full text-base md:text-lg transition-colors">
+          <button className="mt-4 md:mt-6 bg-orange-400 hover:bg-green-500 text-white font-semibold px-2 py-2 md:px-6 md:py-3 rounded-full text-sm md:text-lg transition-colors">
             Langganan Sekarang
           </button>
         </div>

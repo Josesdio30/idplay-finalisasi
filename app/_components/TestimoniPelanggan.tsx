@@ -55,7 +55,7 @@ const TestimoniPelanggan = () => {
   }, [isDragging]);
 
   return (
-    <section className="py-16 bg-teal-500 overflow-hidden">
+    <section className="py-16 bg-teal-400 overflow-hidden">
       <div className="container mx-auto px-4 text-center">
         <h2 className="text-3xl font-bold mb-12 text-white">Testimoni Pelanggan</h2>
         <div className="relative w-full overflow-hidden">

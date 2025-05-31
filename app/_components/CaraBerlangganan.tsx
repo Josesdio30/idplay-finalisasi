@@ -2,49 +2,21 @@ import React from 'react';
 import Image from 'next/image';
 
 const CaraBerlangganan: React.FC = () => {
-  const steps = [
-    {
-      step: 'Pilih Lokasi & Paket Langganan',
-      description: 'Temukan paket yang sesuai dengan kebutuhan Anda dan pilih lokasi layanan yang tersedia.',
-      icon: '/icons/subs-1.jpg',
-    },
-    {
-      step: 'Isi Formulir & Tunggu Konfirmasi',
-      description: 'Lengkapi data pendaftaran, lalu tunggu konfirmasi dari tim kami.',
-      icon: '/icons/subs-2.jpg',
-    },
-    {
-      step: 'Instalasi',
-      description: 'Teknisi profesional idPlay akan melaksanakan pemasangan dan memastikan semuanya siap digunakan.',
-      icon: '/icons/subs-3.jpg',
-    },
-  ];
-
   return (
     <section className="py-16 bg-white">
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto px-4 flex flex-col items-center justify-center">
         <h2 className="text-3xl font-bold text-center mb-12 text-orange-500">Cara Berlangganan</h2>
-        <div className="flex flex-col md:flex-row justify-center items-stretch gap-8 md:gap-4">
-          {steps.map((item, index) => (
-            <div
-              key={index}
-              className="relative flex flex-col items-center text-center group h-full"
-            >
-              <div className="w-48 h-48 mb-4 overflow-hidden rounded-lg">
-                <Image
-                  src={item.icon}
-                  alt={item.step}
-                  width={192}
-                  height={192}
-                  className="object-cover"
-                />
-              </div>
-              <div className="bg-green-50 p-6 rounded-lg shadow-md w-72 min-h-[200px] flex-1 flex flex-col justify-between transition-all duration-300 group-hover:shadow-lg group-hover:-translate-y-1">
-                <h3 className="text-xl font-semibold mb-2 text-gray-800">{item.step}</h3>
-                <p className="text-gray-700 text-sm flex-grow">{item.description}</p>
-              </div>
-            </div>
-          ))}
+        <div className="flex justify-center">
+          <div className="w-72 h-72 md:w-96 md:h-96 flex items-center justify-center">
+            <Image
+              src="/robot-idplay.gif"
+              alt="Robot IdPlay"
+              width={384}
+              height={384}
+              className="object-contain w-full h-full"
+              priority
+            />
+          </div>
         </div>
       </div>
     </section>

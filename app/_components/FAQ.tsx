@@ -24,33 +24,35 @@ const FAQ: React.FC = () => {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   return (
-    <section className="py-16 bg-white">
-      <div className="container mx-auto px-4 text-center">
-        <h2 className="text-3xl font-bold mb-12 text-gray-800">FAQ (Pertanyaan Umum)</h2>
-        <div className="max-w-2xl mx-auto text-left">
-          {faqItems.map((item, index) => (
-            <div key={index} className="mb-4 border-b border-gray-200 last:border-b-0">
-              <button
-                className="w-full flex justify-between items-center py-4 text-left focus:outline-none"
-                onClick={() => setOpenIndex(openIndex === index ? null : index)}
-              >
-                <span className="text-lg font-semibold text-gray-800">{item.question}</span>
-                <svg
-                  className={`w-5 h-5 text-gray-500 transform transition-transform duration-300 ${openIndex === index ? 'rotate-180' : ''}`}
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
+    <section className="py-16 bg-gradient-to-br from-teal-500 to-white">
+      <div className="container mx-auto px-4 flex flex-col items-center">
+        <h2 className="text-3xl font-bold mb-12 text-gray-800 text-center">FAQ (Pertanyaan Umum)</h2>
+        <div className="max-w-2xl w-full">
+          <div className="bg-white rounded-xl shadow-lg p-6">
+            {faqItems.map((item, index) => (
+              <div key={index} className="mb-4 border-b border-gray-200 last:border-b-0">
+                <button
+                  className="w-full flex justify-between items-center py-4 text-left focus:outline-none"
+                  onClick={() => setOpenIndex(openIndex === index ? null : index)}
                 >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
-              </button>
-              <div
-                className={`overflow-hidden transition-all duration-300 ${openIndex === index ? 'max-h-40 opacity-100' : 'max-h-0 opacity-0'}`}
-              >
-                <p className="text-gray-700 text-sm pb-4">{item.answer}</p>
+                  <span className="text-lg font-semibold text-gray-800">{item.question}</span>
+                  <svg
+                    className={`w-5 h-5 text-gray-500 transform transition-transform duration-300 ${openIndex === index ? 'rotate-180' : ''}`}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+                <div
+                  className={`overflow-hidden transition-all duration-300 ${openIndex === index ? 'max-h-40 opacity-100' : 'max-h-0 opacity-0'}`}
+                >
+                  <p className="text-gray-700 text-sm pb-4">{item.answer}</p>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
     </section>

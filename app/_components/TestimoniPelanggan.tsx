@@ -115,13 +115,13 @@ const TestimoniPelanggan = () => {
 	}, [isDragging]);
 
 	return (
-		<section className="py-16 overflow-hidden bg-gradient-to-bl from-white to-teal-500">
+		<section className="py-16 overflow-hidden bg-gradient-to-bl from-orange-500 to-teal-500">
 			<div className="container mx-auto px-4 text-center">
-				<h2
+				{/* <h2
 					className="text-xl font-bold mb-12 inline-block px-4 py-1 border border-white rounded-full bg-gradient-to-r from-orange-400 via-teal-500 to-orange-400 bg-[length:300%_100%] bg-clip-text text-transparent animate-gradient-x"
 				>
 					IdPlAy Menurut Mereka
-				</h2>
+				</h2> */}
 				<style jsx global>{`
 					@keyframes gradient-x {
 						0% {

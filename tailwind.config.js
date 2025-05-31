@@ -6,8 +6,22 @@ module.exports = {
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      keyframes: {
+        'gradient-move': {
+          '0%, 100%': { backgroundPosition: '0% 50%' },
+          '50%': { backgroundPosition: '100% 50%' },
+        },
+      },
+      extend: {
+        backgroundSize: {
+          '200': '200% 200%', // tambahkan ini
+        },
+      },      
+      animation: {
+        'gradient-move': 'gradient-move 5s ease-in-out infinite',
+      },
+    },
   },
   plugins: [],
 }
-

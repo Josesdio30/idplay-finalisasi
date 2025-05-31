@@ -24,7 +24,7 @@ const FAQ: React.FC = () => {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   return (
-    <section className="py-16 bg-gradient-to-br from-teal-500 to-white">
+    <section className="py-16 bg-gray-50">
       <div className="container mx-auto px-4 flex flex-col items-center">
         <h2 className="text-3xl font-bold mb-12 text-gray-800 text-center">FAQ (Pertanyaan Umum)</h2>
         <div className="max-w-2xl w-full">

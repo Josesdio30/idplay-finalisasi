@@ -54,7 +54,7 @@ export default function Home() {
           <h1 className="text-2xl xs:text-3xl md:text-5xl font-bold leading-tight tracking-tight">
             Internet Cepat & Stabil,<br />Tanpa Drama
           </h1>
-          <button className="mt-4 md:mt-6 bg-orange-400 hover:bg-green-500 text-white font-semibold px-4 py-2 md:px-6 md:py-3 rounded-full text-base md:text-lg transition-colors">
+          <button className="mt-4 md:mt-6 bg-orange-400 hover:bg-orange-500 text-white font-semibold px-4 py-2 md:px-6 md:py-3 rounded-full text-base md:text-lg transition-colors">
             Langganan Sekarang
           </button>
         </div>
@@ -113,7 +113,7 @@ export default function Home() {
           </div>
         </div>
       </section>
-      <div className="px-2 md:px-0">
+      <div className="md:px-0">
         <CountingAnimation />
         <Promosi />
         <KeunggulanLayanan />

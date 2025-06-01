@@ -25,25 +25,6 @@ export default function Home() {
     <div className="min-h-screen font-sans">
       <Navbar/>
       <section className="relative h-[320px] xs:h-[400px] md:h-[800px] mt-0 overflow-hidden">
-        {isMenuOpen && (
-          <div className="md:hidden fixed top-[60px] left-0 w-full bg-black/90 backdrop-blur-sm z-40">
-            <div className="flex flex-col items-center space-y-4 py-4 text-white text-sm font-medium drop-shadow-md">
-              <a href="#" className="hover:text-orange-500 transition-colors" onClick={toggleMenu}>Produk</a>
-              <a href="#" className="hover:text-orange-500 transition-colors" onClick={toggleMenu}>Promo</a>
-              <a href="#" className="hover:text-orange-500 transition-colors" onClick={toggleMenu}>Berita & Acara</a>
-              <a href="#" className="hover:text-orange-500 transition-colors" onClick={toggleMenu}>Lokasi</a>
-              <a href="#" className="hover:text-orange-500 transition-colors" onClick={toggleMenu}>Dukungan</a>
-              <a href="#" className="hover:text-orange-500 transition-colors" onClick={toggleMenu}>FAQ</a>
-              <a href="#" className="hover:text-orange-500 transition-colors" onClick={toggleMenu}>Pusat Kontak</a>
-              <div className="flex items-center space-x-2">
-                <select className="border-none outline-none bg-transparent text-white text-sm drop-shadow-md" onChange={toggleMenu}>
-                  <option>ID</option>
-                  <option>EN</option>
-                </select>
-              </div>
-            </div>
-          </div>
-        )}
         <video
           className="absolute inset-0 w-full h-full object-cover"
           src="/idplay-home.mp4"

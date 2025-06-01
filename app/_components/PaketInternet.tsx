@@ -121,7 +121,7 @@ const PaketInternet: React.FC = () => {
         >
           {images.map((img, idx) => (
             <SwiperSlide key={idx}>
-              <div className="relative w-full h-auto max-h-[50rem] md:max-h-[30rem] lg:max-h-[40rem] rounded-lg overflow-hidden shadow-md">
+              <div className="relative w-full h-auto max-h-[55rem] md:max-h-[30rem] lg:max-h-[40rem] rounded-lg overflow-hidden shadow-md">
                 <Image
                   src={img}
                   alt="Paket Internet"

@@ -25,7 +25,7 @@ const Navbar = () => {
 
 	return (
 		<>
-			<nav className="fixed top-0 left-0 w-full bg-black/40 backdrop-blur-sm shadow-md py-3 px-4 md:px-8 flex justify-between items-center z-50">
+			<nav className="sticky top-0 left-0 w-full bg-gray-800 shadow-md py-3 px-4 md:px-8 flex justify-between items-center z-50">
 				<div className="flex items-center">
 					<Image
 						src="/imgs/logo-idplay.png"

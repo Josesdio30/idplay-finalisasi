@@ -23,8 +23,8 @@ export default function Home() {
 
   return (
     <div className="min-h-screen font-sans">
+      <Navbar/>
       <section className="relative h-[320px] xs:h-[400px] md:h-[800px] mt-0 overflow-hidden">
-        <Navbar/>
         {isMenuOpen && (
           <div className="md:hidden fixed top-[60px] left-0 w-full bg-black/90 backdrop-blur-sm z-40">
             <div className="flex flex-col items-center space-y-4 py-4 text-white text-sm font-medium drop-shadow-md">

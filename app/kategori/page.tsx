@@ -6,9 +6,7 @@ import Footer from "../_components/Footer";
 export default function KategoriPage() {
   return (
     <>
-      <Navbar />
       <KategoriLayouts />
-      <Footer />
     </>
   );
 }

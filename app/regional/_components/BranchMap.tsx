@@ -1,24 +1,18 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import 'leaflet/dist/leaflet.css';
-import L from 'leaflet';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Search, X } from 'lucide-react';
 
-const redMarkerIcon = L.icon({
-  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
-  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.3/images/marker-shadow.png',
-  iconSize: [25, 25],
-  iconAnchor: [19, 38],
-  popupAnchor: [0, -38],
-  shadowSize: [41, 41],
+const MapContainer = dynamic(() => import('react-leaflet').then((mod) => mod.MapContainer), {
+  ssr: false
 });
-
-const MapContainer = dynamic(() => import('react-leaflet').then((mod) => mod.MapContainer), { ssr: false });
-const TileLayer = dynamic(() => import('react-leaflet').then((mod) => mod.TileLayer), { ssr: false });
+const TileLayer = dynamic(() => import('react-leaflet').then((mod) => mod.TileLayer), {
+  ssr: false
+});
 const Marker = dynamic(() => import('react-leaflet').then((mod) => mod.Marker), { ssr: false });
 const Popup = dynamic(() => import('react-leaflet').then((mod) => mod.Popup), { ssr: false });
 
@@ -34,13 +28,30 @@ const branches: Branch[] = [
     id: 1,
     name: 'Cabang Jakarta',
     lat: -6.1582,
-    lng: 106.9006,
+    lng: 106.9006
   },
-  { id: 2, name: 'Cabang Surabaya', lat: -7.25, lng: 112.75 },
+  { id: 2, name: 'Cabang Surabaya', lat: -7.25, lng: 112.75 }
 ];
 
 export default function BranchMap() {
   const [searchQuery, setSearchQuery] = useState('');
+  const [redMarkerIcon, setRedMarkerIcon] = useState<any>(null);
+
+  useEffect(() => {
+    import('leaflet').then((L) => {
+      const icon = L.default.icon({
+        iconUrl:
+          'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
+        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.3/images/marker-shadow.png',
+        iconSize: [25, 25],
+        iconAnchor: [19, 38],
+        popupAnchor: [0, -38],
+        shadowSize: [41, 41]
+      });
+      setRedMarkerIcon(icon);
+    });
+  }, []);
+
   const filteredBranches = branches.filter((branch) =>
     branch.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -70,7 +81,7 @@ export default function BranchMap() {
 
       {/* Map */}
       <MapContainer
-        center={[-6.1582, 106.9006]} 
+        center={[-6.1582, 106.9006]}
         zoom={13}
         style={{ height: '500px', width: '100%' }}
         scrollWheelZoom={true}

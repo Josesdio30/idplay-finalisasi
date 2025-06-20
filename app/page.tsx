@@ -23,7 +23,6 @@ export default function Home() {
 
   return (
     <div className="min-h-screen font-sans">
-      <Navbar/>
       <section className="relative h-[320px] xs:h-[400px] md:h-[800px] mt-0 overflow-hidden">
         <video
           className="absolute inset-0 w-full h-full object-cover"
@@ -107,7 +106,6 @@ export default function Home() {
         <TestimoniPelanggan />
         <FAQ />
       </div>
-      <Footer/>
     </div>
   );
 }

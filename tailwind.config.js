@@ -13,15 +13,15 @@ module.exports = {
           '50%': { backgroundPosition: '100% 50%' },
         },
       },
-      extend: {
-        backgroundSize: {
-          '200': '200% 200%', // tambahkan ini
-        },
-      },      
+      backgroundSize: {
+        '200': '200% 200%',
+      },
       animation: {
         'gradient-move': 'gradient-move 5s ease-in-out infinite',
       },
     },
   },
-  plugins: [],
+  plugins: [
+    require('@tailwindcss/line-clamp'),
+  ],
 }

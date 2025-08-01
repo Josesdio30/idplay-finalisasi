@@ -4,7 +4,7 @@ import BranchMap from './_components/BranchMap';
 export default function RegionalPage() {
   return (
     <main className="p-8 bg-white">
-      <Card className="mx-auto">
+      <Card className="max-w-4xl mx-auto">
         <CardHeader>
           <CardTitle className="text-2xl text-center font-bold text-gray-700">
             Peta Lokasi Cabang

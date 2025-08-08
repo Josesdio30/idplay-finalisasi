@@ -1,111 +1,383 @@
-'use client'
-
-import Image from "next/image";
-import CountingAnimation from "@/app/_components/CountingAnimation";
-import Promosi from "@/app/_components/Promosi";
-import PaketInternet from "@/app/_components/PaketInternet";
-import KeunggulanLayanan from "@/app/_components/KeunggulanLayanan";
-import CaraBerlangganan from "@/app/_components/CaraBerlangganan";
-import TestimoniPelanggan from "@/app/_components/TestimoniPelanggan";
-import FAQ from "@/app/_components/FAQ";
-import { FaSearch, FaBars, FaTimes } from "react-icons/fa";
-import { Phone, Mail } from "lucide-react";
-import { useState } from "react";
-import Navbar from "./_components/Navbar";
-import Footer from "./_components/Footer";
+'use client';
+import FAQ from '@/app/_components/FAQ';
+import { FaTachometerAlt, FaGamepad, FaUsers, FaHome, FaWrench, FaSearch } from 'react-icons/fa';
+import { useState } from 'react';
+import HeroSection from './_components/Hero';
+import { MapPin } from 'lucide-react';
+import TestimoniPelanggan from './_components/TestimoniPelanggan';
+import Image from 'next/image';
+import CompareProduct from './_components/CompareProduct';
+import { cn } from '@/lib/utils';
 
 export default function Home() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<'speed' | 'help' | 'quiz'>('speed');
+  const [paketTab, setPaketTab] = useState<'bulan' | 'tahun'>('bulan');
 
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
+  // Icons for the "What is Fiber" tab
+  const fiberIcons = [
+    {
+      icon: (
+        <svg
+          width="40"
+          height="40"
+          viewBox="0 0 40 40"
+        >
+          <g
+            stroke="#0099e5"
+            strokeWidth="2"
+            fill="none"
+          >
+            <path d="M10 30V15a10 10 0 0 1 20 0v15" />
+            <circle
+              cx="20"
+              cy="10"
+              r="2"
+              fill="#0099e5"
+            />
+          </g>
+        </svg>
+      ),
+      label: 'Fiber'
+    },
+    { icon: <FaTachometerAlt className="w-8 h-8 text-blue-500" />, label: 'Speed' },
+    { icon: <FaGamepad className="w-8 h-8 text-blue-500" />, label: 'Gaming' },
+    { icon: <FaUsers className="w-8 h-8 text-blue-500" />, label: 'Family' },
+    { icon: <FaHome className="w-8 h-8 text-blue-500" />, label: 'Smart Home' },
+    { icon: <FaWrench className="w-8 h-8 text-blue-500" />, label: 'Support' }
+  ];
 
   return (
-    <div className="min-h-screen font-sans">
-      <section className="relative h-[320px] xs:h-[400px] md:h-[800px] mt-0 overflow-hidden">
-        <video
-          className="absolute inset-0 w-full h-full object-cover"
-          src="/idplay-home.mp4"
-          autoPlay
-          loop
-          muted
-          playsInline
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/50 to-transparent"></div>
-        <div className="absolute bottom-0 left-0 w-full h-40 md:h-60 bg-gradient-to-b from-transparent to-black z-20"></div>
-        <div className="relative z-30 flex flex-col items-start justify-center h-full pt-6 md:pt-0 px-4 md:px-20 text-white max-w-full md:max-w-3xl">
-          <h1 className="text-xl xs:text-3xl md:text-5xl font-bold leading-tight tracking-tight">
-            Internet Cepat & Stabil,<br />Tanpa Drama
-          </h1>
-          <button className="mt-4 md:mt-6 bg-orange-400 hover:bg-green-500 text-white font-semibold px-2 py-2 md:px-6 md:py-3 rounded-full text-sm md:text-lg transition-colors">
-            Langganan Sekarang
-          </button>
+    <div className="min-h-screen font-sans bg-white">
+      {/* Banner/Card Section */}
+      <HeroSection />
+      <section className="w-full py-8 bg-white mt-14">
+        <div className="container mx-auto px-4">
+          <div className="border-2 border-orange-500 rounded-[30px] p-0 relative">
+            <div className="flex flex-col md:flex-row items-center md:justify-between relative z-10 rounded-[30px] overflow-hidden">
+              {/* Kiri: Teks + Input */}
+              <div className="md:w-1/2 w-full p-6 md:p-8">
+                <h2 className="text-[18px] sm:text-[20px] font-bold text-orange-600 mb-4">
+                  Cek area kamu sekarang untuk mulai langganan!
+                </h2>
+
+                <div className="flex items-center gap-2 sm:gap-4 flex-wrap border-2 border-orange-400 rounded-full px-3 py-1 bg-white w-full">
+                  {/* Input Provinsi */}
+                  <div className="flex items-center gap-2 flex-1">
+                    <MapPin className="text-orange-500 w-4 h-4" />
+                    <span className="text-gray-400 text-sm">Pilih Provinsi</span>
+                  </div>
+
+                  <span className="text-gray-300">|</span>
+
+                  {/* Input Kota */}
+                  <div className="flex items-center gap-2 flex-1">
+                    <MapPin className="text-orange-500 w-4 h-4" />
+                    <span className="text-gray-400 text-sm">Pilih Kota</span>
+                  </div>
+
+                  <span className="text-gray-300">|</span>
+
+                  {/* Tombol Search */}
+                  <button className="w-8 h-8 sm:w-10 sm:h-10 rounded-full border border-orange-400 flex items-center justify-center hover:bg-orange-500 text-black hover:text-white transition">
+                    <FaSearch className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+
+              <img
+                src="/imgs/location-decoration.png" // Ganti dengan path gambar kamu
+                alt="Dekorasi Lokasi"
+                className="block md:hidden absolute inset-0 -z-10 max-w-full h-full object-cover rounded-[30px]"
+              />
+
+              {/* Kanan: Gambar Dekorasi */}
+              <div className="hidden md:flex md:w-1/2 w-full mt-6 md:mt-0 justify-center md:justify-end">
+                <img
+                  src="/imgs/location-decoration.png" // Ganti dengan path gambar kamu
+                  alt="Dekorasi Lokasi"
+                  className="max-w-full h-full object-cover"
+                />
+              </div>
+            </div>
+          </div>
         </div>
-        <section className="md:block absolute bottom-20 left-10 w-full bg-transparent py-6 px-8 z-30 hidden md:flex">
-          <div className="flex flex-row items-center w-full max-w-5xl mx-auto gap-x-4">
-            <h2 className="text-3xl font-semibold bg-gradient-to-r from-orange-500 via-yellow-400 to-green-500 bg-clip-text text-transparent whitespace-nowrap text-left animate-gradient-x">
-              Temukan Harga Terbaik di Kota Kamu
-            </h2>
-            <div className="flex flex-row items-center gap-x-2 flex-grow">
-              <select className="border border-orange-500 rounded-full px-4 py-2 text-gray-800 bg-white focus:ring-2 focus:ring-orange-500 outline-none min-w-[150px] max-w-[200px] flex-1">
-                <option>Pilih Provinsi</option>
-                <option>Jawa Barat</option>
-                <option>Jawa Tengah</option>
-                <option>Jawa Timur</option>
-              </select>
-              <select className="border border-gray-300 rounded-full px-4 py-2 text-gray-800 bg-white focus:ring-2 focus:ring-orange-500 outline-none min-w-[150px] max-w-[200px] flex-1">
-                <option>Pilih Kota</option>
-                <option>Bandung</option>
-                <option>Semarang</option>
-                <option>Surabaya</option>
-              </select>
-              <button className="bg-orange-500 text-white rounded-full p-2 hover:bg-orange-600 transition-colors font-medium flex items-center justify-center min-w-[40px]">
-                <FaSearch className="text-lg" />
+      </section>
+      {/* <Review /> */}
+
+      {/* Our Services Section */}
+      <section className="w-full py-14 bg-white text-black">
+        <div className="container mx-auto px-4">
+          <h2 className="text-xl lg:text-4xl leading-[106%] tracking-[6%] font-bold text-center mb-[30px] text-orange-500">
+            Layanan Kami?
+          </h2>
+          <p className="text-center text-gray-500 text-base lg:text-lg leading-[161%] tracking-[10%] font-base mb-10">
+            Internet cepat dan andal dengan teknologi terbaru. <br /> Koneksi stabil untuk semua
+            kebutuhan digital Anda.
+          </p>
+          {/* Top 3 Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            {/* For Home */}
+            <div className="md:col-span-2 relative rounded-2xl overflow-hidden shadow-lg h-[400px] flex items-end">
+              <img
+                src="/imgs/card1.jpg"
+                alt="For Home"
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#FE5E00] to-[#FE5E00]/0" />
+              <div className="relative z-10 p-6 text-white">
+                <div className="text-2xl font-bold mb-2">For Home</div>
+                <div className="text-base font-light mb-2">
+                  "As a home internet provider, fast and stable connectivity is key to your family's
+                  comfort and productivity."
+                </div>
+              </div>
+            </div>
+            {/* For Business */}
+            <div className="relative rounded-2xl overflow-hidden shadow-lg h-[400px] flex items-end">
+              <img
+                src="/imgs/card2.jpg"
+                alt="For Business"
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-green-700/70 to-transparent" />
+              <div className="relative z-10 p-6 text-white">
+                <div className="text-2xl font-bold mb-2">For Business</div>
+                <div className="text-base font-light mb-2">
+                  Add-ons are optional features that enhance your main service — offering more
+                  control, speed, or coverage based on your needs.
+                </div>
+              </div>
+            </div>
+            {/* Add-Ons */}
+            <div className="relative rounded-2xl overflow-hidden shadow-lg h-[400px] flex items-end">
+              <img
+                src="/imgs/card3.jpg"
+                alt="Add-Ons"
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-green-500/60 to-transparent" />
+              <div className="relative z-10 p-6 text-white">
+                <div className="text-2xl font-bold mb-2">Add-Ons</div>
+                <div className="text-base font-light mb-2">
+                  Add-ons are optional features that enhance your main service — offering more
+                  control, speed, or coverage based on your needs.
+                </div>
+              </div>
+            </div>
+            {/* <div className="md:col-span-4 grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="flex flex-col items-center px-10 py-[53px] bg-[#80808021] rounded-2xl">
+                <p className="text-[#00934C] text-[30px] leading-[161%] tracking-[-4%] font-bold text-center mb-[52px]">
+                  Upgrade Your Connection, Your Way!
+                </p>
+                <p className="text-black text-[20px] leading-[161%] tracking-[-4%] font-base text-center mb-[52px]">
+                  Now you can tailor your internet service with extra features made for both homes
+                  and businesses. From faster speeds and wider coverage to smart access
+                  control—everything is designed to boost your comfort and productivity
+                </p>
+                <Button className="bg-[#00934C] text-white hover:bg-[#007a3c] max-w-[250px] w-full">
+                  Learn More
+                </Button>
+              </div>
+              <div className="flex flex-col items-center px-10 py-[53px] bg-[#80808021] rounded-2xl">
+                <p className="text-[#00934C] text-[30px] leading-[161%] tracking-[-4%] font-bold text-center mb-[52px]">
+                  Upgrade Your Connection, Your Way!
+                </p>
+                <p className="text-black text-[20px] leading-[161%] tracking-[-4%] font-base text-center mb-[52px]">
+                  Now you can tailor your internet service with extra features made for both homes
+                  and businesses. From faster speeds and wider coverage to smart access
+                  control—everything is designed to boost your comfort and productivity
+                </p>
+                <Button className="bg-white text-[#00934C] hover:bg-slate-50 max-w-[250px] w-full gap-2">
+                  <Phone />
+                  Learn More
+                </Button>
+              </div>
+            </div> */}
+          </div>
+        </div>
+      </section>
+
+      {/* Subscription Section */}
+      <section className="relative container mx-auto w-full ">
+        <div className="py-14 rounded-2xl bg-[#FFEFE6]">
+          <h2 className="text-xl lg:text-4xl font-medium tracking-[6%] leading-[29px] text-center mb-4 lg:mb-10 text-black">
+            Mulai <span className="text-orange-500">Berlangganan</span>
+          </h2>
+          <p className="text-base lg:text-lg font-medium text-center text-gray-600 mb-8">
+            Harga Jelas, Tanpa Biaya Tersembunyi.
+            <br />
+            Pilih paket yang sesuai dengan kebutuhan.
+            <br />
+            Tanpa biaya tambahan, tanpa kejutan—hanya harga jujur untuk layanan yang andal.
+          </p>
+
+          {/* Toggle Month/Year */}
+          <div className="flex justify-center mb-8">
+            <div className="flex items-center gap-1 bg-white rounded-lg p-1 shadow-md">
+              <button
+                className={cn(
+                  'px-6 py-2 rounded-md text-white font-semibold transition-all ease-in-out duration-300',
+                  paketTab === 'bulan'
+                    ? 'bg-orange-500'
+                    : 'bg-white hover:bg-orange-200 text-black hover:text-orange-500'
+                )}
+                onClick={() => setPaketTab('bulan')}
+              >
+                Bulan
               </button>
-              <button className="rounded-full px-6 py-2 text-white bg-orange-500 hover:bg-orange-600 transition-colors min-w-[150px] max-w-[200px] flex-1">
-                Lokasi Saya
+              <button
+                className={cn(
+                  'px-6 py-2 rounded-md text-white font-semibold transition-all ease-in-out duration-300',
+                  paketTab === 'tahun'
+                    ? 'bg-orange-500'
+                    : 'bg-white hover:bg-orange-200 text-black hover:text-orange-500'
+                )}
+                onClick={() => setPaketTab('tahun')}
+              >
+                Tahun
               </button>
             </div>
           </div>
-        </section>
-      </section>
-      <section className="md:hidden bg-black py-4 px-4">
-        <div className="flex flex-col items-center w-full gap-y-4">
-          <h2 className="text-lg xs:text-xl font-semibold bg-gradient-to-r from-orange-500 via-yellow-400 to-green-500 bg-clip-text text-transparent whitespace-nowrap text-center animate-gradient-x w-full mb-2">
-            Temukan Harga Terbaik di Kota Kamu
-          </h2>
-          <div className="flex flex-wrap items-center justify-center gap-3 w-full">
-            <select className="border border-orange-500 rounded-full px-4 py-2 text-gray-800 bg-white focus:ring-2 focus:ring-orange-500 outline-none w-full xs:w-48">
-              <option>Pilih Provinsi</option>
-              <option>Jawa Barat</option>
-              <option>Jawa Tengah</option>
-              <option>Jawa Timur</option>
-            </select>
-            <select className="border border-gray-300 rounded-full px-4 py-2 text-gray-800 bg-white focus:ring-2 focus:ring-orange-500 outline-none w-full xs:w-48">
-              <option>Pilih Kota</option>
-              <option>Bandung</option>
-              <option>Semarang</option>
-              <option>Surabaya</option>
-            </select>
-            <button className="bg-orange-500 text-white rounded-full p-2 hover:bg-orange-600 transition-colors font-medium flex items-center justify-center w-12 h-12">
-              <FaSearch className="text-lg" />
-            </button>
-            <button className="rounded-full px-6 py-2 text-white bg-orange-500 hover:bg-orange-600 transition-colors w-full xs:w-48 font-medium">
-              Lokasi Saya
-            </button>
+        </div>
+        <div className="-mt-10 z-10 w-full px-4 lg:px-8">
+          {/* Pricing Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 lg:gap-12 mb-12">
+            {[1, 2, 3].map((item) => (
+              <div
+                key={item}
+                className="bg-white rounded-2xl shadow-lg overflow-hidden"
+              >
+                <div className="flex items-center justify-center bg-orange-500 text-white px-4 py-4 lg:py-9 text-center">
+                  <div className="text-[40px] lg:text-[70px] tracking-[1%] leading-[45px] font-bold text-center">
+                    700<span className="text-[20px]">/Mbps</span>
+                  </div>
+                </div>
+                <div className="relative flex flex-col justify-center items-center p-4 lg:p-6">
+                  <div className="text-xl lg:text-[36px] tracking-[1%] leading-[45px] font-bold text-orange-500 mb-3 lg:mb-5">
+                    Rp.1.700.000<span className="text-[20px]">/Tahun</span>
+                  </div>
+                  <Image
+                    src="/icons/arrow-pricing.svg"
+                    alt=""
+                    width={65}
+                    height={65}
+                    className="size-[55px] lg:size-[65px] absolute z-10 left-12 lg:left-9 top-10 lg:top-13"
+                  />
+                  <div className="text-base lg:text-[30px] tracking-[1%] leading-[26px] font-medium text-orange-700 mb-2">
+                    Rp.350.000<span className="text-[20px]">/Bulan</span>
+                  </div>
+                  <p className="text-sm lg:text-[15px] tracking-[1%] leading-[26px] font-medium text-orange-500">
+                    Mau langganan setahun? Bisa dicicil, kok!
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Broadband Facts Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {[1, 2, 3].map((item) => (
+              <div
+                key={item}
+                className="bg-white rounded-2xl shadow-lg p-6 text-black border border-orange-500"
+              >
+                <h3 className="text-xl font-bold text-gray-800 mb-4 border-b-4 border-orange-500 pb-2">
+                  Broadband Facts
+                </h3>
+
+                <div className="">
+                  <div>
+                    <h4 className="font-bold">IDPlay</h4>
+                    <p className="text-sm font-semibold">12 Months 25 MBp/S</p>
+                    <p className="text-sm mt-1">Lorem Ipsum Dolor Sit Amet</p>
+                  </div>
+
+                  <div>
+                    <div className="flex w-full h-[2px] bg-orange-500 mt-4 mb-2"></div>
+                    <h4 className="font-semibold text-gray-800">Monthly Charges</h4>
+                    <div className="flex w-full h-[2px] bg-orange-500 mb-4 mt-2"></div>
+
+                    <p>Lorem Ipsum Dolor Sit Amet:</p>
+                    <div className="pl-3">
+                      <div className="flex justify-between text-sm text-gray-600">
+                        <span>Lorem Ipsum</span>
+                        <span>12 Months</span>
+                      </div>
+                      <div className="flex justify-between text-sm text-gray-600">
+                        <span>Lorem Ipsum</span>
+                        <span>Rp 1.740.000</span>
+                      </div>
+                    </div>
+                    <div className="flex w-full h-[2px] bg-orange-500 mb-4 mt-2"></div>
+                  </div>
+
+                  <div>
+                    <h4 className="font-semibold text-gray-800 mb-2">Additional Charges & Terms</h4>
+                    <div className="pl-2">
+                      <p className="text-sm font-medium">Provider Monthly Fees</p>
+                      <div className="pl-2">
+                        <p className="text-sm text-gray-600">Lorem Ipsum</p>
+                        <p className="text-sm text-gray-600">Lorem Ipsum</p>
+                      </div>
+                      <p className="text-sm font-medium mt-3">One-time Purchase Fees</p>
+                      <p className="text-sm font-medium mt-3">Early Termination Fees</p>
+                      <p className="text-sm font-medium mt-3">Government Taxes</p>
+                    </div>
+                  </div>
+
+                  <div>
+                    <div className="flex w-full h-[2px] bg-orange-500 mt-4 mb-2"></div>
+                    <h4 className="font-semibold text-gray-800">Discounts & Bundles</h4>
+                    <div className="flex w-full h-[2px] bg-orange-500 mb-4 mt-2"></div>
+
+                    <div className="pl-2">
+                      <p className="text-sm font-medium">Speeds Provided with Plans</p>
+                      <div className="pl-2">
+                        <p className="text-sm text-gray-600">Lorem Ipsum</p>
+                        <p className="text-sm text-gray-600">Lorem Ipsum</p>
+                      </div>
+                      <p className="text-sm font-medium mt-3">One-time Purchase Fees</p>
+                      <p className="text-sm font-medium mt-3">Early Termination Fees</p>
+                      <p className="text-sm font-medium mt-3">Government Taxes</p>
+                    </div>
+                    <div className="flex w-full h-[2px] bg-orange-500 my-4"></div>
+                    <div className="pl-2">
+                      <p className="text-sm font-medium">Customer Support</p>
+                      <div className="pl-2">
+                        <p className="text-sm text-gray-600">Phone</p>
+                        <p className="text-sm text-gray-600">Website</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <button className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 mt-6 rounded-lg flex items-center justify-center space-x-2 transition-colors">
+                    <svg
+                      className="w-5 h-5"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" />
+                    </svg>
+                    <span>Subscribe</span>
+                  </button>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
-      <div className="md:px-0">
-        <CountingAnimation />
-        <Promosi />
+
+      {/* Our Services Section */}
+      <TestimoniPelanggan />
+
+      {/* <CountingAnimation /> */}
+      {/* <Promosi />
         <KeunggulanLayanan />
         <PaketInternet /> 
         <CaraBerlangganan />
-        <TestimoniPelanggan />
-        <FAQ />
-      </div>
+        <TestimoniPelanggan /> */}
+      <FAQ />
+      <CompareProduct />
     </div>
   );
 }

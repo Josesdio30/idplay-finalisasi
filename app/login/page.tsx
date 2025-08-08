@@ -5,8 +5,48 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { FcGoogle } from "react-icons/fc";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
+  const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [agree, setAgree] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setError(null);
+
+    if (!agree) {
+      setError("Anda harus menyetujui Syarat & Ketentuan");
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const resp = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await resp.json().catch(() => ({}));
+      if (!resp.ok) {
+        setError(data?.message || "Login gagal. Periksa kredensial Anda.");
+        return;
+      }
+
+      router.push("/");
+    } catch (err) {
+      setError("Terjadi kesalahan jaringan.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
   return (
     <main className="min-h-[70vh] w-full bg-[#FFFBF9]">
       <section className="mx-auto flex max-w-xl flex-col items-center px-6 py-24 text-center">
@@ -20,22 +60,35 @@ export default function LoginPage() {
           Silakan isi informasi berikut untuk mendaftar.
         </p>
 
-        <form
-          className="mt-8 w-full space-y-5"
-          onSubmit={(e) => {
-            e.preventDefault();
-          }}
-        >
+        <form className="mt-8 w-full space-y-5" onSubmit={onSubmit}>
           <Input
-            placeholder="Nama Lengkap"
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
             className="h-12 rounded-full border-0 bg-[#F3EBE7] px-5 text-[15px] placeholder:text-neutral-500"
           />
 
+          <Input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            className="h-12 rounded-full border-0 bg-[#F3EBE7] px-5 text-[15px] placeholder:text-neutral-500"
+          />
+
+          {error ? (
+            <p className="text-left text-sm text-red-600">{error}</p>
+          ) : null}
+
           <Button
             type="submit"
-            className="h-12 w-full rounded-full bg-[#FF7A4A] text-white hover:bg-[#ff6b33]"
+            disabled={isSubmitting}
+            className="h-12 w-full rounded-full bg-[#FF7A4A] text-white hover:bg-[#ff6b33] disabled:opacity-60"
           >
-            Daftar Sekarang
+            {isSubmitting ? "Memproses..." : "Daftar Sekarang"}
           </Button>
 
           <div className="relative py-2 text-center">
@@ -57,7 +110,12 @@ export default function LoginPage() {
           </Button>
 
           <div className="flex items-start gap-3 pt-2 text-left">
-            <Checkbox id="terms" className="mt-0.5" />
+            <Checkbox
+              id="terms"
+              checked={agree}
+              onCheckedChange={(v) => setAgree(Boolean(v))}
+              className="mt-0.5"
+            />
             <label htmlFor="terms" className="text-sm text-neutral-600">
               Saya setuju dengan {" "}
               <Link href="#" className="font-medium text-neutral-800 underline">

@@ -8,9 +8,9 @@ import { Card } from "@/components/ui/card";
 export default function PaymentPage() {
   return (
     <div className="min-h-screen bg-white px-4 py-10 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2">
         {/* Left: Ringkasan Pembayaran (Smaller Card) */}
-        <Card className="bg-neutral-100 p-4 rounded-xl shadow-md max-w-xs">
+        <Card className="bg-neutral-100 p-4 rounded-xl shadow-md max-w-xs max-h-fit">
           <h2 className="text-lg font-semibold mb-4">Ringkasan Pembayaran</h2>
           <div className="space-y-2 text-sm">
             <div className="flex justify-between">
@@ -45,7 +45,7 @@ export default function PaymentPage() {
         </Card>
 
         {/* Right: Metode Pembayaran */}
-        <Card className="bg-white p-6 rounded-xl shadow-md">
+        <Card className="bg-white p-6 rounded-xl shadow-md w-full border-0">
           <h2 className="text-lg font-semibold mb-6">Metode Pembayaran</h2>
 
           {/* Metode Buttons */}

@@ -4,8 +4,8 @@ import { Facebook, Instagram, Twitter } from 'lucide-react';
 const Footer = () => {
   return (
     <footer className="bg-white text-black mt-0">
-      <div className="container mx-auto px-6 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+      <div className="container mx-auto px-4 md:px-6 py-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 md:gap-10">
           {/* Logo and Company Info */}
           <div className="md:col-span-1">
             <div className="mb-6">
@@ -18,23 +18,6 @@ const Footer = () => {
                 priority
               />
             </div>
-            {/* <div className="mb-4">
-              <h3 className="text-lg font-semibold text-gray-800 mb-3">HEAD OFFICE</h3>
-              <p className="text-sm leading-relaxed">
-                Rukan Artha Gading, Jl. Boulevard Artha Gading No.12 Blok E 11-13, RT.18/RW.8, Klp.
-                Gading Bar., Kec. Klp. Gading, Jkt Utara, Daerah Khusus Ibukota Jakarta 14240
-              </p>
-            </div>
-            <div className="space-y-2">
-              <div className="flex items-center gap-2 text-sm">
-                <Phone className="w-4 h-4" />
-                <span>0822 8998 6477</span>
-              </div>
-              <div className="flex items-center gap-2 text-sm">
-                <Mail className="w-4 h-4" />
-                <span>cx.ays@supercorridor.co.id</span>
-              </div>
-            </div> */}
           </div>
 
           {/* Navigation Links */}

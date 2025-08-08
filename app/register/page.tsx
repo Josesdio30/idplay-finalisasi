@@ -56,7 +56,7 @@ export default function RegisterPage() {
 
   return (
     <main className="min-h-[70vh] w-full bg-[#FFFBF9]">
-      <section className="mx-auto flex max-w-xl flex-col items-center px-6 py-24 text-center">
+      <section className="mx-auto flex w-full max-w-md md:max-w-xl flex-col items-center px-4 sm:px-6 py-16 sm:py-20 md:py-24 text-center">
         <h1 className="text-2xl font-semibold text-neutral-900 md:text-[28px]">
           Buat Akun Baru
         </h1>

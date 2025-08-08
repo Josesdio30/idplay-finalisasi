@@ -49,15 +49,15 @@ export default function LoginPage() {
 
   return (
     <main className="min-h-[70vh] w-full bg-[#FFFBF9]">
-      <section className="mx-auto flex max-w-xl flex-col items-center px-6 py-24 text-center">
+      <section className="mx-auto flex w-full max-w-md md:max-w-xl flex-col items-center px-4 sm:px-6 py-16 sm:py-20 md:py-24 text-center">
         <h1 className="text-2xl font-semibold text-neutral-900 md:text-[28px]">
-          Daftar & Mulai Langganan
+          Masuk ke Akun Anda
         </h1>
         <h2 className="mt-1 text-2xl font-semibold text-neutral-900 md:text-[28px]">
           idPlay
         </h2>
         <p className="mt-4 text-sm text-neutral-600">
-          Silakan isi informasi berikut untuk mendaftar.
+          Silakan isi email dan password untuk masuk.
         </p>
 
         <form className="mt-8 w-full space-y-5" onSubmit={onSubmit}>
@@ -88,7 +88,7 @@ export default function LoginPage() {
             disabled={isSubmitting}
             className="h-12 w-full rounded-full bg-[#FF7A4A] text-white hover:bg-[#ff6b33] disabled:opacity-60"
           >
-            {isSubmitting ? "Memproses..." : "Daftar Sekarang"}
+            {isSubmitting ? "Memproses..." : "Masuk"}
           </Button>
 
           <div className="relative py-2 text-center">
@@ -123,6 +123,13 @@ export default function LoginPage() {
               </Link>
             </label>
           </div>
+
+          <p className="pt-2 text-left text-sm text-neutral-600">
+            Belum punya akun? {" "}
+            <Link href="/register" className="font-medium text-neutral-800 underline">
+              Daftar di sini
+            </Link>
+          </p>
         </form>
       </section>
     </main>

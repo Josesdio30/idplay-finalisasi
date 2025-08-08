@@ -74,9 +74,9 @@ const Navbar = () => {
             <FaSearch className="h-4 w-4 text-orange-500" />
           </button>
           <div className="flex items-center gap-x-2">
-            <button className="px-4 py-1.5 border border-orange-500 text-orange-500 rounded-full font-semibold hover:bg-orange-50 transition-colors">
+            <a href="/login" className="px-4 py-1.5 border border-orange-500 text-orange-500 rounded-full font-semibold hover:bg-orange-50 transition-colors">
               Sign In
-            </button>
+            </a>
             <button className="px-4 py-1.5 bg-green-600 text-white rounded-full font-semibold hover:bg-green-700 transition-colors">
               Sign Up
             </button>
@@ -133,9 +133,9 @@ const Navbar = () => {
             <button className="flex items-center justify-center p-2 border border-slate-200 bg-transparent rounded-full shadow-sm transition-colors">
               <FaSearch className="h-4 w-4 text-orange-500" />
             </button>
-            <button className="px-4 py-1.5 border border-orange-500 text-orange-500 rounded-full font-semibold hover:bg-orange-50 transition-colors">
+            <a href="/login" className="px-4 py-1.5 border border-orange-500 text-orange-500 rounded-full font-semibold hover:bg-orange-50 transition-colors">
               Sign In
-            </button>
+            </a>
             <button className="px-4 py-1.5 bg-green-600 text-white rounded-full font-semibold hover:bg-green-700 transition-colors">
               Sign Up
             </button>

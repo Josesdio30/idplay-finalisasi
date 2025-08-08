@@ -413,9 +413,9 @@ const HeroSection = () => {
                 <div className="row-start-2 col-start-1 lg:row-start-1 lg:col-start-1 space-y-6 px-4 lg:px-[100px] py-6 lg:py-24">
                   {!selectedQuestion && (
                     <div className="">
-                      <h3 className="text-4xl lg:text-[150px] lg:leading-[141%] tracking-[-3%] font-bold text-orange-500">
+                      <h4 className="text-4xl lg:text-[90px] lg:leading-[141%] tracking-[-3%] font-bold text-orange-500">
                         Apa itu
-                      </h3>
+                      </h4>
                       <div className="flex items-center gap-2 mt-4 lg:mt-0">
                         <Image
                           src="/imgs/logo-idplay.png"

@@ -50,12 +50,12 @@ export default function Home() {
     <div className="min-h-screen font-sans bg-white">
       {/* Banner/Card Section */}
       <HeroSection />
-      <section className="w-full py-8 bg-white mt-14">
+      <section className="w-full py-8 bg-white mt-10 md:mt-14">
         <div className="container mx-auto px-4">
           <div className="border-2 border-orange-500 rounded-[30px] p-0 relative">
             <div className="flex flex-col md:flex-row items-center md:justify-between relative z-10 rounded-[30px] overflow-hidden">
               {/* Kiri: Teks + Input */}
-              <div className="md:w-1/2 w-full p-6 md:p-8">
+              <div className="md:w-1/2 w-full p-4 sm:p-6 md:p-8">
                 <h2 className="text-[18px] sm:text-[20px] font-bold text-orange-600 mb-4">
                   Cek area kamu sekarang untuk mulai langganan!
                 </h2>
@@ -117,14 +117,14 @@ export default function Home() {
           {/* Top 3 Cards */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
             {/* For Home */}
-            <div className="md:col-span-2 relative rounded-2xl overflow-hidden shadow-lg h-[400px] flex items-end">
+            <div className="md:col-span-2 relative rounded-2xl overflow-hidden shadow-lg h-[280px] sm:h-[340px] md:h-[400px] flex items-end">
               <img
                 src="/imgs/card1.jpg"
                 alt="For Home"
                 className="absolute inset-0 w-full h-full object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-[#FE5E00] to-[#FE5E00]/0" />
-              <div className="relative z-10 p-6 text-white">
+              <div className="relative z-10 p-4 sm:p-6 text-white">
                 <div className="text-2xl font-bold mb-2">For Home</div>
                 <div className="text-base font-light mb-2">
                   "As a home internet provider, fast and stable connectivity is key to your family's
@@ -133,14 +133,14 @@ export default function Home() {
               </div>
             </div>
             {/* For Business */}
-            <div className="relative rounded-2xl overflow-hidden shadow-lg h-[400px] flex items-end">
+            <div className="relative rounded-2xl overflow-hidden shadow-lg h-[280px] sm:h-[340px] md:h-[400px] flex items-end">
               <img
                 src="/imgs/card2.jpg"
                 alt="For Business"
                 className="absolute inset-0 w-full h-full object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-green-700/70 to-transparent" />
-              <div className="relative z-10 p-6 text-white">
+              <div className="relative z-10 p-4 sm:p-6 text-white">
                 <div className="text-2xl font-bold mb-2">For Business</div>
                 <div className="text-base font-light mb-2">
                   Add-ons are optional features that enhance your main service — offering more
@@ -149,14 +149,14 @@ export default function Home() {
               </div>
             </div>
             {/* Add-Ons */}
-            <div className="relative rounded-2xl overflow-hidden shadow-lg h-[400px] flex items-end">
+            <div className="relative rounded-2xl overflow-hidden shadow-lg h-[280px] sm:h-[340px] md:h-[400px] flex items-end">
               <img
                 src="/imgs/card3.jpg"
                 alt="Add-Ons"
                 className="absolute inset-0 w-full h-full object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-green-500/60 to-transparent" />
-              <div className="relative z-10 p-6 text-white">
+              <div className="relative z-10 p-4 sm:p-6 text-white">
                 <div className="text-2xl font-bold mb-2">Add-Ons</div>
                 <div className="text-base font-light mb-2">
                   Add-ons are optional features that enhance your main service — offering more
@@ -164,35 +164,6 @@ export default function Home() {
                 </div>
               </div>
             </div>
-            {/* <div className="md:col-span-4 grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="flex flex-col items-center px-10 py-[53px] bg-[#80808021] rounded-2xl">
-                <p className="text-[#00934C] text-[30px] leading-[161%] tracking-[-4%] font-bold text-center mb-[52px]">
-                  Upgrade Your Connection, Your Way!
-                </p>
-                <p className="text-black text-[20px] leading-[161%] tracking-[-4%] font-base text-center mb-[52px]">
-                  Now you can tailor your internet service with extra features made for both homes
-                  and businesses. From faster speeds and wider coverage to smart access
-                  control—everything is designed to boost your comfort and productivity
-                </p>
-                <Button className="bg-[#00934C] text-white hover:bg-[#007a3c] max-w-[250px] w-full">
-                  Learn More
-                </Button>
-              </div>
-              <div className="flex flex-col items-center px-10 py-[53px] bg-[#80808021] rounded-2xl">
-                <p className="text-[#00934C] text-[30px] leading-[161%] tracking-[-4%] font-bold text-center mb-[52px]">
-                  Upgrade Your Connection, Your Way!
-                </p>
-                <p className="text-black text-[20px] leading-[161%] tracking-[-4%] font-base text-center mb-[52px]">
-                  Now you can tailor your internet service with extra features made for both homes
-                  and businesses. From faster speeds and wider coverage to smart access
-                  control—everything is designed to boost your comfort and productivity
-                </p>
-                <Button className="bg-white text-[#00934C] hover:bg-slate-50 max-w-[250px] w-full gap-2">
-                  <Phone />
-                  Learn More
-                </Button>
-              </div>
-            </div> */}
           </div>
         </div>
       </section>
@@ -247,24 +218,24 @@ export default function Home() {
                 key={item}
                 className="bg-white rounded-2xl shadow-lg overflow-hidden"
               >
-                <div className="flex items-center justify-center bg-orange-500 text-white px-4 py-4 lg:py-9 text-center">
-                  <div className="text-[40px] lg:text-[70px] tracking-[1%] leading-[45px] font-bold text-center">
-                    700<span className="text-[20px]">/Mbps</span>
+                <div className="flex items-center justify-center bg-orange-500 text-white px-4 py-6 sm:py-7 lg:py-9 text-center">
+                  <div className="text-[36px] sm:text-[40px] lg:text-[70px] tracking-[1%] leading-[45px] font-bold text-center">
+                    700<span className="text-[16px] sm:text-[20px]">/Mbps</span>
                   </div>
                 </div>
                 <div className="relative flex flex-col justify-center items-center p-4 lg:p-6">
-                  <div className="text-xl lg:text-[36px] tracking-[1%] leading-[45px] font-bold text-orange-500 mb-3 lg:mb-5">
-                    Rp.1.700.000<span className="text-[20px]">/Tahun</span>
+                  <div className="text-xl sm:text-2xl lg:text-[36px] tracking-[1%] leading-[45px] font-bold text-orange-500 mb-2 sm:mb-3 lg:mb-5">
+                    Rp.1.700.000<span className="text-[16px] sm:text-[20px]">/Tahun</span>
                   </div>
                   <Image
                     src="/icons/arrow-pricing.svg"
                     alt=""
                     width={65}
                     height={65}
-                    className="size-[55px] lg:size-[65px] absolute z-10 left-12 lg:left-9 top-10 lg:top-13"
+                    className="size-[45px] sm:size-[55px] lg:size-[65px] absolute z-10 left-10 sm:left-12 lg:left-9 top-10 lg:top-13"
                   />
                   <div className="text-base lg:text-[30px] tracking-[1%] leading-[26px] font-medium text-orange-700 mb-2">
-                    Rp.350.000<span className="text-[20px]">/Bulan</span>
+                    Rp.350.000<span className="text-[16px] sm:text-[20px]">/Bulan</span>
                   </div>
                   <p className="text-sm lg:text-[15px] tracking-[1%] leading-[26px] font-medium text-orange-500">
                     Mau langganan setahun? Bisa dicicil, kok!

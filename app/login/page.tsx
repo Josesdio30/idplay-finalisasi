@@ -51,13 +51,10 @@ export default function LoginPage() {
     <main className="min-h-[70vh] w-full bg-[#FFFBF9]">
       <section className="mx-auto flex w-full max-w-md md:max-w-xl flex-col items-center px-4 sm:px-6 py-16 sm:py-20 md:py-24 text-center">
         <h1 className="text-2xl font-semibold text-neutral-900 md:text-[28px]">
-          Masuk ke Akun Anda
+          Masuk ke Akun idPlay
         </h1>
-        <h2 className="mt-1 text-2xl font-semibold text-neutral-900 md:text-[28px]">
-          idPlay
-        </h2>
         <p className="mt-4 text-sm text-neutral-600">
-          Silakan isi email dan password untuk masuk.
+          Akses tagihan, pengaturan layanan, dan lainnya.
         </p>
 
         <form className="mt-8 w-full space-y-5" onSubmit={onSubmit}>
@@ -86,7 +83,7 @@ export default function LoginPage() {
           <Button
             type="submit"
             disabled={isSubmitting}
-            className="h-12 w-full rounded-full bg-[#FF7A4A] text-white hover:bg-[#ff6b33] disabled:opacity-60"
+            className="h-12 w-full rounded-full bg-green-500 text-white hover:bg-green-600 disabled:opacity-60"
           >
             {isSubmitting ? "Memproses..." : "Masuk"}
           </Button>

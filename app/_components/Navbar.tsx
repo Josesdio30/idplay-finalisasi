@@ -77,9 +77,9 @@ const Navbar = () => {
             <a href="/login" className="px-4 py-1.5 border border-orange-500 text-orange-500 rounded-full font-semibold hover:bg-orange-50 transition-colors">
               Sign In
             </a>
-            <button className="px-4 py-1.5 bg-green-600 text-white rounded-full font-semibold hover:bg-green-700 transition-colors">
+            <a href="/register" className="px-4 py-1.5 bg-green-600 text-white rounded-full font-semibold hover:bg-green-700 transition-colors">
               Sign Up
-            </button>
+            </a>
           </div>
         </div>
 
@@ -136,9 +136,9 @@ const Navbar = () => {
             <a href="/login" className="px-4 py-1.5 border border-orange-500 text-orange-500 rounded-full font-semibold hover:bg-orange-50 transition-colors">
               Sign In
             </a>
-            <button className="px-4 py-1.5 bg-green-600 text-white rounded-full font-semibold hover:bg-green-700 transition-colors">
+            <a href="/register" className="px-4 py-1.5 bg-green-600 text-white rounded-full font-semibold hover:bg-green-700 transition-colors">
               Sign Up
-            </button>
+            </a>
           </div>
         </div>
       </div>

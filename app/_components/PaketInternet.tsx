@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Autoplay } from 'swiper/modules';
@@ -46,36 +46,57 @@ const imagesByRegion = {
   },
 };
 
-const PaketInternet: React.FC = () => {
-  const [region, setRegion] = useState<'jawa' | 'sulawesi'>('jawa');
-  const [duration, setDuration] = useState<'bulanan' | 'tahunan'>('bulanan');
+type RegionKey = keyof typeof imagesByRegion;
+
+type PaketInternetProps = {
+  region?: RegionKey;
+  lockRegion?: boolean;
+  defaultDuration?: 'bulanan' | 'tahunan';
+};
+
+const PaketInternet: React.FC<PaketInternetProps> = ({
+  region: regionProp,
+  lockRegion = false,
+  defaultDuration = 'bulanan'
+}) => {
+  const [region, setRegion] = useState<RegionKey>(regionProp ?? 'jawa');
+  const [duration, setDuration] = useState<'bulanan' | 'tahunan'>(defaultDuration);
+
+  useEffect(() => {
+    if (regionProp) {
+      setRegion(regionProp);
+    }
+  }, [regionProp]);
+
   const images = imagesByRegion[region][duration];
 
   return (
     <section className="py-16 bg-orange-500">
       <div className="container mx-auto px-4">
-        <div className="flex justify-center mb-6 gap-4">
-          <button
-            className={`px-6 py-2 rounded-full font-medium transition-colors ${
-              region === 'jawa'
-                ? 'bg-white text-orange-500'
-                : 'bg-orange-700 text-white hover:bg-orange-600'
-            }`}
-            onClick={() => setRegion('jawa')}
-          >
-            Jawa
-          </button>
-          <button
-            className={`px-6 py-2 rounded-full font-medium transition-colors ${
-              region === 'sulawesi'
-                ? 'bg-white text-orange-500'
-                : 'bg-orange-700 text-white hover:bg-orange-600'
-            }`}
-            onClick={() => setRegion('sulawesi')}
-          >
-            Sulawesi & Kalimantan
-          </button>
-        </div>
+        {!lockRegion && (
+          <div className="flex justify-center mb-6 gap-4">
+            <button
+              className={`px-6 py-2 rounded-full font-medium transition-colors ${
+                region === 'jawa'
+                  ? 'bg-white text-orange-500'
+                  : 'bg-orange-700 text-white hover:bg-orange-600'
+              }`}
+              onClick={() => setRegion('jawa')}
+            >
+              Jawa
+            </button>
+            <button
+              className={`px-6 py-2 rounded-full font-medium transition-colors ${
+                region === 'sulawesi'
+                  ? 'bg-white text-orange-500'
+                  : 'bg-orange-700 text-white hover:bg-orange-600'
+              }`}
+              onClick={() => setRegion('sulawesi')}
+            >
+              Sulawesi & Kalimantan
+            </button>
+          </div>
+        )}
 
         <div className="flex justify-center mb-10 gap-4">
           <button

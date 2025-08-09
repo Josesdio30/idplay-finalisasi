@@ -16,14 +16,20 @@ const TileLayer = dynamic(() => import('react-leaflet').then((mod) => mod.TileLa
 const Marker = dynamic(() => import('react-leaflet').then((mod) => mod.Marker), { ssr: false });
 const Popup = dynamic(() => import('react-leaflet').then((mod) => mod.Popup), { ssr: false });
 
-interface Branch {
+export interface Branch {
   id: number;
   name: string;
   lat: number;
   lng: number;
 }
 
-const branches: Branch[] = [
+type BranchMapProps = {
+  branches?: Branch[];
+  center?: [number, number];
+  zoom?: number;
+};
+
+const defaultBranches: Branch[] = [
   {
     id: 1,
     name: 'Cabang Jakarta',
@@ -33,7 +39,7 @@ const branches: Branch[] = [
   { id: 2, name: 'Cabang Surabaya', lat: -7.25, lng: 112.75 }
 ];
 
-export default function BranchMap() {
+export default function BranchMap({ branches = defaultBranches, center = [-6.1582, 106.9006], zoom = 13 }: BranchMapProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [redMarkerIcon, setRedMarkerIcon] = useState<any>(null);
 
@@ -81,8 +87,8 @@ export default function BranchMap() {
 
       {/* Map */}
       <MapContainer
-        center={[-6.1582, 106.9006]}
-        zoom={13}
+        center={center}
+        zoom={zoom}
         style={{ height: '500px', width: '100%' }}
         scrollWheelZoom={true}
       >

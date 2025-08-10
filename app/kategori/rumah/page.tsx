@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-import CompareProduct from '../_components/CompareProduct';
-import ProductFacts from './_component/ProductFacts';
+import CompareProduct from '@/app/_components/CompareProduct';
+import ProductFacts from '../_component/ProductFacts';
 
 export default function Kategori() {
 

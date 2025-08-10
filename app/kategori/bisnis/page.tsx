@@ -1,22 +1,19 @@
 'use client';
 
-import { useState } from 'react';
 import Image from 'next/image';
-import CompareProduct from '../_components/CompareProduct';
-import ProductFacts from './_component/ProductFacts';
+import CompareProduct from '../../_components/CompareProduct';
+import ProductFacts from '../_component/ProductFacts';
 
-export default function Kategori() {
-
+export default function KategoriBisnis() {
   return (
     <div className="min-h-screen font-sans bg-white">
-      
-      {/* Banner/Card Section */}
+      {/* Banner/Card Section for Bisnis */}
       <div className="relative container mx-auto lg:pt-14">
         <Image
-          src="/category/hero-kategori.svg"
+          src="/category/hero-bisnis.svg"
           width={1000}
           height={1000}
-          alt="Kategori Rumah"
+          alt="Kategori Bisnis"
           className="w-full h-auto object-contain"
         />
       </div>

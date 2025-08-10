@@ -10,18 +10,32 @@ import Link from 'next/link';
 
 const menuItems = [
   { label: 'Home', href: '/' },
-  { label: 'Kategori', href: '/kategori', hasDropdown: true },
-  { label: 'Berita & Informasi', href: '/article', hasDropdown: true },
-  { label: 'Regional', href: '/regional', hasDropdown: true }
+  {
+    label: 'Kategori',
+    href: '/kategori',
+    hasDropdown: true,
+    subItems: [
+      { label: 'Rumah', href: '/kategori/rumah' },
+      { label: 'Bisnis', href: '/kategori/bisnis' },
+      { label: 'Add-ons', href: '/kategori/add-ons' },
+    ],
+  },
+  { label: 'Berita & Informasi', href: '/article', hasDropdown: false }, // sementara false, menunggu subitem
+  { label: 'Regional', href: '/regional', hasDropdown: false } // sementara false, menunggu subitem
 ];
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
   const [isScrolled, setIsScrolled] = useState(false);
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const [openMobileDropdown, setOpenMobileDropdown] = useState<string | null>(null);
 
   const toggleMenu = () => {
     setIsMenuOpen((prev) => !prev);
+    if (!isMenuOpen) {
+      setOpenMobileDropdown(null);
+    }
   };
 
   useEffect(() => {
@@ -32,6 +46,22 @@ const Navbar = () => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  const handleMouseEnter = (label: string) => {
+    setOpenDropdown(label);
+  };
+
+  const handleMouseLeave = () => {
+    setOpenDropdown(null);
+  };
+
+  const toggleDesktopDropdown = (label: string) => {
+    setOpenDropdown((prev) => (prev === label ? null : label));
+  };
+
+  const toggleMobileDropdown = (label: string) => {
+    setOpenMobileDropdown((prev) => (prev === label ? null : label));
+  };
 
   return (
     <>
@@ -53,6 +83,40 @@ const Navbar = () => {
         <div className="hidden md:flex items-center space-x-8">
           {menuItems.map((item) => {
             const isActive = pathname === item.href;
+            if (item.hasDropdown) {
+              return (
+                <div
+                  key={item.label}
+                  className="relative"
+                  onMouseEnter={() => handleMouseEnter(item.label)}
+                  onMouseLeave={handleMouseLeave}
+                >
+                  <button
+                    onClick={() => toggleDesktopDropdown(item.label)}
+                    className={clsx(
+                      'text-gray-700 hover:text-orange-500 transition-colors flex items-center',
+                      isActive && 'text-orange-500'
+                    )}
+                  >
+                    {item.label}
+                    <ChevronDown className="ml-1 h-4 w-4" />
+                  </button>
+                  {openDropdown === item.label && item.subItems && (
+                    <div className="absolute top-full left-0 w-48 bg-white shadow-lg rounded-md py-2 z-50">
+                      {item.subItems.map((subItem) => (
+                        <Link
+                          key={subItem.label}
+                          href={subItem.href}
+                          className="block px-4 py-2 text-gray-700 hover:bg-orange-50 hover:text-orange-500 transition-colors"
+                        >
+                          {subItem.label}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            }
             return (
               <Link
                 key={item.label}
@@ -63,7 +127,6 @@ const Navbar = () => {
                 )}
               >
                 {item.label}
-                {item.hasDropdown && <ChevronDown className="ml-1 h-4 w-4" />}
               </Link>
             );
           })}
@@ -120,20 +183,52 @@ const Navbar = () => {
         )}
       >
         <div className="flex flex-col items-center space-y-4 py-4 text-gray-700 text-sm font-medium">
-          {menuItems.map((item) => (
-            <Link
-              key={item.label}
-              href={item.href}
-              className={clsx(
-                'transition-colors flex items-center',
-                pathname === item.href ? 'text-orange-500' : 'hover:text-orange-500'
-              )}
-              onClick={toggleMenu}
-            >
-              {item.label}
-              {item.hasDropdown && <ChevronDown className="ml-1 h-4 w-4" />}
-            </Link>
-          ))}
+          {menuItems.map((item) => {
+            const isActive = pathname === item.href;
+            if (item.hasDropdown) {
+              return (
+                <div key={item.label} className="w-full text-center">
+                  <button
+                    onClick={() => toggleMobileDropdown(item.label)}
+                    className={clsx(
+                      'w-full flex items-center justify-center transition-colors',
+                      isActive ? 'text-orange-500' : 'hover:text-orange-500'
+                    )}
+                  >
+                    {item.label}
+                    <ChevronDown className="ml-1 h-4 w-4" />
+                  </button>
+                  {openMobileDropdown === item.label && item.subItems && (
+                    <div className="flex flex-col items-center space-y-2 mt-2">
+                      {item.subItems.map((subItem) => (
+                        <Link
+                          key={subItem.label}
+                          href={subItem.href}
+                          className="text-gray-700 hover:text-orange-500 transition-colors"
+                          onClick={toggleMenu}
+                        >
+                          {subItem.label}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            }
+            return (
+              <Link
+                key={item.label}
+                href={item.href}
+                className={clsx(
+                  'transition-colors flex items-center',
+                  isActive ? 'text-orange-500' : 'hover:text-orange-500'
+                )}
+                onClick={toggleMenu}
+              >
+                {item.label}
+              </Link>
+            );
+          })}
           <div className="flex items-center space-x-4 pt-4 border-t border-gray-200 w-full justify-center">
             <button className="flex items-center justify-center p-2 border border-slate-200 bg-transparent rounded-full shadow-sm transition-colors">
               <FaSearch className="h-4 w-4 text-orange-500" />

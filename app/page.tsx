@@ -1,13 +1,14 @@
 'use client';
 import FAQ from '@/app/_components/FAQ';
-import { FaTachometerAlt, FaGamepad, FaUsers, FaHome, FaWrench, FaSearch } from 'react-icons/fa';
+import { FaTachometerAlt, FaGamepad, FaUsers, FaHome, FaWrench } from 'react-icons/fa';
 import { useState } from 'react';
 import HeroSection from './_components/Hero';
-import { MapPin } from 'lucide-react';
+
 import TestimoniPelanggan from './_components/TestimoniPelanggan';
 import Image from 'next/image';
 import CompareProduct from './_components/CompareProduct';
 import { cn } from '@/lib/utils';
+import CekCoverage from './_components/CekCoverage';
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState<'speed' | 'help' | 'quiz'>('speed');
@@ -50,58 +51,7 @@ export default function Home() {
     <div className="min-h-screen font-sans bg-white">
       {/* Banner/Card Section */}
       <HeroSection />
-      <section className="w-full py-8 bg-white mt-10 md:mt-14">
-        <div className="container mx-auto px-4">
-          <div className="border-2 border-orange-500 rounded-[30px] p-0 relative">
-            <div className="flex flex-col md:flex-row items-center md:justify-between relative z-10 rounded-[30px] overflow-hidden">
-              {/* Kiri: Teks + Input */}
-              <div className="md:w-1/2 w-full p-4 sm:p-6 md:p-8">
-                <h2 className="text-[18px] sm:text-[20px] font-bold text-orange-600 mb-4">
-                  Cek area kamu sekarang untuk mulai langganan!
-                </h2>
-
-                <div className="flex items-center gap-2 sm:gap-4 flex-wrap border-2 border-orange-400 rounded-full px-3 py-1 bg-white w-full">
-                  {/* Input Provinsi */}
-                  <div className="flex items-center gap-2 flex-1">
-                    <MapPin className="text-orange-500 w-4 h-4" />
-                    <span className="text-gray-400 text-sm">Pilih Provinsi</span>
-                  </div>
-
-                  <span className="text-gray-300">|</span>
-
-                  {/* Input Kota */}
-                  <div className="flex items-center gap-2 flex-1">
-                    <MapPin className="text-orange-500 w-4 h-4" />
-                    <span className="text-gray-400 text-sm">Pilih Kota</span>
-                  </div>
-
-                  <span className="text-gray-300">|</span>
-
-                  {/* Tombol Search */}
-                  <button className="w-8 h-8 sm:w-10 sm:h-10 rounded-full border border-orange-400 flex items-center justify-center hover:bg-orange-500 text-black hover:text-white transition">
-                    <FaSearch className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-
-              <img
-                src="/imgs/location-decoration.png" // Ganti dengan path gambar kamu
-                alt="Dekorasi Lokasi"
-                className="block md:hidden absolute inset-0 -z-10 max-w-full h-full object-cover rounded-[30px]"
-              />
-
-              {/* Kanan: Gambar Dekorasi */}
-              <div className="hidden md:flex md:w-1/2 w-full mt-6 md:mt-0 justify-center md:justify-end">
-                <img
-                  src="/imgs/location-decoration.png" // Ganti dengan path gambar kamu
-                  alt="Dekorasi Lokasi"
-                  className="max-w-full h-full object-cover"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      <CekCoverage />
       {/* <Review /> */}
 
       {/* Our Services Section */}

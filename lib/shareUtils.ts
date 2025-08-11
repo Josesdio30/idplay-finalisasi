@@ -15,11 +15,11 @@ export const sharePlatforms: Record<string, SharePlatform> = {
     bgColor: 'bg-blue-600',
     hoverColor: 'hover:bg-blue-700'
   },
-  twitter: {
-    name: 'Twitter',
+  x: {
+    name: 'X',
     getUrl: (url: string, title: string) =>
-      `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}`,
-    icon: 'twitter',
+      `https://x.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}`,
+    icon: 'x',
     bgColor: 'bg-sky-500',
     hoverColor: 'hover:bg-sky-600'
   },

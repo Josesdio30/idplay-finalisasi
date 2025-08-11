@@ -38,7 +38,7 @@ export const dummyArticles: Article[] = [
     image: 'https://picsum.photos/600/400?random=1',
     user: {
       name: 'John Doe',
-      avatar: 'https://picsum.photos/40/40?random=1'
+      // avatar: 'https://picsum.photos/40/40?random=1'
     },
     publish_date: '2025-06-01',
     category_id: 1,

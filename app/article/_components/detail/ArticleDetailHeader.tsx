@@ -11,7 +11,7 @@ const ArticleDetailHeader: React.FC<ArticleDetailHeaderProps> = ({ article }) =>
   return (
     <header className="mb-8">
       <div className="mb-4">
-        <span className="bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-medium">
+        <span className="bg-orange-500 text-white px-4 py-2 rounded-full text-sm font-medium">
           {getCategoryName(article.category_id)}
         </span>
       </div>
@@ -22,12 +22,12 @@ const ArticleDetailHeader: React.FC<ArticleDetailHeaderProps> = ({ article }) =>
 
       <div className="flex flex-wrap items-center gap-6 text-gray-600 mb-6">
         <div className="flex items-center gap-2">
-          <FaCalendarAlt className="text-blue-600" />
+          <FaCalendarAlt className="text-orange-500" />
           <span>{formatDate(article.publish_date)}</span>
         </div>
         {article.reading_time && (
           <div className="flex items-center gap-2">
-            <FaClock className="text-blue-600" />
+            <FaClock className="text-orange-500" />
             <span>{article.reading_time} menit</span>
           </div>
         )}

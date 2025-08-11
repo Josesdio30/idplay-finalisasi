@@ -10,13 +10,14 @@ import ArticlesByCategory from './_components/layout/ArticlesByCategory';
 import LoadingSkeleton from './_components/detail/LoadingSkeleton';
 import Pagination from './_components/navigation/Pagination';
 import EmptyState from './_components/layout/EmptyState';
+import CategoryFilter from './_components/filters/CategoryFilter';
 
 const Blog: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const articlesPerPage = 6;
+  const articlesPerPage = 9;
 
   const { filteredArticles, articlesByCategory, totalPages, paginatedArticles } = useArticleFilter(
     {
@@ -53,7 +54,8 @@ const Blog: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+    // <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 font-sans">
+    <div className="min-h-screen font-sans bg-white mb-24">
       <BlogHeader
         searchQuery={searchQuery}
         selectedCategory={selectedCategory}
@@ -65,37 +67,38 @@ const Blog: React.FC = () => {
       />
 
       <main>
-        <section className="py-16">
+        <section className="">
           <div className="container mx-auto px-4">
+            {currentPage === 1 && (
+              <FeaturedArticle article={dummyArticles[0]} />
+            )}
             {isLoading ? (
               <div className="space-y-16">
                 <LoadingSkeleton />
               </div>
             ) : filteredArticles.length > 0 ? (
               <>
-                {currentPage === 1 && !selectedCategory && !searchQuery && (
-                  <FeaturedArticle article={dummyArticles[0]} />
-                )}
-
                 <div className="space-y-16">
-                  {selectedCategory || searchQuery ? (
-                    <ArticleGrid
-                      articles={paginatedArticles}
-                      showCategory={true}
+                  {/* category filter */}
+                  <div className="flex justify-start mb-8">
+                    <CategoryFilter
+                      selectedCategory={selectedCategory}
+                      onCategoryChange={handleCategoryFilter}
                     />
-                  ) : (
-                    <ArticlesByCategory
-                      articlesByCategory={articlesByCategory}
-                      onCategoryFilter={handleCategoryFilter}
-                    />
-                  )}
+                  </div>
+
+                  {/* show all articles */}
+                  <ArticleGrid
+                    articles={paginatedArticles}
+                    showCategory={true}
+                  />
                 </div>
 
-                <Pagination
+                {/* <Pagination
                   currentPage={currentPage}
                   totalPages={totalPages}
                   onPageChange={handlePageChange}
-                />
+                /> */}
               </>
             ) : (
               <EmptyState

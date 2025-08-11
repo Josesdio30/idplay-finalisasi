@@ -6,7 +6,7 @@ export const limitDescription = (text: string, limit: number): string => {
 };
 
 export const formatDate = (date: string): string => {
-  return new Date(date).toLocaleDateString('en-US', {
+  return new Date(date).toLocaleDateString('id-ID', {
     month: 'long',
     day: 'numeric',
     year: 'numeric'

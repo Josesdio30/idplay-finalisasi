@@ -8,7 +8,7 @@ const BackNavigation: React.FC = () => {
       <div className="max-w-4xl mx-auto px-4 py-4">
         <Link
           href="/article"
-          className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 transition-colors"
+          className="inline-flex items-center gap-2 text-orange-500 hover:text-blue-800 transition-colors"
         >
           <FaArrowLeft />
           Kembali ke Artikel

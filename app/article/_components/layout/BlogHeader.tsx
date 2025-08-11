@@ -23,16 +23,16 @@ const BlogHeader: React.FC<BlogHeaderProps> = ({
   isLoading
 }) => {
   return (
-    <section className="py-16 bg-white">
+    <section className="py-16 ">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-8">
-          <h1 className="text-5xl font-bold text-gray-900 mb-4">Blog</h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-            Temukan artikel menarik dan solusi untuk kamu yang bikin mudah hari mu!
+        <div className="mb-8 mt-8 text-left">
+          <h1 className="text-8xl font-medium text-gray-900 mb-4">Blog</h1>
+          <p className="text-xl text-gray-600 max-w-3xl leading-relaxed">
+            Cek berita terbaru kita!
           </p>
         </div>
 
-        <div className="flex flex-col  gap-6 items-center justify-center mb-8">
+        {/* <div className="flex flex-col  gap-6 items-center justify-center mb-8">
           <SearchForm
             searchQuery={searchQuery}
             onSearchChange={onSearchChange}
@@ -54,7 +54,7 @@ const BlogHeader: React.FC<BlogHeaderProps> = ({
               {selectedCategory && ` in ${getCategoryName(selectedCategory)}`}
             </p>
           </div>
-        )}
+        )} */}
       </div>
     </section>
   );

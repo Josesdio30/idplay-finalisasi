@@ -30,7 +30,8 @@ const RelatedArticles: React.FC<RelatedArticlesProps> = ({ currentArticle }) => 
           <Link
             key={article.id}
             href={`/article/${article.slug}`}
-            className="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden group"
+            // className="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden group"
+            className="bg-white rounded-xl overflow-hidden group"
           >
             <div className="relative overflow-hidden">
               <Image
@@ -42,12 +43,13 @@ const RelatedArticles: React.FC<RelatedArticlesProps> = ({ currentArticle }) => 
               />
             </div>
             <div className="p-4">
-              <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2 group-hover:text-blue-600 transition-colors">
+              {/* <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2 group-hover:text-blue-600 transition-colors"> */}
+              <h3 className="font-bold text-orange-500 mb-2 hover:underline line-clamp-2">
                 {article.title}
               </h3>
               <p className="text-gray-600 text-sm line-clamp-2 mb-3">{article.description}</p>
               <div className="flex items-center gap-2 text-xs text-gray-500">
-                <FaCalendarAlt />
+                {/* <FaCalendarAlt /> */}
                 <span>{formatDate(article.publish_date)}</span>
               </div>
             </div>

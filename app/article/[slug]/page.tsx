@@ -22,8 +22,9 @@ export default async function ArticleDetail({ params }: ArticleDetailProps) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <BackNavigation />
+    // <div className="min-h-screen bg-gray-50 font-sans">
+    <div className="min-h-screen font-sans bg-white">
+      {/* <BackNavigation /> */}
 
       <article className="max-w-4xl mx-auto px-4 py-8">
         <ArticleDetailHeader article={article} />

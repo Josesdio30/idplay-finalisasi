@@ -1,5 +1,6 @@
 import React from 'react';
 import { FaShare, FaFacebook, FaTwitter, FaLinkedin } from 'react-icons/fa';
+import { FaXTwitter } from 'react-icons/fa6';
 import { type Article } from '@/data/dummyData';
 import { sharePlatforms, getShareUrl } from '@/lib/shareUtils';
 
@@ -22,8 +23,8 @@ const ShareButton: React.FC<ShareButtonProps> = ({ platform, url, title }) => {
     switch (platform) {
       case 'facebook':
         return <FaFacebook />;
-      case 'twitter':
-        return <FaTwitter />;
+      case 'x':
+        return <FaXTwitter />;
       case 'linkedin':
         return <FaLinkedin />;
       default:
@@ -50,7 +51,7 @@ const ShareSection: React.FC<ShareSectionProps> = ({ article }) => {
   return (
     <div className="mt-12 bg-white rounded-xl p-6 shadow-sm">
       <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-        <FaShare className="text-blue-600" />
+        <FaShare className="text-orange-500" />
         Bagikan Artikel
       </h3>
       <div className="flex gap-4">
@@ -60,7 +61,7 @@ const ShareSection: React.FC<ShareSectionProps> = ({ article }) => {
           title={article.title}
         />
         <ShareButton
-          platform="twitter"
+          platform="x"
           url={articleUrl}
           title={article.title}
         />

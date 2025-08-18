@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 
+const BACKEND_URL = process.env.BACKEND_URL || 'http://10.80.253.78:6868';
+
 export async function GET(request: Request) {
   try {
     const url = new URL(request.url);
@@ -13,14 +15,14 @@ export async function GET(request: Request) {
       );
     }
 
-    const upstreamUrl = `http://10.80.253.78:6868/api/region/check_coverage?longitude=${encodeURIComponent(
+    const upstreamUrl = `${BACKEND_URL}/region/check_coverage?longitude=${encodeURIComponent(
       longitude
     )}&latitude=${encodeURIComponent(latitude)}`;
 
     const upstreamResponse = await fetch(upstreamUrl, {
       method: 'GET',
       headers: {
-        'Accept': 'application/json'
+        Accept: 'application/json'
       },
       // Avoid caching on both server and downstream
       cache: 'no-store'

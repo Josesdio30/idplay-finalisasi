@@ -23,6 +23,7 @@ import BannerModal from './BannerModal';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { FaHouseSignal } from 'react-icons/fa6';
+import { useRouter } from 'next/navigation';
 
 interface Question {
   id: string;
@@ -185,6 +186,8 @@ const HeroSection = () => {
   const [activeTab, setActiveTab] = useState<'kenalan' | 'kecepatan' | 'default'>('default');
   const [selectedQuestion, setSelectedQuestion] = useState<Question | null>(null);
   const [startedQuiz, setStartedQuiz] = useState(false);
+
+  const navigate = useRouter();
 
   // Quiz states
   const [currentQuizQuestion, setCurrentQuizQuestion] = useState(0);
@@ -355,7 +358,12 @@ const HeroSection = () => {
 
                     {/* Action buttons */}
                     <div className="flex flex-col sm:flex-row gap-2 mt-4">
-                      <Button className="rounded-full bg-orange-500 hover:bg-orange-600 border border-orange-500 text-white px-8 py-3 font-medium transition-colors flex items-center justify-center gap-2">
+                      <Button
+                        onClick={() => {
+                          navigate.push('/payment');
+                        }}
+                        className="rounded-full bg-orange-500 hover:bg-orange-600 border border-orange-500 text-white px-8 py-3 font-medium transition-colors flex items-center justify-center gap-2"
+                      >
                         <MdEmail className="w-4 h-4" />
                         Subscribe Now
                       </Button>

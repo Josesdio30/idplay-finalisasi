@@ -9,10 +9,12 @@ import Image from 'next/image';
 import CompareProduct from './_components/CompareProduct';
 import { cn } from '@/lib/utils';
 import CekCoverage from './_components/CekCoverage';
+import { useRouter } from 'next/navigation';
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState<'speed' | 'help' | 'quiz'>('speed');
   const [paketTab, setPaketTab] = useState<'bulan' | 'tahun'>('bulan');
+  const navigate = useRouter();
 
   // Icons for the "What is Fiber" tab
   const fiberIcons = [
@@ -271,7 +273,12 @@ export default function Home() {
                     </div>
                   </div>
 
-                  <button className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 mt-6 rounded-lg flex items-center justify-center space-x-2 transition-colors">
+                  <button
+                    onClick={() => {
+                      navigate.push('/payment');
+                    }}
+                    className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 mt-6 rounded-lg flex items-center justify-center space-x-2 transition-colors"
+                  >
                     <svg
                       className="w-5 h-5"
                       fill="currentColor"

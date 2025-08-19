@@ -33,7 +33,7 @@ const CekCoverage: React.FC = () => {
         try {
           const { latitude, longitude } = position.coords;
           const resp = await fetch(
-            `/api/check_coverage?latitude=${encodeURIComponent(latitude)}&longitude=${encodeURIComponent(longitude)}`,
+            `${process.env.NEXT_PUBLIC_BASE_URL}/check_coverage?latitude=${encodeURIComponent(latitude)}&longitude=${encodeURIComponent(longitude)}`,
             { cache: 'no-store' }
           );
           const data = await resp.json();
@@ -101,7 +101,7 @@ const CekCoverage: React.FC = () => {
 
   return (
     <section className="py-10 bg-white">
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto px-4 pt-10">
         <div className="border-2 border-orange-500 rounded-[30px] p-0 relative">
           <div className="flex flex-col md:flex-row items-center md:justify-between relative z-10 rounded-[30px] overflow-hidden">
             <div className="md:w-1/2 w-full p-4 sm:p-6 md:p-8">

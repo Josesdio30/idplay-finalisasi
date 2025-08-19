@@ -1,7 +1,6 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { FcGoogle } from "react-icons/fc";
@@ -12,7 +11,6 @@ export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [agree, setAgree] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -20,18 +18,21 @@ export default function LoginPage() {
     e.preventDefault();
     setError(null);
 
-    if (!agree) {
-      setError("Anda harus menyetujui Syarat & Ketentuan");
+    if (!email || !password) {
+      setError("Semua kolom wajib diisi.");
       return;
     }
 
     setIsSubmitting(true);
     try {
-      const resp = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
+      const resp = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}user/login?apps_id=IDMALL_CUSTOMER`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password }),
+        }
+      );
 
       const data = await resp.json().catch(() => ({}));
       if (!resp.ok) {
@@ -105,21 +106,6 @@ export default function LoginPage() {
             <FcGoogle className="text-xl" />
             Google
           </Button>
-
-          <div className="flex items-start gap-3 pt-2 text-left">
-            <Checkbox
-              id="terms"
-              checked={agree}
-              onCheckedChange={(v) => setAgree(Boolean(v))}
-              className="mt-0.5"
-            />
-            <label htmlFor="terms" className="text-sm text-neutral-600">
-              Saya setuju dengan {" "}
-              <Link href="#" className="font-medium text-neutral-800 underline">
-                Syarat & Ketentuan
-              </Link>
-            </label>
-          </div>
 
           <p className="pt-2 text-left text-sm text-neutral-600">
             Belum punya akun? {" "}

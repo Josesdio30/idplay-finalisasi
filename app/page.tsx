@@ -53,7 +53,7 @@ export default function Home() {
     <div className="min-h-screen font-sans bg-white">
       {/* Banner/Card Section */}
       <HeroSection />
-      <CekCoverage />
+      <CekCoverage/>
       {/* <Review /> */}
 
       {/* Our Services Section */}

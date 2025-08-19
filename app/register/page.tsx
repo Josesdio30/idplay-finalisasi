@@ -12,8 +12,7 @@ export default function RegisterPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
+  const [fullName, setFullName] = useState("");
   const [agree, setAgree] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -27,18 +26,25 @@ export default function RegisterPage() {
       return;
     }
 
+    if (!email || !password || !fullName) {
+      setError("Semua kolom wajib diisi.");
+      return;
+    }
+
     setIsSubmitting(true);
     try {
-      const resp = await fetch("/api/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email,
-          password,
-          first_name: firstName,
-          last_name: lastName,
-        }),
-      });
+      const resp = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/user/register`, // disesuaikan path-nya
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email,
+            password,
+            full_name: fullName,
+          }),
+        }
+      );
 
       const data = await resp.json().catch(() => ({}));
       if (!resp.ok) {
@@ -68,24 +74,14 @@ export default function RegisterPage() {
         </p>
 
         <form className="mt-8 w-full space-y-5" onSubmit={onSubmit}>
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <Input
-              type="text"
-              placeholder="Nama Depan"
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
-              required
-              className="h-12 rounded-full border-0 bg-[#F3EBE7] px-5 text-[15px] placeholder:text-neutral-500"
-            />
-            <Input
-              type="text"
-              placeholder="Nama Belakang"
-              value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
-              required
-              className="h-12 rounded-full border-0 bg-[#F3EBE7] px-5 text-[15px] placeholder:text-neutral-500"
-            />
-          </div>
+          <Input
+            type="text"
+            placeholder="Nama Lengkap"
+            value={fullName}
+            onChange={(e) => setFullName(e.target.value)}
+            required
+            className="h-12 rounded-full border-0 bg-[#F3EBE7] px-5 text-[15px] placeholder:text-neutral-500"
+          />
 
           <Input
             type="email"

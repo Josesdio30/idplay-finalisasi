@@ -34,7 +34,7 @@ export default function RegisterPage() {
     setIsSubmitting(true);
     try {
       const resp = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/user/register`, // disesuaikan path-nya
+        `${process.env.NEXT_PUBLIC_BASE_URL}/user/register`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

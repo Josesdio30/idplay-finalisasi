@@ -13,8 +13,7 @@ interface ArticleCardProps {
 
 const ArticleCard: React.FC<ArticleCardProps> = ({ article, showCategory = false }) => {
   return (
-    // <article className="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden group transform hover:-translate-y-1 flex flex-col font-sans">
-      <article className="bg-white rounded-xl overflow-hidden group transform flex flex-col">
+    <article className="bg-white rounded-xl overflow-hidden group transform flex flex-col">
       <div className="relative overflow-hidden flex items-center justify-center" style={{ minHeight: 180 }}>
         {article.image ? (
           <Image
@@ -22,18 +21,19 @@ const ArticleCard: React.FC<ArticleCardProps> = ({ article, showCategory = false
             alt={article.title}
             width={400}
             height={250}
-            className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-500"
+            className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-500"
           />
         ) : (
-          <div className="w-full h-48 bg-gray-200 flex items-center justify-center">
+          <div className="w-full h-64 bg-gray-200 flex items-center justify-center">
             <svg width="48" height="48" fill="none" viewBox="0 0 24 24"><rect width="24" height="24" rx="6" fill="#e5e7eb"/><path d="M7 17l3-4 2 3 3-4 4 6H5l2-3z" fill="#bdbdbd"/><circle cx="8.5" cy="8.5" r="2.5" fill="#bdbdbd"/></svg>
           </div>
         )}
       </div>
 
-      <div className="px-6 pt-4 pb-6 flex flex-col flex-1">
+      <div className="pt-4 pb-6 flex flex-col flex-1">
+
         {/* Category */}
-        <div className="text-xs font-bold text-gray-700 mb-1">{getCategoryName(article.category_id)}</div>
+        <div className="text-s font-bold text-gray-700 mb-1">{getCategoryName(article.category_id)}</div>
 
         {/* Title */}
         <Link href={`/article/${article.slug}`}>

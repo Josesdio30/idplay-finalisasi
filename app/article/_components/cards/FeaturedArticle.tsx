@@ -26,7 +26,7 @@ const FeaturedArticle: React.FC<FeaturedArticleProps> = ({ article }) => {
             />
           </div>
           {/* <div className="md:w-1/2 p-8"> */}
-          <div className="md:w-1/2 p-6 flex flex-col justify-center">
+          <div className="md:w-1/2 p-10 flex flex-col justify-center">
             <div className="flex items-center gap-3 mb-4">
               {/* <span className="bg-blue-100 text-blue-800 text-md px-3 py-1 rounded-full font-medium"> */}
               <span className="text-md rounded-full font-bold">

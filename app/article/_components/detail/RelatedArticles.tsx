@@ -3,7 +3,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { FaCalendarAlt } from 'react-icons/fa';
 import { dummyArticles, type Article } from '@/data/dummyData';
-import { formatDate } from '@/lib/articleUtils';
+import { formatDate, getCategoryName } from '@/lib/articleUtils';
 
 interface RelatedArticlesProps {
   currentArticle: Article;
@@ -32,6 +32,7 @@ const RelatedArticles: React.FC<RelatedArticlesProps> = ({ currentArticle }) => 
             href={`/article/${article.slug}`}
             // className="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden group"
             className="bg-white rounded-xl overflow-hidden group"
+            // className="bg-white rounded-xl overflow-hidden group transform flex flex-col"
           >
             <div className="relative overflow-hidden">
               <Image
@@ -42,7 +43,9 @@ const RelatedArticles: React.FC<RelatedArticlesProps> = ({ currentArticle }) => 
                 className="w-full h-32 object-cover group-hover:scale-110 transition-transform duration-500"
               />
             </div>
-            <div className="p-4">
+            {/* <div className="p-4"> */}
+            <div className="pt-4 pb-6 flex flex-col flex-1">
+              <div className="text-xs font-bold text-gray-700 mb-1">{getCategoryName(article.category_id)}</div>
               {/* <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2 group-hover:text-blue-600 transition-colors"> */}
               <h3 className="font-bold text-orange-500 mb-2 hover:underline line-clamp-2">
                 {article.title}

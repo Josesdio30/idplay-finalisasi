@@ -23,9 +23,9 @@ const ArticleContent: React.FC<ArticleContentProps> = ({ article }) => {
 
       <div className="prose prose-lg max-w-none">
         <div className="bg-white rounded-xl p-8 shadow-sm">
-          <div className="text-xl text-gray-700 leading-relaxed mb-8 font-medium border-l-4 border-orange-500 pl-6">
+          {/* <div className="text-xl text-gray-700 leading-relaxed mb-8 font-medium border-l-4 border-orange-500 pl-6">
             {article.description}
-          </div>
+          </div> */}
 
           <div className="space-y-6 text-gray-800 leading-relaxed">
             <GeneratedContent article={article} />

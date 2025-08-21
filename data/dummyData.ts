@@ -6,6 +6,7 @@ export interface Category {
 export interface User {
   name: string;
   avatar?: string;
+  interest: string;
 }
 
 export interface Article {
@@ -34,11 +35,12 @@ export const dummyArticles: Article[] = [
     slug: 'tech-article-1',
     title: 'The Future of AI: Transforming Industries',
     description:
-      'Artificial Intelligence is transforming industries with innovative solutions. This article explores the latest advancements and their impact on various sectors, from healthcare to finance, and what the future holds.',
+      'Artificial Intelligence is transforming industries with innovative solutions. ',
     image: 'https://picsum.photos/600/400?random=1',
     user: {
       name: 'John Doe',
-      // avatar: 'https://picsum.photos/40/40?random=1'
+      avatar: 'https://picsum.photos/40/40?random=1',
+      interest: "Tech Enthusiast"
     },
     publish_date: '2025-06-01',
     category_id: 1,
@@ -54,7 +56,8 @@ export const dummyArticles: Article[] = [
     image: 'https://picsum.photos/600/400?random=2',
     user: {
       name: 'Jane Smith',
-      avatar: 'https://picsum.photos/40/40?random=2'
+      avatar: 'https://picsum.photos/40/40?random=2',
+      interest: "Tech Enthusiast"
     },
     publish_date: '2025-06-02',
     category_id: 1,
@@ -70,7 +73,8 @@ export const dummyArticles: Article[] = [
     image: 'https://picsum.photos/600/400?random=10',
     user: {
       name: 'Alex Chen',
-      avatar: 'https://picsum.photos/40/40?random=10'
+      avatar: 'https://picsum.photos/40/40?random=10',
+      interest: "Tech Enthusiast"
     },
     publish_date: '2025-06-10',
     category_id: 1,
@@ -86,7 +90,8 @@ export const dummyArticles: Article[] = [
     image: 'https://picsum.photos/600/400?random=3',
     user: {
       name: 'Alice Brown',
-      avatar: 'https://picsum.photos/40/40?random=3'
+      avatar: 'https://picsum.photos/40/40?random=3',
+      interest: "Tech Enthusiast"
     },
     publish_date: '2025-06-03',
     category_id: 2,
@@ -102,7 +107,8 @@ export const dummyArticles: Article[] = [
     image: 'https://picsum.photos/600/400?random=11',
     user: {
       name: 'Emma Green',
-      avatar: 'https://picsum.photos/40/40?random=11'
+      avatar: 'https://picsum.photos/40/40?random=11',
+      interest: "Tech Enthusiast"
     },
     publish_date: '2025-06-11',
     category_id: 2,
@@ -118,7 +124,8 @@ export const dummyArticles: Article[] = [
     image: 'https://picsum.photos/600/400?random=4',
     user: {
       name: 'Mike Johnson',
-      avatar: 'https://picsum.photos/40/40?random=4'
+      avatar: 'https://picsum.photos/40/40?random=4',
+      interest: "Tech Enthusiast"
     },
     publish_date: '2025-06-04',
     category_id: 3,
@@ -134,7 +141,8 @@ export const dummyArticles: Article[] = [
     image: 'https://picsum.photos/600/400?random=12',
     user: {
       name: 'Sarah Wilson',
-      avatar: 'https://picsum.photos/40/40?random=12'
+      avatar: 'https://picsum.photos/40/40?random=12',
+      interest: "Tech Enthusiast"
     },
     publish_date: '2025-06-12',
     category_id: 3,
@@ -150,7 +158,8 @@ export const dummyArticles: Article[] = [
     image: 'https://picsum.photos/600/400?random=5',
     user: {
       name: 'Dr. Sarah Wilson',
-      avatar: 'https://picsum.photos/40/40?random=5'
+      avatar: 'https://picsum.photos/40/40?random=5',
+      interest: "Tech Enthusiast"
     },
     publish_date: '2025-06-05',
     category_id: 4,
@@ -165,7 +174,8 @@ export const dummyArticles: Article[] = [
     image: 'https://picsum.photos/600/400?random=13',
     user: {
       name: 'Dr. Mark Thompson',
-      avatar: 'https://picsum.photos/40/40?random=13'
+      avatar: 'https://picsum.photos/40/40?random=13',
+      interest: "Tech Enthusiast"
     },
     publish_date: '2025-06-13',
     category_id: 4,

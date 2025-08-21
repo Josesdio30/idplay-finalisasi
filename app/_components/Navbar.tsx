@@ -7,6 +7,7 @@ import clsx from 'clsx';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
+import Image from 'next/image';
 
 const menuItems = [
   { label: 'Home', href: '/' },
@@ -71,11 +72,10 @@ const Navbar = () => {
           isScrolled ? 'shadow-md' : ''
         )}
       >
+        {/* Logo */}
         <div className="flex items-center">
-          {/* Logo */}
-          <div className="text-2xl font-bold">
-            <span className="text-green-600">idPI</span>
-            <span className="text-orange-500">Ay</span>
+          <div className="w-26 h-10 flex items-center">
+            <Image src="/idplay-logo.svg" alt="IdPlay Logo" width={120} height={40} priority />
           </div>
         </div>
 

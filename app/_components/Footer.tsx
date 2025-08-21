@@ -10,7 +10,8 @@ const Footer = () => {
           <div className="md:col-span-1">
             <div className="mb-6">
               <Image
-                src="/imgs/logo-idplay.png"
+                // src="/imgs/logo-idplay.png"
+                src="/idplay-logo.svg"
                 alt="IdPlay Logo"
                 width={120}
                 height={40}

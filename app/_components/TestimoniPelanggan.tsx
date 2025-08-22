@@ -11,56 +11,56 @@ const testimonials = [
     name: 'Emily Carter',
     role: 'Content Creator',
     rating: 5,
-    avatar: '/imgs/avatar1.jpg'
+    avatar: 'https://picsum.photos/40/40?random=1'
   },
   {
     quote: 'Gaming is smooth with zero lag just the way I like it!',
     name: 'Ethan Davis',
     role: 'Gamer & Streamer',
     rating: 5,
-    avatar: '/imgs/avatar2.jpg'
+    avatar: 'https://picsum.photos/40/40?random=2'
   },
   {
     quote: 'Been using it for months, and the signal stays strong with no issues!',
     name: 'Chloe Anderson',
     role: 'Graphic Designer',
     rating: 5,
-    avatar: '/imgs/avatar3.jpg'
+    avatar: 'https://picsum.photos/40/40?random=3'
   },
   {
     quote: 'The internet is perfect for remote work and meetings!',
     name: 'James Walker',
     role: 'Remote Worker',
     rating: 5,
-    avatar: '/imgs/avatar4.jpg'
+    avatar: 'https://picsum.photos/40/40?random=4'
   },
   {
     quote: 'Fast downloads and uploads make my work so much easier!',
     name: 'Sarah Johnson',
     role: 'Video Editor',
     rating: 5,
-    avatar: '/imgs/avatar5.jpg'
+    avatar: 'https://picsum.photos/40/40?random=5'
   },
   {
     quote: 'Customer support is amazing, always ready to help!',
     name: 'Michael Brown',
     role: 'Business Owner',
     rating: 5,
-    avatar: '/imgs/avatar6.jpg'
+    avatar: 'https://picsum.photos/40/40?random=6'
   },
   {
     quote: 'No data limits means I can stream and work without worry!',
     name: 'Lisa Martinez',
     role: 'Marketing Manager',
     rating: 5,
-    avatar: '/imgs/avatar7.jpg'
+    avatar: 'https://picsum.photos/40/40?random=7'
   },
   {
     quote: 'Installation was quick and the technicians were professional!',
     name: 'David Wilson',
     role: 'Freelancer',
     rating: 5,
-    avatar: '/imgs/avatar8.jpg'
+    avatar: 'https://picsum.photos/40/40?random=8'
   }
 ];
 

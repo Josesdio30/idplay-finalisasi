@@ -113,6 +113,11 @@ export default function LoginPage() {
               Daftar di sini
             </Link>
           </p>
+          <p className="pt-2 text-left text-sm text-neutral-600">
+            <Link href="/forgot" className="font-medium text-neutral-800 underline">
+              Lupa Password?
+            </Link>
+          </p>
         </form>
       </section>
     </main>

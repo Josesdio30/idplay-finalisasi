@@ -33,7 +33,7 @@ const CekCoverage: React.FC = () => {
         try {
           const { latitude, longitude } = position.coords;
           const resp = await fetch(
-            `${process.env.NEXT_PUBLIC_BASE_URL}/check_coverage?latitude=${encodeURIComponent(latitude)}&longitude=${encodeURIComponent(longitude)}`,
+            `${process.env.NEXT_PUBLIC_BASE_URL}check_coverage?latitude=${encodeURIComponent(latitude)}&longitude=${encodeURIComponent(longitude)}`,
             { cache: 'no-store' }
           );
           const data = await resp.json();

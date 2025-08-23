@@ -6,9 +6,11 @@ import Link from "next/link";
 import { FcGoogle } from "react-icons/fc";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function LoginPage() {
   const router = useRouter();
+  const { login } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -40,7 +42,15 @@ export default function LoginPage() {
         return;
       }
 
-      router.push("/");
+      // Simpan data user dan token ke localStorage
+      if (data.status === "success" && data.data) {
+        login(data.data);
+        
+        // Redirect ke dashboard
+        router.push("/dashboard");
+      } else {
+        setError("Login gagal. Periksa kredensial Anda.");
+      }
     } catch (err) {
       setError("Terjadi kesalahan jaringan.");
     } finally {

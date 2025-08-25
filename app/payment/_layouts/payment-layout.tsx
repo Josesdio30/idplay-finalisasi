@@ -3,14 +3,14 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { useForm } from 'react-hook-form';
-import { SubscriptionRetailEntriProspekType } from '@/schemas/subscription-retail-entri-prospek';
-import API from '@/lib/axios';
 import { toast } from 'sonner';
-import { AxiosError } from 'axios';
 import { useState, useEffect, useCallback } from 'react';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { subscriptionRetailEntriProspekSchema } from '@/schemas/subscription-retail-entri-prospek';
+import {
+  subscriptionRetailEntriProspekSchema,
+  SubscriptionRetailEntriProspekType
+} from '@/lib/validations/subscription-retail-entri-prospek';
 import { NextPage } from 'next';
 import { PaymentType } from '@/schemas/payment';
 import { useRouter } from 'next/navigation';
@@ -93,87 +93,57 @@ const PaymentLayout: NextPage<IProps> = ({ token, user }) => {
   }, [getCurrentLocation]);
 
   const handleCreatePayment = (values: PaymentType) => {
-    API({
-      url: '/transaction/create',
-      method: 'POST',
-      data: {
-        ...values
-      },
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    })
-      .then((res) => {
-        const { payment_url } = res.data.data;
-
+    (async () => {
+      try {
+        const resp = await fetch('/api/payment', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+          body: JSON.stringify(values)
+        });
+        const data = await resp.json().catch(() => ({}));
+        if (!resp.ok) {
+          toast.error(data?.error?.message || 'Gagal membuat payment.');
+          return;
+        }
         toast.success('Payment submitted successfully');
-
-        navigate.push(payment_url);
-
+        if (data?.data?.payment_url) {
+          navigate.push(data.data.payment_url);
+        }
         form.reset();
-      })
-      .catch((err: AxiosError) => {
-        console.error('Payment error:', err);
-        toast.error(
-          (err.response?.data as { data?: string; message?: string })?.data ||
-            (err.response?.data as { data?: string; message?: string })?.message ||
-            (
-              err.response?.data as {
-                data?: string;
-                message?: string;
-                errors?: { message?: string };
-              }
-            )?.errors?.message ||
-            '500: Internal Server Error'
-        );
-      });
+      } catch (err) {
+        toast.error('Terjadi kesalahan jaringan.');
+      }
+    })();
   };
 
   const onSubmit = async (values: SubscriptionRetailEntriProspekType) => {
     setLoading(true);
-
-    API({
-      url: '/subscription/retail/entri-prospek',
-      method: 'POST',
-      data: values,
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    })
-      .then((res) => {
-        const { task_id } = res.data.data;
-        console.log('Subscription response:', res.data);
-        toast.success('Subscription submitted successfully');
-
-        form.reset();
-
-        return task_id;
-      })
-      .then((task_id) => {
-        handleCreatePayment({
-          task_id: user.task_id[0] || '',
-          gateway: 'MIDTRANS',
-          source: 'MOBILE'
-        });
-      })
-      .catch((err: AxiosError) => {
-        console.error('Subscription error:', err);
-        toast.error(
-          (err.response?.data as { data?: string; message?: string })?.data ||
-            (err.response?.data as { data?: string; message?: string })?.message ||
-            (
-              err.response?.data as {
-                data?: string;
-                message?: string;
-                errors?: { message?: string };
-              }
-            )?.errors?.message ||
-            '500: Internal Server Error'
-        );
-      })
-      .finally(() => {
-        setLoading(false);
+    setGeoError(null);
+    try {
+      const resp = await fetch('/api/subscription/retail/entri-prospek', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify(values)
       });
+      const data = await resp.json().catch(() => ({}));
+      if (!resp.ok) {
+        toast.error(data?.error?.message || 'Gagal membuat subscription.');
+        setLoading(false);
+        return;
+      }
+      toast.success('Subscription submitted successfully');
+      form.reset();
+      // Jika ingin lanjut ke payment, bisa panggil handleCreatePayment di sini
+      handleCreatePayment({
+        task_id: user.task_id[0] || '',
+        gateway: 'MIDTRANS',
+        source: 'MOBILE'
+      });
+    } catch (err) {
+      toast.error('Terjadi kesalahan jaringan.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

@@ -1,48 +1,57 @@
-"use client";
-
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import Link from "next/link";
-import { FcGoogle } from "react-icons/fc";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+'use client';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import Link from 'next/link';
+import { FcGoogle } from 'react-icons/fc';
+import { useState, useTransition } from 'react';
+import { useRouter } from 'next/navigation';
+import { saveToken } from '@/actions/save-token';
+import { saveUser } from '@/actions/save-user';
 
 export default function LoginPage() {
   const router = useRouter();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [saving, startAction] = useTransition();
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setError(null);
 
     if (!email || !password) {
-      setError("Semua kolom wajib diisi.");
+      setError('Semua kolom wajib diisi.');
       return;
     }
 
     setIsSubmitting(true);
+
     try {
       const resp = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}user/login?apps_id=IDMALL_CUSTOMER`,
+        `${process.env.NEXT_PUBLIC_BASE_URL}/user/login?apps_id=IDMALL_CUSTOMER`,
         {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, password }),
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
         }
       );
 
-      const data = await resp.json().catch(() => ({}));
+      const { data } = await resp.json().catch(() => ({}));
+
       if (!resp.ok) {
-        setError(data?.message || "Login gagal. Periksa kredensial Anda.");
+        setError(data?.message || 'Login gagal. Periksa kredensial Anda.');
         return;
       }
 
-      router.push("/");
+      startAction(async () => {
+        await saveToken(data.token);
+        saveUser(data).then(() => {
+          router.push('/');
+        });
+      });
     } catch (err) {
-      setError("Terjadi kesalahan jaringan.");
+      setError('Terjadi kesalahan jaringan.');
     } finally {
       setIsSubmitting(false);
     }
@@ -58,7 +67,10 @@ export default function LoginPage() {
           Akses tagihan, pengaturan layanan, dan lainnya.
         </p>
 
-        <form className="mt-8 w-full space-y-5" onSubmit={onSubmit}>
+        <form
+          className="mt-8 w-full space-y-5"
+          onSubmit={onSubmit}
+        >
           <Input
             type="email"
             placeholder="Email"
@@ -77,16 +89,14 @@ export default function LoginPage() {
             className="h-12 rounded-full border-0 bg-[#F3EBE7] px-5 text-[15px] placeholder:text-neutral-500"
           />
 
-          {error ? (
-            <p className="text-left text-sm text-red-600">{error}</p>
-          ) : null}
+          {error ? <p className="text-left text-sm text-red-600">{error}</p> : null}
 
           <Button
             type="submit"
             disabled={isSubmitting}
             className="h-12 w-full rounded-full bg-green-500 text-white hover:bg-green-600 disabled:opacity-60"
           >
-            {isSubmitting ? "Memproses..." : "Masuk"}
+            {isSubmitting ? 'Memproses...' : 'Masuk'}
           </Button>
 
           <div className="relative py-2 text-center">
@@ -108,14 +118,12 @@ export default function LoginPage() {
           </Button>
 
           <p className="pt-2 text-left text-sm text-neutral-600">
-            Belum punya akun? {" "}
-            <Link href="/register" className="font-medium text-neutral-800 underline">
+            Belum punya akun?{' '}
+            <Link
+              href="/register"
+              className="font-medium text-neutral-800 underline"
+            >
               Daftar di sini
-            </Link>
-          </p>
-          <p className="pt-2 text-left text-sm text-neutral-600">
-            <Link href="/forgot" className="font-medium text-neutral-800 underline">
-              Lupa Password?
             </Link>
           </p>
         </form>

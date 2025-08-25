@@ -12,7 +12,7 @@ import {
   SubscriptionRetailEntriProspekType
 } from '@/lib/validations/subscription-retail-entri-prospek';
 import { NextPage } from 'next';
-import { PaymentType } from '@/schemas/payment';
+import { PaymentType } from '@/lib/validations/payment';
 import { useRouter } from 'next/navigation';
 import { UserCookieType } from '@/actions/save-user';
 

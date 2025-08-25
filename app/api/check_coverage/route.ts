@@ -15,7 +15,7 @@ export async function GET(request: Request) {
       );
     }
 
-    const upstreamUrl = `${BACKEND_URL}/region/check_coverage?longitude=${encodeURIComponent(
+    const upstreamUrl = `${BACKEND_URL}region/check_coverage?longitude=${encodeURIComponent(
       longitude
     )}&latitude=${encodeURIComponent(latitude)}`;
 

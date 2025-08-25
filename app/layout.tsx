@@ -5,6 +5,7 @@ import './globals.css';
 import Navbar from './_components/Navbar';
 import Footer from './_components/Footer';
 import 'leaflet/dist/leaflet.css';
+import { Toaster } from '@/components/ui/sonner';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -39,6 +40,11 @@ export default function RootLayout({
         <Navbar />
         {children}
         <Footer />
+        <Toaster
+          richColors
+          theme="light"
+          position="top-right"
+        />
       </body>
     </html>
   );

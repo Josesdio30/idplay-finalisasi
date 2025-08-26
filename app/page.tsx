@@ -1,6 +1,5 @@
 'use client';
 import FAQ from '@/app/_components/FAQ';
-import { FaTachometerAlt, FaGamepad, FaUsers, FaHome, FaWrench } from 'react-icons/fa';
 import { useState } from 'react';
 import HeroSection from './_components/Hero';
 
@@ -12,48 +11,14 @@ import CekCoverage from './_components/CekCoverage';
 import { useRouter } from 'next/navigation';
 
 export default function Home() {
-  const [activeTab, setActiveTab] = useState<'speed' | 'help' | 'quiz'>('speed');
   const [paketTab, setPaketTab] = useState<'bulan' | 'tahun'>('bulan');
   const navigate = useRouter();
-
-  // Icons for the "What is Fiber" tab
-  const fiberIcons = [
-    {
-      icon: (
-        <svg
-          width="40"
-          height="40"
-          viewBox="0 0 40 40"
-        >
-          <g
-            stroke="#0099e5"
-            strokeWidth="2"
-            fill="none"
-          >
-            <path d="M10 30V15a10 10 0 0 1 20 0v15" />
-            <circle
-              cx="20"
-              cy="10"
-              r="2"
-              fill="#0099e5"
-            />
-          </g>
-        </svg>
-      ),
-      label: 'Fiber'
-    },
-    { icon: <FaTachometerAlt className="w-8 h-8 text-blue-500" />, label: 'Speed' },
-    { icon: <FaGamepad className="w-8 h-8 text-blue-500" />, label: 'Gaming' },
-    { icon: <FaUsers className="w-8 h-8 text-blue-500" />, label: 'Family' },
-    { icon: <FaHome className="w-8 h-8 text-blue-500" />, label: 'Smart Home' },
-    { icon: <FaWrench className="w-8 h-8 text-blue-500" />, label: 'Support' }
-  ];
 
   return (
     <div className="min-h-screen font-sans bg-white">
       {/* Banner/Card Section */}
       <HeroSection />
-      <CekCoverage/>
+      <CekCoverage />
       {/* <Review /> */}
 
       {/* Our Services Section */}

@@ -165,12 +165,7 @@ const KecepatanBanner = ({
                       </p>
 
                       {/* Answer options */}
-                      <div
-                        className="grid grid-cols-1 lg:grid-cols-3 gap-4"
-                        // style={{
-                        //   gridTemplateColumns: `repeat(${quizQuestions[currentQuizQuestion].options.length}, 1fr)`
-                        // }}
-                      >
+                      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
                         {quizQuestions[currentQuizQuestion].options.map((option, index) => (
                           <button
                             key={index}

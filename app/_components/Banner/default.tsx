@@ -86,7 +86,6 @@ const DefaultBanner = ({ setShowBanner }: IProps) => {
                 width={1000}
                 height={500}
                 alt="Happy people using internet"
-                // className="w-full h-auto rounded-lg"
               />
             </div>
           </div>

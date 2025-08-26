@@ -3,10 +3,8 @@ import React, { useCallback, useState } from 'react';
 import CoverageMaps from './CoverageMaps';
 
 type CoverageResult = {
-  // Adjust based on actual API response shape
   status?: string;
   message?: string;
-  data?: any; // Replace with specific type if known
   [key: string]: unknown;
 };
 
@@ -40,7 +38,6 @@ const CekCoverage: React.FC = () => {
         try {
           const { latitude, longitude } = position.coords;
 
-          // Set user location for map
           setUserLocation({ lat: latitude, lng: longitude });
           setShowModal(true);
 
@@ -110,12 +107,10 @@ const CekCoverage: React.FC = () => {
   const handleModalClose = useCallback((open: boolean) => {
     setShowModal(open);
 
-    // Reset parent states when modal is closed
     if (!open) {
       setError(null);
       setResult(null);
       setIsChecking(false);
-      // Keep userLocation as it might be needed for reopening
     }
   }, []);
 

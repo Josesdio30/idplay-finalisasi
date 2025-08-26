@@ -25,17 +25,17 @@ const ServicesSection = () => {
         'Add-ons are optional features that enhance your main service — offering more control, speed, or coverage based on your needs.',
       image: '/imgs/card2.jpg',
       gradient: 'from-green-700/70 to-transparent',
-      colSpan: ''
+      colSpan: 'md:col-span-2'
     },
-    {
-      id: 3,
-      title: 'Add-Ons',
-      description:
-        'Add-ons are optional features that enhance your main service — offering more control, speed, or coverage based on your needs.',
-      image: '/imgs/card3.jpg',
-      gradient: 'from-green-500/60 to-transparent',
-      colSpan: ''
-    }
+    // {
+    //   id: 3,
+    //   title: 'Add-Ons',
+    //   description:
+    //     'Add-ons are optional features that enhance your main service — offering more control, speed, or coverage based on your needs.',
+    //   image: '/imgs/card3.jpg',
+    //   gradient: 'from-green-500/60 to-transparent',
+    //   colSpan: ''
+    // }
   ];
 
   const ServiceCard = ({

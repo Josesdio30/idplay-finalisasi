@@ -124,7 +124,7 @@ const CekCoverage: React.FC = () => {
               alt="Dekorasi Lokasi"
               className="block lg:hidden absolute inset-0 -z-10 w-full h-full object-cover"
             />
-            <div className="md:w-1/2 w-full px-4 py-12 sm:p-6 md:p-8">
+            <div className="md:w-1/2 w-full px-4 sm:p-6 md:p-8">
               <h2 className="text-[18px] sm:text-[20px] font-bold text-orange-600 mb-4 text-center lg:text-left">
                 Cek area kamu sekarang untuk mulai langganan!
               </h2>
@@ -146,7 +146,7 @@ const CekCoverage: React.FC = () => {
               <img
                 src="/imgs/location-decoration.png"
                 alt="Dekorasi Lokasi"
-                className="max-w-full w-full h-[300px] object-cover"
+                className="max-w-full w-full h-[150px] object-cover"
               />
             </div>
           </div>

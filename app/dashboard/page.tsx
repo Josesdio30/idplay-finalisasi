@@ -25,16 +25,12 @@ export default function Dashboard() {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const formatCurrency = (value: number) => {
-    try {
-      return new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 }).format(value);
-    } catch {
-      return `Rp ${value?.toLocaleString("id-ID")}`;
-    }
+    return new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 }).format(value);
   };
 
   const getStatusBadge = (status: string) => {
     const normalized = (status || "").toLowerCase();
-    if (normalized.includes("lunas") || normalized.includes("success") || normalized.includes("berhasil")) {
+    if (normalized.includes("lunas") || normalized.includes("berhasil")) {
       return { label: "Berhasil", className: "bg-emerald-100 text-emerald-700 border-emerald-200", dot: "bg-emerald-500" };
     }
     if (normalized.includes("pending") || normalized.includes("belum")) {
@@ -44,16 +40,13 @@ export default function Dashboard() {
   };
 
   useEffect(() => {
-    // Tunggu auth selesai sebelum memutuskan redirect
     if (isAuthLoading) return;
 
-    // Cek apakah user sudah login
     if (!isLoggedIn || !user) {
       router.push("/login");
       return;
     }
 
-    // Ambil task_id pertama sebagai default
     if (user.task_id && user.task_id.length > 0) {
       setSelectedTaskId(user.task_id[0]);
       fetchTransactionData(user.task_id[0], user.token);
@@ -65,9 +58,7 @@ export default function Dashboard() {
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}transaction/ca/${taskId}`, {
         method: "GET",
-        headers: {
-          "Authorization": `Bearer ${token}`
-        }
+        headers: { "Authorization": `Bearer ${token}` },
       });
       const data = await response.json();
       if (data.status === "success" && Array.isArray(data.data)) {
@@ -84,7 +75,6 @@ export default function Dashboard() {
       }
     } catch (error) {
       console.error("Error fetching transaction data:", error);
-      // Jangan timpa error utama dashboard jika hanya transaksi yang gagal
     } finally {
       setIsLoading(false);
     }
@@ -92,9 +82,7 @@ export default function Dashboard() {
 
   const handleTaskIdChange = (taskId: string) => {
     setSelectedTaskId(taskId);
-    if (user?.token) {
-      fetchTransactionData(taskId, user.token);
-    }
+    if (user?.token) fetchTransactionData(taskId, user.token);
   };
 
   const submitNote = async () => {
@@ -103,22 +91,14 @@ export default function Dashboard() {
       return;
     }
 
-    const payload = {
-      task_id: selectedTaskId,
-      note: note,
-    };
-
+    const payload = { task_id: selectedTaskId, note };
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}request-du`, {
         method: "POST",
-        headers: { 
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${user?.token}`
-        },
+        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${user?.token}` },
         body: JSON.stringify(payload),
       });
       const data = await response.json();
-      
       if (data.status === "success") {
         setSuccessMessage("Note berhasil dikirim");
         setNote("");
@@ -147,72 +127,17 @@ export default function Dashboard() {
 
   return (
     <div className="container mx-auto p-4">
-      {/* Alert Messages */}
-      {error && (
-        <div className="mb-4">
-          <Alert
-            type="error"
-            message={error}
-            onClose={() => setError(null)}
-          />
-        </div>
-      )}
-      
-      {successMessage && (
-        <div className="mb-4">
-          <Alert
-            type="success"
-            message={successMessage}
-            onClose={() => setSuccessMessage(null)}
-          />
-        </div>
-      )}
+      {error && <Alert type="error" message={error} onClose={() => setError(null)} />}
+      {successMessage && <Alert type="success" message={successMessage} onClose={() => setSuccessMessage(null)} />}
 
-      {/* Header dengan info user */}
-      <div className="bg-white p-4 rounded-lg shadow mb-4">
-        <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-800">Dashboard</h1>
-            <p className="text-gray-600">Selamat datang, {user.full_name}</p>
-            <p className="text-sm text-gray-500">Total Points: {user.total_points}</p>
-          </div>
-          <button
-            onClick={handleLogout}
-            className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
-          >
-            Logout
-          </button>
-        </div>
-      </div>
-
-      {/* Task ID Selector */}
-      <div className="bg-white p-4 rounded-lg shadow mb-4">
-        <h3 className="text-lg font-semibold mb-2">Pilih Task ID:</h3>
-        <select
-          value={selectedTaskId}
-          onChange={(e) => handleTaskIdChange(e.target.value)}
-          className="w-full p-2 border rounded-lg"
-        >
-          {user.task_id && user.task_id.map((taskId: string) => (
-            <option key={taskId} value={taskId}>
-              {taskId}
-            </option>
-          ))}
-        </select>
-      </div>
-      {/* 2 Kolom: Kiri (Layanan + Upgrade + Note), Kanan (Speed/Usage + Tabel) */}
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-        {/* KIRI: Layanan + Status + Upgrade + Note */}
+        {/* Left Column */}
         <div className="space-y-6">
           <div className="bg-white p-4 rounded-xl shadow">
-            <div className="mb-3">
-              <h3 className="text-lg font-semibold">Layanan yang dipakai</h3>
-            </div>
+            <h3 className="text-lg font-semibold mb-3">Layanan yang dipakai</h3>
             {isLoading ? (
-              <div className="flex items-center justify-center py-8">
-                <Loading size="md" />
-              </div>
-            ) : transactionData && transactionData.length > 0 ? (
+              <div className="flex items-center justify-center py-8"><Loading size="md" /></div>
+            ) : transactionData.length > 0 ? (
               <div className="space-y-4">
                 <div className="flex items-center justify-between rounded-lg bg-emerald-50 px-4 py-3">
                   <div>
@@ -224,38 +149,33 @@ export default function Dashboard() {
                     <p className="font-semibold text-emerald-800">{formatCurrency(transactionData[0].Total)}</p>
                   </div>
                 </div>
-                <div>
-                  <p className="text-sm font-semibold mb-1">Status</p>
-                  <div className="grid grid-cols-2 gap-3 text-sm">
-                    <div className="space-y-1">
-                      <p className="text-gray-500">Status Tagihan</p>
-                      <p className="inline-flex items-center gap-2">
-                        <span className={`h-2 w-2 rounded-full ${getStatusBadge(transactionData[0].AR_Status).dot}`}></span>
-                        <span className="font-medium">{getStatusBadge(transactionData[0].AR_Status).label}</span>
-                      </p>
-                    </div>
-                    <div className="space-y-1">
-                      <p className="text-gray-500">Tagihan Mendatang</p>
-                      <p className="font-medium">{formatCurrency(transactionData[0].Total)}</p>
-                    </div>
-                    <div className="space-y-1">
-                      <p className="text-gray-500">Belum Dibayar</p>
-                      <p className="font-medium">{/* AR_Remain analog */}{formatCurrency(transactionData[0].AR_Status.toLowerCase().includes("belum") ? transactionData[0].Total : 0)}</p>
-                    </div>
-                    <div className="space-y-1">
-                      <p className="text-gray-500">Metode</p>
-                      <p className="font-medium">{transactionData[0].Payment_Method}</p>
-                    </div>
-                    <div className="space-y-1">
-                      <p className="text-gray-500">Tanggal</p>
-                      <p className="font-medium">{transactionData[0].Payment_Date}</p>
-                    </div>
+                <div className="grid grid-cols-2 gap-3 text-sm">
+                  <div className="space-y-1">
+                    <p className="text-gray-500">Status</p>
+                    <p className="inline-flex items-center gap-2">
+                      <span className={`h-2 w-2 rounded-full ${getStatusBadge(transactionData[0].AR_Status).dot}`}></span>
+                      <span>{getStatusBadge(transactionData[0].AR_Status).label}</span>
+                    </p>
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-gray-500">Tagihan Mendatang</p>
+                    <p className="font-medium">{formatCurrency(transactionData[0].Total)}</p>
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-gray-500">Belum Dibayar</p>
+                    <p className="font-medium">{transactionData[0].AR_Status.toLowerCase().includes("belum") ? formatCurrency(transactionData[0].Total) : "Rp 0"}</p>
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-gray-500">Metode</p>
+                    <p className="font-medium">{transactionData[0].Payment_Method}</p>
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-gray-500">Tanggal</p>
+                    <p className="font-medium">{transactionData[0].Payment_Date}</p>
                   </div>
                 </div>
               </div>
-            ) : (
-              <p className="text-gray-500">Tidak ada data</p>
-            )}
+            ) : <p className="text-gray-500">Tidak ada data</p>}
           </div>
 
           <div className="bg-white p-4 rounded-xl shadow">
@@ -288,23 +208,21 @@ export default function Dashboard() {
             </div>
             <div className="mt-4">
               <textarea className="w-full p-2 border rounded" placeholder="Note" value={note} onChange={(e) => setNote(e.target.value)} />
-              <button className="mt-2 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition-colors" onClick={submitNote}>Submit</button>
+              <button className="mt-2 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600" onClick={submitNote}>Submit</button>
             </div>
           </div>
         </div>
 
-        {/* KANAN: Speed Test + Average Usage + Tabel */}
+        {/* Right Column */}
         <div className="space-y-6">
-          {/* Cek Kecepatan Internet Card */}
           <div className="bg-white p-4 rounded-xl shadow text-center">
             <h3 className="text-lg font-semibold mb-2">Cek Kecepatan Internet</h3>
             <div className="mx-auto my-4 h-28 w-28 rounded-full border-8 border-emerald-200 flex items-center justify-center">
-              <span className="text-xl font-bold text-emerald-700">25 Mbp/s</span>
+              <span className="text-xl font-bold text-emerald-700">25 Mbps</span>
             </div>
-            <button className="mt-2 bg-green-500 text-white px-4 py-2 rounded-full hover:bg-green-600 transition-colors">Speed Test</button>
+            <button className="mt-2 bg-green-500 text-white px-4 py-2 rounded-full hover:bg-green-600">Speed Test</button>
           </div>
 
-          {/* Average Data Usage Card */}
           <div className="bg-white p-4 rounded-xl shadow">
             <h3 className="text-lg font-semibold mb-2">Average Data Usage</h3>
             <p className="text-3xl font-bold">1.2 Terabytes</p>
@@ -325,7 +243,6 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* Histori Transaksi Card */}
           <div className="bg-white p-4 rounded-xl shadow">
             <h3 className="text-lg font-semibold mb-2">Histori Transaksi</h3>
             {transactionData.length > 0 ? (
@@ -347,26 +264,19 @@ export default function Dashboard() {
                       <td className="border p-2">{transaction.Payment_Method}</td>
                       <td className="border p-2">{formatCurrency(transaction.Total)}</td>
                       <td className="border p-2">
-                        {(() => {
-                          const b = getStatusBadge(transaction.AR_Status);
-                          return (
-                            <span className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-medium ${b.className}`}>
-                              <span className={`h-2 w-2 rounded-full ${b.dot}`}></span>
-                              {b.label}
-                            </span>
-                          );
-                        })()}
+                        <span className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-medium ${getStatusBadge(transaction.AR_Status).className}`}>
+                          <span className={`h-2 w-2 rounded-full ${getStatusBadge(transaction.AR_Status).dot}`}></span>
+                          {getStatusBadge(transaction.AR_Status).label}
+                        </span>
                       </td>
-                    </tr>) )}
+                    </tr>
+                  ))}
                 </tbody>
               </table>
-            ) : (
-              <p className="text-gray-500">Belum ada data transaksi</p>
-            )}
+            ) : <p className="text-gray-500">Belum ada data transaksi</p>}
           </div>
         </div>
       </div>
-      
     </div>
   );
 }

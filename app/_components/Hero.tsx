@@ -114,18 +114,18 @@ const quizQuestions: QuizQuestion[] = [
   {
     id: 1,
     question: 'Berapa banyak orang di rumah tangga Anda yang saat ini menggunakan internet?',
-    icon: <MdFamilyRestroom className="w-20 lg:w-40 h-20 lg:h-40 text-green-600" />,
+    icon: <MdFamilyRestroom className="w-10 lg:w-40 h-10 lg:h-40 text-green-600" />,
     options: ['1-5', '6-8', '9+']
   },
   {
     id: 2,
     question: 'Berapa banyak perangkat di rumah Anda?',
     icon: (
-      <div className="flex flex-col items-center justify-center gap-2 lg:gap-6">
-        <Monitor className="w-16 lg:w-24 h-16 lg:h-24 text-green-600" />,
-        <div className="flex items-center justify-center gap-2 lg:gap-6">
-          <Smartphone className="w-16 lg:w-24 h-16 lg:h-24 text-green-600" />,
-          <Gamepad className="w-16 lg:w-24 h-16 lg:h-24 text-green-600" />
+      <div className="flex flex-row lg:flex-col items-center justify-center gap-4 lg:gap-6">
+        <Monitor className="w-10 lg:w-24 h-10 lg:h-24 text-green-600" />
+        <div className="flex items-center justify-center gap-4 lg:gap-6">
+          <Smartphone className="w-10 lg:w-24 h-10 lg:h-24 text-green-600" />
+          <Gamepad className="w-10 lg:w-24 h-10 lg:h-24 text-green-600" />
         </div>
       </div>
     ),
@@ -136,10 +136,10 @@ const quizQuestions: QuizQuestion[] = [
     question:
       'Pernyataan mana yang paling menggambarkan aktivitas streaming dan media sosial rumah tangga Anda?',
     icon: (
-      <div className="flex flex-row lg:lex-col items-center justify-center gap-2 lg:gap-6">
-        <Laptop className="w-16 lg:w-24 h-16 lg:h-24 text-green-600" />,
-        <Phone className="w-16 lg:w-24 h-16 lg:h-24 text-green-600" />,
-        <Monitor className="w-16 lg:w-24 h-16 lg:h-24 text-green-600" />
+      <div className="flex flex-row lg:lex-col items-center justify-center gap-4 lg:gap-6">
+        <Laptop className="w-10 lg:w-24 h-10 lg:h-24 text-green-600" />
+        <Phone className="w-10 lg:w-24 h-10 lg:h-24 text-green-600" />
+        <Monitor className="w-10 lg:w-24 h-10 lg:h-24 text-green-600" />
       </div>
     ),
     options: [
@@ -151,14 +151,14 @@ const quizQuestions: QuizQuestion[] = [
   {
     id: 4,
     question: 'Pernyataan mana yang paling menggambarkan gaya bermain game di rumah Anda?',
-    icon: <Gamepad className="w-16 lg:w-24 h-16 lg:h-24 text-green-600" />,
+    icon: <Gamepad className="w-10 lg:w-24 h-10 lg:h-24 text-green-600" />,
     options: ['Tidak Bermain Game', 'Sangat Sering Bermain Game', 'Bermain Game Adalah Hobi Saya']
   },
   {
     id: 5,
     question:
       'Pernyataan mana yang paling menggambarkan situasi bekerja dari rumah atau sekolah daring di rumah tangga Anda?',
-    icon: <Monitor className="w-16 lg:w-24 h-16 lg:h-24 text-green-600" />,
+    icon: <Monitor className="w-10 lg:w-24 h-10 lg:h-24 text-green-600" />,
     options: [
       'Jarang digunakan untuk bekerja atau sekolah daring',
       'Digunakan secara berkala untuk tugas atau rapat online',

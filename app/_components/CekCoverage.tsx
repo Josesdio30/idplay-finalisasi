@@ -119,17 +119,22 @@ const CekCoverage: React.FC = () => {
       <div className="container mx-auto px-4 pt-10">
         <div className="border-2 border-orange-500 rounded-[30px] p-0 relative">
           <div className="flex flex-col md:flex-row items-center md:justify-between relative z-10 rounded-[30px] overflow-hidden">
-            <div className="md:w-1/2 w-full p-4 sm:p-6 md:p-8">
-              <h2 className="text-[18px] sm:text-[20px] font-bold text-orange-600 mb-4">
+            <img
+              src="/imgs/location-decoration.png"
+              alt="Dekorasi Lokasi"
+              className="block lg:hidden absolute inset-0 -z-10 w-full h-full object-cover"
+            />
+            <div className="md:w-1/2 w-full px-4 py-12 sm:p-6 md:p-8">
+              <h2 className="text-[18px] sm:text-[20px] font-bold text-orange-600 mb-4 text-center lg:text-left">
                 Cek area kamu sekarang untuk mulai langganan!
               </h2>
 
               <div className="flex flex-col gap-4 w-full">
-                <div className="flex items-center gap-3">
+                <div className="flex items-center justify-center lg:justify-start gap-3">
                   <button
                     onClick={handleCheck}
                     disabled={isChecking}
-                    className="px-5 py-2 rounded-full border-2 border-orange-500 text-orange-600 hover:bg-orange-500 hover:text-white transition disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-4 lg:px-5 py-1 lg:py-2 text-sm lg:text-base rounded-full border-2 border-orange-500 text-orange-600 hover:bg-orange-500 hover:text-white transition disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     Cek Coverage dengan Lokasi Saya
                   </button>

@@ -1,5 +1,6 @@
 'use client';
 import React, { useCallback, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import CoverageMaps from './CoverageMaps';
 
 type CoverageResult = {
@@ -14,6 +15,7 @@ type UserLocation = {
 };
 
 const CekCoverage: React.FC = () => {
+  const router = useRouter();
   const [isChecking, setIsChecking] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<CoverageResult | null>(null);
@@ -132,7 +134,7 @@ const CekCoverage: React.FC = () => {
               <div className="flex flex-col gap-4 w-full">
                 <div className="flex items-center justify-center lg:justify-start gap-3">
                   <button
-                    onClick={handleCheck}
+                    onClick={() => router.push('/entri-prospek')}
                     disabled={isChecking}
                     className="px-4 lg:px-5 py-1 lg:py-2 text-sm lg:text-base rounded-full border-2 border-orange-500 text-orange-600 hover:bg-orange-500 hover:text-white transition disabled:opacity-50 disabled:cursor-not-allowed"
                   >

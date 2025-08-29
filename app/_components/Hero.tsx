@@ -329,7 +329,7 @@ const HeroSection = () => {
         <div className="absolute top-full left-3 lg:left-5 lg:right-auto right-3 flex items-center gap-1 z-20">
           <button
             className={cn(
-              'bg-orange-500 text-white pl-2 lg:pl-4 pr-9 lg:pr-12 py-1.5 rounded-b-lg flex items-center gap-2 cursor-pointer',
+              'bg-orange-500 text-white pl-3 lg:pl-5 pr-10 lg:pr-14 py-2 rounded-b-lg flex items-center gap-2 cursor-pointer',
               activeTab === 'kenalan' && 'bg-[#FFCDB0]'
             )}
             style={{
@@ -340,14 +340,14 @@ const HeroSection = () => {
               setShowBanner(false);
             }}
           >
-            <Info className="w-3 h-3 lg:w-4 lg:h-4" />
-            <span className="text-[10px] lg:text-xs font-medium text-left">
+            <Info className="w-4 h-4 lg:w-5 lg:h-5" />
+            <span className="text-xs lg:text-sm font-medium text-left">
               Yuk, kenalan sama IDPlay!
             </span>
           </button>
           <button
             className={cn(
-              'bg-green-600 text-white pl-2 lg:pl-4 pr-9 lg:pr-12 py-1.5 rounded-b-lg lg:ml-auto flex items-center gap-2 cursor-pointer',
+              'bg-green-600 text-white pl-3 lg:pl-5 pr-10 lg:pr-14 py-2 rounded-b-lg lg:ml-auto flex items-center gap-2 cursor-pointer',
               activeTab === 'kecepatan' && 'bg-[#B0DEC8]'
             )}
             style={{
@@ -358,8 +358,8 @@ const HeroSection = () => {
               setShowBanner(false);
             }}
           >
-            <MdSpeed className="w-3 h-3 lg:w-4 lg:h-4" />
-            <span className="text-[10px] lg:text-xs font-medium text-left">
+            <MdSpeed className="w-4 h-4 lg:w-5 lg:h-5" />
+            <span className="text-xs lg:text-sm font-medium text-left">
               Kecepatan mana yang cocok untukmu?
             </span>
           </button>

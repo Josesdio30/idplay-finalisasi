@@ -2,6 +2,7 @@ import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import { X, ChevronLeft } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useRouter } from 'next/navigation';
 
 interface QuizQuestion {
   id: number;
@@ -51,6 +52,7 @@ const KecepatanBanner = ({
   resetQuiz,
   getRecommendedSpeed
 }: IProps) => {
+  const router = useRouter();
   return (
     <>
       {!startedQuiz && (
@@ -230,9 +232,9 @@ const KecepatanBanner = ({
                       </div>
                       <button
                         className="text-white font-medium transition-colors text-sm lg:text-base flex items-center gap-2 cursor-pointer"
-                        onClick={() => setShowBanner(true)}
+                        onClick={() => router.push('/entri-prospek')}
                       >
-                        Lihat Detail
+                        Langsung Berlangganan
                         <svg
                           className="w-4 h-4"
                           fill="none"

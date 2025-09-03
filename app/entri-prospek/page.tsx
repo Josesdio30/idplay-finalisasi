@@ -5,6 +5,7 @@ import { GoogleMap, Marker, useJsApiLoader } from '@react-google-maps/api';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Loader2, MapPin, Search } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 type UserLocation = {
   lat: number;
@@ -21,6 +22,12 @@ type PlacePrediction = {
   types: string[];
 };
 
+type Product = {
+  product_code: string;
+  name: string;
+  price: number;
+};
+
 const mapContainerStyle = {
   width: '100%',
   height: '380px',
@@ -35,12 +42,16 @@ export default function EntriProspekPage() {
   const [isSearching, setIsSearching] = useState(false);
   const [selectedAddress, setSelectedAddress] = useState('');
   const [zipCode, setZipCode] = useState('');
+  const [products, setProducts] = useState<Product[]>([]);
+  const [selectedProduct, setSelectedProduct] = useState('');
+  const [isProductLoading, setIsProductLoading] = useState(false);
 
   const [fullname, setFullname] = useState('');
   const [email, setEmail] = useState('');
   const [address, setAddress] = useState('');
   const [phone, setPhone] = useState('');
   const [ktp, setKtp] = useState('');
+  const [referralCode, setReferralCode] = useState('');
 
   const [submitting, setSubmitting] = useState(false);
   const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -72,6 +83,39 @@ export default function EntriProspekPage() {
       }
     );
   }, []);
+
+  useEffect(() => {
+    if (zipCode.length >= 5) {
+      const fetchProducts = async () => {
+        setIsProductLoading(true);
+        try {
+          const response = await fetch(
+            `${process.env.NEXT_PUBLIC_BASE_URL}/common/products?offset=1&list_per_page=10&customer_type=Retail&product_type=NORMAL&zip_code=${zipCode}`
+          );
+          const data = await response.json();
+          if (response.ok && data?.data) {
+            setProducts(
+              data.data.map((item: any) => ({
+                product_code: item.Product_Code,
+                name: item.Product_Name,
+                price: item.Price
+              }))
+            );
+          } else {
+            setProducts([]);
+          }
+        } catch (error) {
+          setProducts([]);
+        } finally {
+          setIsProductLoading(false);
+        }
+      };
+      fetchProducts();
+    } else {
+      setProducts([]);
+      setSelectedProduct('');
+    }
+  }, [zipCode]);
 
   const searchPlaces = useCallback(
     async (query: string) => {
@@ -166,26 +210,27 @@ export default function EntriProspekPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!currentLocation) return;
+    if (!currentLocation || !selectedProduct) return;
     setSubmitting(true);
     try {
+      const selectedProductData = products.find((p) => p.product_code === selectedProduct);
       const payload = {
         zip_code: zipCode || '',
-        provider_id: '',
+        provider_id: '150001170',
         fullname,
         email,
         address,
         phone,
         latitude: String(currentLocation.lat),
         longitude: String(currentLocation.lng),
-        // ktp optional, kirim hanya jika terisi
-        ...(ktp ? { ktp } : {}),
-        services: '',
-        harga: '',
-        product_code: ''
+        ktp: ktp || '',
+        services: selectedProductData?.name || '',
+        harga: String(selectedProductData?.price || ''),
+        product_code: selectedProduct,
+        referral_code: referralCode || ''
       };
 
-      const resp = await fetch('/api/subscription/retail/entri-prospek', {
+      const resp = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}subscription/retail/entri-prospek`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
@@ -195,12 +240,13 @@ export default function EntriProspekPage() {
         alert(data?.error?.message || 'Gagal mengirim data');
       } else {
         alert('Pengajuan prospek berhasil dikirim');
-        // reset ringan
         setFullname('');
         setEmail('');
         setAddress('');
         setPhone('');
         setKtp('');
+        setSelectedProduct('');
+        setReferralCode('');
       }
     } catch (err) {
       alert('Terjadi kesalahan tak terduga');
@@ -253,9 +299,7 @@ export default function EntriProspekPage() {
               )}
               <p className="text-xs text-gray-500 mt-1">Ketik alamat untuk mencari lokasi.</p>
             </div>
-
             {MapComponent}
-
             <div className="space-y-1">
               {selectedAddress && (
                 <p className="text-sm text-gray-700"><span className="font-medium">Alamat dipilih:</span> {selectedAddress}</p>
@@ -267,9 +311,15 @@ export default function EntriProspekPage() {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap</label>
-              <Input value={fullname} onChange={(e) => setFullname(e.target.value)} placeholder="Nama lengkap" required />
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap</label>
+                <Input value={fullname} onChange={(e) => setFullname(e.target.value)} placeholder="Nama lengkap" required />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Nomor Whatsapp</label>
+                <Input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Nomor Whatsapp" required />
+              </div>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
@@ -285,16 +335,48 @@ export default function EntriProspekPage() {
                 <Input value={zipCode} onChange={(e) => setZipCode(e.target.value)} placeholder="15111" required />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Nomor Whatsapp</label>
-                <Input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Nomor Whatsapp" required />
+                <label className="block text-sm font-medium text-gray-700 mb-1">Produk</label>
+                <Select
+                  value={selectedProduct}
+                  onValueChange={setSelectedProduct}
+                  disabled={!zipCode || isProductLoading || products.length === 0}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder={isProductLoading ? "Memuat produk..." : "Pilih produk"} />
+                  </SelectTrigger>
+                  <SelectContent className="bg-white border border-gray-300 rounded-lg shadow-lg z-[50] max-h-60 overflow-y-auto">
+                    {products.map((product) => (
+                      <SelectItem
+                        key={product.product_code}
+                        value={product.product_code}
+                        className="hover:bg-gray-100 cursor-pointer"
+                      >
+                        {product.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">KTP (opsional)</label>
-              <Input value={ktp} onChange={(e) => setKtp(e.target.value)} placeholder="Nomor KTP (opsional)" />
+              <label className="block text-sm font-medium text-gray-700 mb-1">KTP</label>
+              <Input value={ktp} onChange={(e) => setKtp(e.target.value)} placeholder="Nomor KTP" required />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Kode Referral (opsional)</label>
+              <Input
+                value={referralCode}
+                onChange={(e) => setReferralCode(e.target.value)}
+                placeholder="Kode referral (6 digit alpha-numeric)"
+                maxLength={6}
+              />
             </div>
 
-            <Button type="submit" disabled={submitting || !currentLocation} className="bg-orange-600 hover:bg-orange-700 text-white">
+            <Button
+              type="submit"
+              disabled={submitting || !currentLocation || !selectedProduct || !ktp}
+              className="bg-orange-600 hover:bg-orange-700 text-white"
+            >
               {submitting ? (
                 <span className="inline-flex items-center gap-2"><Loader2 className="h-4 w-4 animate-spin" /> Mengirim...</span>
               ) : (
@@ -307,5 +389,3 @@ export default function EntriProspekPage() {
     </div>
   );
 }
-
-

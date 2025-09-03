@@ -8,6 +8,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import TransactionTable from './_components/TransactionTable';
 import ProductCarousel from './_components/ProductCarousel';
 import SpeedTest from './_components/SpeedTest';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 interface TransactionData {
   Payment_Date: string;
@@ -102,6 +103,8 @@ export default function Dashboard() {
   const [customerDashboard, setCustomerDashboard] = useState<CustomerDashboardData | null>(null);
   const [speedTestResult, setSpeedTestResult] = useState<number | null>(null);
   const [isSpeedTesting, setIsSpeedTesting] = useState(false);
+  const [billingTasks, setBillingTasks] = useState<{ task_id: string; status: string }[]>([]);
+  const [isLoadingBilling, setIsLoadingBilling] = useState(false);
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('id-ID', {
@@ -126,11 +129,37 @@ export default function Dashboard() {
 
     if (user.task_id && user.task_id.length > 0) {
       setSelectedTaskId(user.task_id[0]);
-      fetchTransactionData(user.task_id[0], user.token);
-      fetchCustomerDashboard(user.task_id[0], user.token);
+      fetchBillingDetail(user.task_id[0], user.token);
       fetchProducts(user.token);
     }
+
+    // Fetch selectable task IDs from billing list
+    fetchBillingList(user.token);
   }, [isLoggedIn, user, isAuthLoading, router]);
+
+  const fetchBillingList = async (token: string) => {
+    setIsLoadingBilling(true);
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}customer/billing/list`, {
+        method: 'GET',
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await response.json();
+      if (data.status === 'success' && Array.isArray(data.data)) {
+        setBillingTasks(data.data);
+        if (!selectedTaskId && data.data.length > 0) {
+          setSelectedTaskId(data.data[0].task_id);
+        }
+      } else {
+        setBillingTasks([]);
+      }
+    } catch (error) {
+      console.error('Error fetching billing list:', error);
+      setBillingTasks([]);
+    } finally {
+      setIsLoadingBilling(false);
+    }
+  };
 
   const fetchTransactionData = async (taskId: string, token: string) => {
     setIsLoading(true);
@@ -162,25 +191,31 @@ export default function Dashboard() {
     }
   };
 
-  const fetchCustomerDashboard = async (taskId: string, token: string) => {
-    setIsLoadingCustomerDashboard(true);
+  const fetchBillingDetail = async (taskId: string, token: string) => {
+    setIsLoading(true);
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}customer/dashboard`, {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ task_id: taskId })
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}customer/billing/detail/${taskId}`, {
+        method: 'GET',
+        headers: { Authorization: `Bearer ${token}` }
       });
       const data = await response.json();
-
-      if (data.status === 'success') {
-        setCustomerDashboard(data.data);
+      if (data.status === 'success' && Array.isArray(data.data)) {
+        const mapped = data.data.map((item: any) => ({
+          Payment_Date: item.Inv_Date || '-',
+          Sub_Product: item.Sub_Product,
+          Payment_Method: '-',
+          Total: item.Total ?? 0,
+          AR_Status: item.Bill_Status === 'Terbayar' ? 'Lunas' : 'Belum Lunas',
+        }));
+        setTransactionData(mapped);
       } else {
-        setCustomerDashboard(null);
+        setTransactionData([]);
       }
     } catch (error) {
-      console.error('Error fetching transaction data:', error);
+      console.error('Error fetching billing detail:', error);
+      setTransactionData([]);
     } finally {
-      setIsLoadingCustomerDashboard(false);
+      setIsLoading(false);
     }
   };
 
@@ -208,7 +243,9 @@ export default function Dashboard() {
 
   const handleTaskIdChange = (taskId: string) => {
     setSelectedTaskId(taskId);
-    if (user?.token) fetchTransactionData(taskId, user.token);
+    if (user?.token) {
+      fetchBillingDetail(taskId, user.token);
+    }
   };
 
   const submitNote = async () => {
@@ -269,19 +306,34 @@ export default function Dashboard() {
       )}
 
       <div className="flex flex-col md:flex-row gap-6 mt-6">
-        {/* Left Column */}
         <div className="space-y-6 md:min-w-[500px] max-w-[500px]">
           <div className="bg-white p-4 rounded-xl shadow-lg">
+            <h3 className="text-lg font-semibold mb-3">Pilih Task ID</h3>
+            <Select
+              value={selectedTaskId}
+              onValueChange={handleTaskIdChange}
+              disabled={isLoadingBilling || billingTasks.length === 0}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder={isLoadingBilling ? 'Memuat daftar...' : 'Pilih Task ID'} />
+              </SelectTrigger>
+              <SelectContent className="bg-white">
+                {billingTasks.map((item: { task_id: string; status: string }) => (
+                  <SelectItem key={item.task_id} value={item.task_id}>
+                    {item.task_id}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          {/* <div className="bg-white p-4 rounded-xl shadow-lg">
             <h3 className="text-lg font-semibold mb-3">Layanan yang dipakai</h3>
             {isLoadingCustomerDashboard ? (
               <div className="space-y-4">
-                {/* Service Package Card Skeleton */}
                 <div className="rounded-lg bg-gray-50 p-4 max-w-[400px]">
                   <Skeleton className="h-8 w-24 mb-2 bg-gray-200 animate-pulse" />
                   <Skeleton className="h-6 w-32 bg-gray-200 animate-pulse" />
                 </div>
-
-                {/* Status and Details Skeleton */}
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
                     <Skeleton className="h-5 w-16 bg-gray-200 animate-pulse" />
@@ -311,22 +363,14 @@ export default function Dashboard() {
               </div>
             ) : customerDashboard ? (
               <div className="space-y-4">
-                {/* Service Package Card */}
                 <div className="rounded-lg bg-[#008443] text-white p-4 max-w-[400px]">
                   <div className="text-2xl font-bold">
-                    {customerDashboard.Product_Name.includes('10 Mbps')
-                      ? '10 Mbps'
-                      : customerDashboard.Product_Name.includes('25 Mbps')
-                        ? '25 Mbps'
-                        : customerDashboard.Product_Name.match(/(\d+)\s*Mbps/)?.[1] + ' Mbps' ||
-                          '10 Mbps'}
+                    {extractSpeed(customerDashboard?.Product_Name || '') || '10 Mbps'}
                   </div>
                   <div className="text-emerald-100 mt-1">
                     {formatCurrency(customerDashboard.Total_Payment || 1700000)}/Tahun
                   </div>
                 </div>
-
-                {/* Status and Details */}
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
                     <span className="text-gray-600 font-medium">Status</span>
@@ -378,7 +422,7 @@ export default function Dashboard() {
             ) : (
               <p className="text-gray-500">Tidak ada data</p>
             )}
-          </div>
+          </div> */}
 
           <div className="bg-white p-4 rounded-xl shadow-lg">
             <h3 className="text-lg font-semibold mb-4">Upgrade Paket Internet</h3>
@@ -439,10 +483,10 @@ export default function Dashboard() {
 
         {/* Right Column */}
         <div className="space-y-6 flex-1">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="">
             <SpeedTest customerDashboard={customerDashboard} />
 
-            <div className="bg-white p-4 rounded-xl shadow-lg">
+            {/* <div className="bg-white p-4 rounded-xl shadow-lg">
               <h3 className="text-lg font-semibold mb-2 text-center">Average Data Usage</h3>
               {isLoadingCustomerDashboard ? (
                 <div className="space-y-4">
@@ -484,11 +528,11 @@ export default function Dashboard() {
                   </div>
                 </>
               )}
-            </div>
+            </div> */}
           </div>
 
           <div className="bg-white p-4 rounded-xl shadow-lg">
-            <h3 className="text-lg font-semibold mb-2">Histori Transaksi</h3>
+            <h3 className="text-lg font-semibold mb-2">Histori Billing</h3>
             {isLoading ? (
               <div className="space-y-2">
                 <div className="grid grid-cols-5 gap-2 bg-gray-100 p-2 rounded">

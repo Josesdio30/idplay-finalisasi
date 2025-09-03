@@ -6,6 +6,8 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Loader2, MapPin, Search } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/hooks/useAuth';
 
 type UserLocation = {
   lat: number;
@@ -35,6 +37,8 @@ const mapContainerStyle = {
 };
 
 export default function EntriProspekPage() {
+  const router = useRouter();
+  const { isLoggedIn, isLoading, user } = useAuth();
   const [currentLocation, setCurrentLocation] = useState<UserLocation | null>(null);
   const [searchValue, setSearchValue] = useState('');
   const [suggestions, setSuggestions] = useState<PlacePrediction[]>([]);
@@ -62,6 +66,13 @@ export default function EntriProspekPage() {
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_API_KEY!,
     libraries: ['places']
   });
+
+  // Auth guard: redirect to login when not authenticated
+  useEffect(() => {
+    if (!isLoading && !isLoggedIn) {
+      router.replace('/login?redirect=/entri-prospek');
+    }
+  }, [isLoading, isLoggedIn, router]);
 
   useEffect(() => {
     if (isLoaded && window.google) {
@@ -230,9 +241,13 @@ export default function EntriProspekPage() {
         referral_code: referralCode || ''
       };
 
+      const token = user?.token || localStorage.getItem('token') || '';
       const resp = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}subscription/retail/entri-prospek`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
         body: JSON.stringify(payload)
       });
       const data = await resp.json().catch(() => ({}));
@@ -380,7 +395,7 @@ export default function EntriProspekPage() {
               {submitting ? (
                 <span className="inline-flex items-center gap-2"><Loader2 className="h-4 w-4 animate-spin" /> Mengirim...</span>
               ) : (
-                'Kirim Prospek'
+                'Berlangganan'
               )}
             </Button>
           </form>

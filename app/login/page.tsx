@@ -5,11 +5,12 @@ import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { FcGoogle } from "react-icons/fc";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 
 export default function LoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { login } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -46,8 +47,9 @@ export default function LoginPage() {
       if (data.status === "success" && data.data) {
         login(data.data);
         
-        // Redirect ke dashboard
-        router.push("/dashboard");
+        // Redirect ke tujuan jika ada, jika tidak ke dashboard
+        const redirect = searchParams.get('redirect');
+        router.push(redirect || "/dashboard");
       } else {
         setError("Login gagal. Periksa kredensial Anda.");
       }

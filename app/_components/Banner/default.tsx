@@ -51,16 +51,6 @@ const DefaultBanner = ({ setShowBanner }: IProps) => {
             </div>
 
             <div>
-              <p className="text-[10px] lg:text-[12px] lg:leading-[59px] tracking-[-3%] text-gray-600">
-                Pilih lokasi kamu sekarang!{' '}
-                <span
-                  className="font-semibold italic underline cursor-pointer hover:font-bold transition-all duration-100 ease-in-out"
-                  onClick={() => setShowBanner(true)}
-                >
-                  Tentukan
-                </span>
-              </p>
-
               {/* Action buttons */}
               <div className="flex flex-col lg:flex-row gap-1 lg:gap-2 mt-2 lg:mt-4">
                 <Button

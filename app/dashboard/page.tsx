@@ -314,12 +314,16 @@ export default function Dashboard() {
               onValueChange={handleTaskIdChange}
               disabled={isLoadingBilling || billingTasks.length === 0}
             >
-              <SelectTrigger>
+              <SelectTrigger className="border-orange-500">
                 <SelectValue placeholder={isLoadingBilling ? 'Memuat daftar...' : 'Pilih Task ID'} />
               </SelectTrigger>
-              <SelectContent className="bg-white">
+              <SelectContent className="bg-white max-h-60 overflow-y-auto border-orange-500">
                 {billingTasks.map((item: { task_id: string; status: string }) => (
-                  <SelectItem key={item.task_id} value={item.task_id}>
+                  <SelectItem
+                    key={item.task_id}
+                    value={item.task_id}
+                    className="hover:bg-gray-100 focus:bg-gray-200 transition-colors duration-150"
+                  >
                     {item.task_id}
                   </SelectItem>
                 ))}

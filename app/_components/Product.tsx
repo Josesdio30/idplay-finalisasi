@@ -5,13 +5,31 @@ import Image from 'next/image';
 
 const ProductSection = () => {
   const [paketTab, setPaketTab] = useState<'bulan' | 'tahun'>('bulan');
+  const [regionTab, setRegionTab] = useState<'Jawa' | 'Sulawesi' | 'Kalimantan' | 'Sumatera'>('Jawa');
   const navigate = useRouter();
 
-  const products = [
-    { id: 1, speed: '700', yearlyPrice: '1.700.000', monthlyPrice: '350.000' },
-    { id: 2, speed: '700', yearlyPrice: '1.700.000', monthlyPrice: '350.000' },
-    { id: 3, speed: '700', yearlyPrice: '1.700.000', monthlyPrice: '350.000' }
-  ];
+  const products = {
+    Jawa: [
+      { id: 1, speed: '700', yearlyPrice: '1.700.000', monthlyPrice: '350.000' },
+      { id: 2, speed: '700', yearlyPrice: '1.700.000', monthlyPrice: '350.000' },
+      { id: 3, speed: '700', yearlyPrice: '1.700.000', monthlyPrice: '350.000' }
+    ],
+    Sulawesi: [
+      { id: 1, speed: '700', yearlyPrice: '1.800.000', monthlyPrice: '370.000' },
+      { id: 2, speed: '700', yearlyPrice: '1.800.000', monthlyPrice: '370.000' },
+      { id: 3, speed: '700', yearlyPrice: '1.800.000', monthlyPrice: '370.000' }
+    ],
+    Kalimantan: [
+      { id: 1, speed: '700', yearlyPrice: '1.750.000', monthlyPrice: '360.000' },
+      { id: 2, speed: '700', yearlyPrice: '1.750.000', monthlyPrice: '360.000' },
+      { id: 3, speed: '700', yearlyPrice: '1.750.000', monthlyPrice: '360.000' }
+    ],
+    Sumatera: [
+      { id: 1, speed: '700', yearlyPrice: '1.650.000', monthlyPrice: '340.000' },
+      { id: 2, speed: '700', yearlyPrice: '1.650.000', monthlyPrice: '340.000' },
+      { id: 3, speed: '700', yearlyPrice: '1.650.000', monthlyPrice: '340.000' }
+    ]
+  };
 
   const broadbandPlans = [
     { id: 1, title: 'IDPlay', subtitle: '12 Months 25 MBp/S', description: 'Lorem Ipsum Dolor Sit Amet' },
@@ -34,6 +52,56 @@ const ProductSection = () => {
           <br />
           Tanpa biaya tambahan, tanpa kejutan—hanya harga jujur untuk layanan yang andal.
         </p>
+
+        {/* Toggle Region */}
+        <div className="flex justify-center mb-8">
+          <div className="flex items-center gap-1 bg-white rounded-lg p-1 shadow-md">
+            <button
+              className={cn(
+                'px-6 py-2 rounded-md text-white font-semibold transition-all ease-in-out duration-300',
+                regionTab === 'Jawa'
+                  ? 'bg-green-600'
+                  : 'bg-white hover:bg-green-200 text-black hover:text-green-600'
+              )}
+              onClick={() => setRegionTab('Jawa')}
+            >
+              Jawa
+            </button>
+            <button
+              className={cn(
+                'px-6 py-2 rounded-md text-white font-semibold transition-all ease-in-out duration-300',
+                regionTab === 'Sulawesi'
+                  ? 'bg-green-600'
+                  : 'bg-white hover:bg-green-200 text-black hover:text-green-600'
+              )}
+              onClick={() => setRegionTab('Sulawesi')}
+            >
+              Sulawesi
+            </button>
+            <button
+              className={cn(
+                'px-6 py-2 rounded-md text-white font-semibold transition-all ease-in-out duration-300',
+                regionTab === 'Kalimantan'
+                  ? 'bg-green-600'
+                  : 'bg-white hover:bg-green-200 text-black hover:text-green-600'
+              )}
+              onClick={() => setRegionTab('Kalimantan')}
+            >
+              Kalimantan
+            </button>
+            <button
+              className={cn(
+                'px-6 py-2 rounded-md text-white font-semibold transition-all ease-in-out duration-300',
+                regionTab === 'Sumatera'
+                  ? 'bg-green-600'
+                  : 'bg-white hover:bg-green-200 text-black hover:text-green-600'
+              )}
+              onClick={() => setRegionTab('Sumatera')}
+            >
+              Sumatera
+            </button>
+          </div>
+        </div>
 
         {/* Toggle Month/Year */}
         <div className="flex justify-center mb-8">
@@ -67,7 +135,7 @@ const ProductSection = () => {
       <div className="-mt-10 z-10 w-full px-4 lg:px-8">
         {/* Grid per-produk: kartu produk + collapse broadband + subscribe */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5 lg:gap-12 mb-12">
-          {products.map((product, idx) => {
+          {products[regionTab].map((product, idx) => {
             const plan = broadbandPlans[idx];
             const isOpen = openId === product.id;
             return (
@@ -110,8 +178,8 @@ const ProductSection = () => {
                   </div>
                 </div>
 
-                {/* Collapse broadband facts */}
-                <div
+                {/* Collapse broadband facts - Commented out */}
+                {/* <div
                   id={`broadband-${product.id}`}
                   className={`transition-[max-height,opacity] duration-300 ease-in-out overflow-hidden ${isOpen ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'}`}
                 >
@@ -172,18 +240,16 @@ const ProductSection = () => {
                       </div>
                     </div>
                   </div>
-                </div>
+                </div> */}
 
                 {/* Bottom action buttons: Selengkapnya (di atas) dan Subscribe (di bawah) */}
                 <div className="px-4 pb-6 flex flex-col gap-3">
                   <button
                     className="w-full border border-orange-500 text-orange-600 hover:bg-orange-50 font-semibold py-3 rounded-lg flex items-center justify-center gap-2"
-                    onClick={() => toggleOpen(product.id)}
-                    aria-expanded={isOpen}
-                    aria-controls={`broadband-${product.id}`}
+                    onClick={() => navigate.push('/kategori/rumah')}
                   >
                     <span>Selengkapnya</span>
-                    <span className={`transition-transform ${isOpen ? 'rotate-180' : ''}`}>▾</span>
+                    <span className="transition-transform">▾</span>
                   </button>
                   <button
                     onClick={() => navigate.push('/entri-prospek')}
@@ -198,6 +264,7 @@ const ProductSection = () => {
               </div>
             );
           })}
+          {/* Arrow Button */}
         </div>
       </div>
     </section>

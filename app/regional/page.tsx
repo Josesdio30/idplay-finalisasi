@@ -54,9 +54,9 @@ const RegionalPage = () => {
   }
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen pt-14 md:pt-16">
       {/* Header Section */}
-      <div className="relative bg-orange-500 text-white p-6 lg:p-12 flex items-center justify-between">
+      <div className="relative bg-orange-500 text-white p-6 lg:p-12 flex items-center justify-between mb-8">
         <div>
           <div className="flex items-center gap-2">
             <span className="text-green-400 text-2xl lg:text-3xl font-bold">pi/y</span>

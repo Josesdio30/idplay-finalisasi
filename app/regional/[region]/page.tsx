@@ -1,116 +1,217 @@
-import Promosi from '@/app/_components/Promosi';
-import PaketInternet from '@/app/_components/PaketInternet';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import BranchMap, { Branch } from '../_components/BranchMap';
-import { notFound } from 'next/navigation';
-import HeroSection from '@/app/_components/Hero';
-import FAQ from '@/app/_components/FAQ';
+'use client';
 
-type RegionKey = 'jawa' | 'sulawesi';
+import { useRouter, useParams } from 'next/navigation';
+import { useState, useEffect } from 'react';
 
-type RegionConfig = {
-  slug: string;
+interface BannerImage {
+  id: number;
+  documentId: string;
   name: string;
-  key: RegionKey;
-  rating?: number;
-  reviews?: number;
-  address?: string;
-  hours?: string;
-  phone?: string;
-  center: [number, number];
-  branches: Branch[];
-};
-
-const regions: RegionConfig[] = [
-  {
-    slug: 'jabodetabek',
-    name: 'Jabodetabek',
-    key: 'jawa',
-    rating: 4.2,
-    reviews: 420,
-    address: 'Rukan Artha Gading Niagra, Jkt Utara, DKI Jakarta',
-    hours: '8 am – 10:45 pm',
-    phone: '+62 811-4768-5301',
-    center: [-6.1582, 106.9006],
-    branches: [
-      { id: 1, name: 'Cabang Jakarta Utara', lat: -6.1509, lng: 106.8915 },
-      { id: 2, name: 'Cabang Jakarta Selatan', lat: -6.2607, lng: 106.7816 },
-      { id: 3, name: 'Cabang Bekasi', lat: -6.2349, lng: 106.9896 }
-    ]
-  },
-  {
-    slug: 'sulawesi-kalimantan',
-    name: 'Sulawesi & Kalimantan',
-    key: 'sulawesi',
-    rating: 4.3,
-    reviews: 300,
-    address: 'Kantor Operasional Regional Sulawesi',
-    hours: '8 am – 9 pm',
-    phone: '+62 811-1234-5678',
-    center: [-5.1477, 119.4327],
-    branches: [
-      { id: 1, name: 'Cabang Makassar', lat: -5.1477, lng: 119.4327 },
-      { id: 2, name: 'Cabang Manado', lat: 1.4748, lng: 124.8428 },
-      { id: 3, name: 'Cabang Balikpapan', lat: -1.2692, lng: 116.8259 }
-    ]
-  }
-];
-
-export function generateStaticParams() {
-  return regions.map((r) => ({ region: r.slug }));
+  url: string;
+  formats: {
+    large: { url: string };
+  };
 }
 
-export default async function RegionalLanding({ params }: { params: Promise<{ region: string }> }) {
-  const { region } = await params;
-  const config = regions.find((r) => r.slug === region);
-  if (!config) return notFound();
+interface BannerData {
+  id: number;
+  documentId: string;
+  altname: string;
+  image: BannerImage;
+}
+
+interface ProductData {
+  ID: number;
+  Product_Name: string;
+  Region: string;
+  Price: number;
+}
+
+const RegionalPageDetail = () => {
+  const router = useRouter();
+  const params = useParams();
+  const region = params?.region as string | undefined;
+  const [regionData, setRegionData] = useState<any | null>(null);
+  const [banners, setBanners] = useState<BannerData[]>([]);
+  const [products, setProducts] = useState<ProductData[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Fetch region data based on region name
+        if (region) {
+          const regionResponse = await fetch(`https://inspiring-power-f8fa08a4a5.strapiapp.com/api/regionals?filters[region][$eq]=${encodeURIComponent(region)}`);
+          const regionDataResult = await regionResponse.json();
+          if (regionDataResult.data.length > 0) {
+            setRegionData(regionDataResult.data[0]);
+          }
+        }
+
+        // Fetch banner data for hero section
+        const bannerResponse = await fetch('https://inspiring-power-f8fa08a4a5.strapiapp.com/api/regional-banners?populate=image');
+        const bannerData = await bannerResponse.json();
+        if (bannerData.data) {
+          setBanners(bannerData.data);
+        }
+
+        // Fetch product data based on selected region
+        if (region) {
+          const productResponse = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/common/products?offset=1&list_per_page=100000&customer_type=Retail&product_type=NORMAL&region=${encodeURIComponent(region)}`);
+          const productData = await productResponse.json();
+          if (productData.data) {
+            setProducts(productData.data);
+          } else {
+            // Fallback to all products if region-specific data is not found
+            const fallbackResponse = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/common/products?offset=1&list_per_page=100000&customer_type=Retail&product_type=NORMAL`);
+            const fallbackData = await fallbackResponse.json();
+            if (fallbackData.data) {
+              setProducts(fallbackData.data);
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+
+    // Auto-slide every 5 seconds
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % (banners.length || 1));
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [region, banners.length]);
+
+  if (loading) {
+    return <div className="container mx-auto p-6 text-center">Loading...</div>;
+  }
 
   return (
-    <main className="bg-white">
-      <HeroSection />
-      <section className="container mx-auto px-4 py-8">
-        <h1 className="text-2xl md:text-4xl font-bold text-gray-900">{config.name}</h1>
-        <p className="text-gray-600 mt-2">Produk dan promo khusus untuk wilayah {config.name}.</p>
-      </section>
+    <div className="min-h-screen">
+      {/* Hero Section with Banner Slider */}
+      <div className="relative w-full overflow-hidden">
+        <div
+          className="flex transition-transform duration-500 ease-in-out"
+          style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+        >
+          {banners.length > 0 ? (
+            banners.map((banner, index) => (
+              <div key={banner.documentId} className="w-full flex-shrink-0">
+                <img
+                  src={banner.image.formats.large.url}
+                  alt={banner.altname || 'Banner'}
+                  className="w-full h-64 object-cover"
+                />
+              </div>
+            ))
+          ) : (
+            <div className="w-full bg-gray-200 h-64 flex items-center justify-center flex-shrink-0">
+              No banner available
+            </div>
+          )}
+        </div>
+      </div>
 
-      <Promosi region={config.key} />
 
-      <PaketInternet region={config.key} lockRegion defaultDuration="bulanan" />
-
-      <section className="container mx-auto px-4 pb-12">
-        <Card className="w-full">
-          <CardHeader>
-            <CardTitle className="text-xl font-bold">Kantor Representatif</CardTitle>
-          </CardHeader>
-          <CardContent className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="space-y-3">
-              <div className="text-gray-800">
-                <div className="flex items-center gap-2">
-                  <span className="font-semibold">Rating</span>
-                  <span className="text-sm text-gray-600">{config.rating} ({config.reviews} reviews)</span>
-                </div>
-                <div className="mt-2">
-                  <div className="font-semibold">Address:</div>
-                  <div className="text-sm text-gray-700">{config.address}</div>
-                </div>
-                <div className="mt-2">
-                  <div className="font-semibold">Hours:</div>
-                  <div className="text-sm text-gray-700">{config.hours}</div>
-                </div>
-                <div className="mt-2">
-                  <div className="font-semibold">Phone:</div>
-                  <div className="text-sm text-gray-700">{config.phone}</div>
+      {/* Product Section */}
+      <div className="-mt-10 z-10 w-full px-4 lg:px-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 lg:gap-12 mb-12">
+          {products.map((product, idx) => (
+            <div key={product.ID} className="bg-white rounded-2xl shadow-lg overflow-hidden border border-transparent">
+              {/* Product Card */}
+              <div className="flex items-center justify-center bg-orange-500 text-white px-4 py-6 sm:py-7 lg:py-9 text-center">
+                <div className="text-[36px] sm:text-[40px] lg:text-[70px] tracking-[1%] leading-[45px] font-bold text-center">
+                  {product.Product_Name.match(/Up To (\d+)/)?.[1] || 'N/A'}
+                  <span className="text-[16px] sm:text-[20px]">/Mbps</span>
                 </div>
               </div>
-            </div>
-            <div>
-              <BranchMap branches={config.branches} center={config.center} />
-            </div>
-          </CardContent>
-        </Card>
-      </section>
+              <div className="relative flex flex-col justify-center items-center p-4 lg:p-6">
+                <div className="text-xl sm:text-2xl lg:text-[36px] tracking-[1%] leading-[45px] font-bold text-orange-500 mb-2 sm:mb-3 lg:mb-5">
+                  Rp.{(product.Price * 12).toLocaleString('id-ID')}
+                  <span className="text-[16px] sm:text-[20px]">/Tahun</span>
+                </div>
+                <img src="/icons/arrow-pricing.svg" alt="" width={65} height={65} className="size-[45px] sm:size-[55px] lg:size-[65px] absolute z-10 left-10 sm:left-12 lg:left-9 top-10 lg:top-13" />
+                <div className="text-base lg:text-[30px] tracking-[1%] leading-[26px] font-medium text-orange-700 mb-2">
+                  Rp.{product.Price.toLocaleString('id-ID')}
+                  <span className="text-[16px] sm:text-[20px]">/Bulan</span>
+                </div>
+                <p className="text-sm lg:text-[15px] tracking-[1%] leading-[26px] font-medium text-orange-500">Mau langganan setahun? Bisa dicicil, kok!</p>
+              </div>
 
-      <FAQ />
-    </main>
+              {/* Feature block */}
+              <div className="mx-4 mb-4 rounded-xl bg-orange-50 border border-orange-100 p-4 text-black">
+                <div className="space-y-3">
+                  {['Fast and reliable connection', 'No contract required', 'Easy setup Process'].map((text, i) => (
+                    <div key={i} className="flex items-start gap-3">
+                      <span className="mt-0.5 inline-flex h-5 w-5 items-center justify-center rounded-full bg-orange-500 text-white text-xs">✓</span>
+                      <span className="text-sm text-gray-800">{text}</span>
+                    </div>
+                  ))}
+                </div>
+                <div className="my-4 h-0.5 w-full bg-orange-300" />
+                <div className="flex items-center justify-around text-orange-600">
+                  <span className="text-xs font-semibold border border-orange-400 px-2 py-1 rounded">1080p FULLHD</span>
+                  <span className="text-xs font-semibold">🎮 Gaming</span>
+                  <span className="text-xs font-semibold">∞ Unlimited</span>
+                </div>
+              </div>
+
+              {/* Bottom action buttons */}
+              <div className="px-4 pb-6 flex flex-col gap-3">
+                <button
+                  className="w-full border border-orange-500 text-orange-600 hover:bg-orange-50 font-semibold py-3 rounded-lg flex items-center justify-center gap-2"
+                  onClick={() => router.push('/kategori/rumah')}
+                >
+                  <span>Selengkapnya</span>
+                  <span className="transition-transform">▾</span>
+                </button>
+                <button
+                  onClick={() => router.push('/entri-prospek')}
+                  className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-lg flex items-center justify-center gap-2"
+                >
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" />
+                  </svg>
+                  Subscribe
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Artikel Section */}
+      <div className="container mx-auto p-6">
+        <h2 className="text-2xl font-semibold mb-6">Artikel</h2>
+        <p className="text-gray-600 mb-6">Biarakan Customer yang Menilai Produk Kita!</p>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="bg-gray-100 p-4 rounded-lg">
+            <h3 className="text-lg font-semibold mb-2">Tips & Tricks</h3>
+            <p className="text-gray-700">Apa rencana internet rumah yang tepat untuk Anda?</p>
+            <p className="text-gray-700 mt-2">"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare."</p>
+            <button className="mt-4 bg-orange-500 text-white py-2 px-4 rounded hover:bg-orange-600">Learn More +</button>
+          </div>
+          <div className="bg-gray-100 p-4 rounded-lg">
+            <h3 className="text-lg font-semibold mb-2">Tips & Tricks</h3>
+            <p className="text-gray-700">Apa rencana internet rumah yang tepat untuk Anda?</p>
+            <p className="text-gray-700 mt-2">"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare."</p>
+            <button className="mt-4 bg-orange-500 text-white py-2 px-4 rounded hover:bg-orange-600">Learn More +</button>
+          </div>
+          <div className="bg-gray-100 p-4 rounded-lg">
+            <h3 className="text-lg font-semibold mb-2">Tips & Tricks</h3>
+            <p className="text-gray-700">Apa rencana internet rumah yang tepat untuk Anda?</p>
+            <p className="text-gray-700 mt-2">"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare."</p>
+            <button className="mt-4 bg-orange-500 text-white py-2 px-4 rounded hover:bg-orange-600">Learn More +</button>
+          </div>
+        </div>
+      </div>
+    </div>
   );
-}
+};
+
+export default RegionalPageDetail;

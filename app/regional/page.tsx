@@ -1,21 +1,57 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+
+interface RegionItem {
+  documentId: string;
+  region: string;
+}
 
 const RegionalPage = () => {
   const router = useRouter();
-  const regions = ['Jawa', 'Kalimantan', 'Sulawesi', 'Sumatra', 'Nusa Tenggara'];
+  const [regions, setRegions] = useState<RegionItem[]>([]);
+  const [openLetter, setOpenLetter] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const [openRegion, setOpenRegion] = useState(null);
+  useEffect(() => {
+    const fetchRegions = async () => {
+      try {
+        const response = await fetch('https://inspiring-power-f8fa08a4a5.strapiapp.com/api/regionals/');
+        const data = await response.json();
+        if (data.data && Array.isArray(data.data)) {
+          const uniqueRegions = data.data.map((item: { documentId: string; region: string }) => ({
+            documentId: item.documentId,
+            region: item.region,
+          }));
+          setRegions(uniqueRegions);
+        }
+      } catch (error) {
+        console.error('Error fetching regions:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const toggleRegion = (region) => {
-    setOpenRegion(openRegion === region ? null : region);
+    fetchRegions();
+  }, []);
+
+  const toggleLetter = (letter: string) => {
+    setOpenLetter(openLetter === letter ? null : letter);
   };
 
-  const handleRegionSelect = (region) => {
-    router.push(`/regional/${region.toLowerCase().replace(' ', '-')}`);
+  const handleRegionSelect = (region: string) => {
+    router.push(`/regional/${encodeURIComponent(region)}`);
   };
+
+  const getUniqueLetters = (): string[] => {
+    const letters = regions.map(item => item.region.charAt(0).toUpperCase());
+    return [...new Set(letters)].sort();
+  };
+
+  if (loading) {
+    return <div className="container mx-auto p-6 text-center">Loading...</div>;
+  }
 
   return (
     <div className="min-h-screen">
@@ -51,23 +87,28 @@ const RegionalPage = () => {
       <div className="container mx-auto p-6">
         <h2 className="text-2xl font-semibold text-center mb-6">Pilih Daerah Lokasimu</h2>
         <div className="space-y-4">
-          {regions.map((region) => (
-            <div key={region} className="border-b py-2">
+          {getUniqueLetters().map((letter) => (
+            <div key={letter} className="border-b py-2">
               <button
-                onClick={() => toggleRegion(region)}
+                onClick={() => toggleLetter(letter)}
                 className="w-full text-left text-lg font-medium flex justify-between items-center"
               >
-                <span>{region}</span>
-                <span className={`transition-transform ${openRegion === region ? 'rotate-180' : ''}`}>▾</span>
+                <span>{letter}</span>
+                <span className={`transition-transform ${openLetter === letter ? 'rotate-180' : ''}`}>▾</span>
               </button>
-              {openRegion === region && (
-                <div className="mt-2 p-2 bg-gray-50 rounded">
-                  <button
-                    onClick={() => handleRegionSelect(region)}
-                    className="w-full text-center py-2 bg-green-600 text-white rounded hover:bg-green-700"
-                  >
-                    Pilih {region}
-                  </button>
+              {openLetter === letter && (
+                <div className="mt-2 p-2 bg-gray-50 rounded grid grid-cols-2 md:grid-cols-3 gap-2">
+                  {regions
+                    .filter((item) => item.region.charAt(0).toUpperCase() === letter)
+                    .map((item) => (
+                      <button
+                        key={item.documentId}
+                        onClick={() => handleRegionSelect(item.region)}
+                        className="text-left py-2 px-4 bg-white text-gray-800 rounded hover:bg-gray-200 transition-colors"
+                      >
+                        {item.region}
+                      </button>
+                    ))}
                 </div>
               )}
             </div>

@@ -4,11 +4,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { FcGoogle } from "react-icons/fc";
-import { useState, Suspense } from "react"; // Import Suspense
+import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 
-// Separate component to handle useSearchParams
 function LoginRedirectHandler() {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -46,7 +45,6 @@ function LoginRedirectHandler() {
 
       if (data.status === "success" && data.data) {
         login(data.data);
-        // Redirect ke tujuan jika ada, jika tidak ke dashboard
         const redirect = searchParams.get("redirect");
         router.push(redirect || "/dashboard");
       } else {

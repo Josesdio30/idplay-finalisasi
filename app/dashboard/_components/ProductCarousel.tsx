@@ -56,7 +56,7 @@ const ProductCarousel = ({ products, note, setNote, onSubmit }: IProps) => {
                 <p className="text-xs text-gray-500">{product.Product_Name}</p>
                 <button
                   className="mt-3 w-full rounded bg-orange-500 px-3 py-2 text-white hover:bg-orange-600"
-                  onClick={() => navigate.push('/payment')}
+                  onClick={() => navigate.push('/entri-prospek')}
                 >
                   Langganan Sekarang
                 </button>

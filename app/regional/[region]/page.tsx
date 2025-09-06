@@ -55,13 +55,13 @@ const RegionalPageDetail = () => {
           if (regionDataResult.data.length > 0) {
             setRegionData(regionDataResult.data[0]);
           }
-        }
 
-        // Fetch banner data for hero section
-        const bannerResponse = await fetch('https://inspiring-power-f8fa08a4a5.strapiapp.com/api/regional-banners?populate=image');
-        const bannerData = await bannerResponse.json();
-        if (bannerData.data) {
-          setBanners(bannerData.data);
+          // Fetch banners based on selected region
+          const bannerResponse = await fetch(`https://inspiring-power-f8fa08a4a5.strapiapp.com/api/regional-banners?filters[regional][region][$eq]=${encodeURIComponent(region)}&populate=image`);
+          const bannerData = await bannerResponse.json();
+          if (bannerData.data) {
+            setBanners(bannerData.data);
+          }
         }
 
         // Fetch product data based on selected region
@@ -71,7 +71,6 @@ const RegionalPageDetail = () => {
           if (productData.data) {
             setProducts(productData.data);
           } else {
-            // Fallback to all products if region-specific data is not found
             const fallbackResponse = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/common/products?offset=1&list_per_page=100000&customer_type=Retail&product_type=NORMAL`);
             const fallbackData = await fallbackResponse.json();
             if (fallbackData.data) {
@@ -88,7 +87,6 @@ const RegionalPageDetail = () => {
 
     fetchData();
 
-    // Auto-slide every 5 seconds
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % (banners.length || 1));
     }, 5000);
@@ -100,7 +98,7 @@ const RegionalPageDetail = () => {
   }
 
   return (
-    <div className="min-h-screen pt-14 md:pt-16">
+    <div className="min-h-screen space-y-8"> {/* Gap konsisten antar section */}
       {/* Hero Section with Banner Slider */}
       <div className="relative w-full overflow-hidden pb-8">
         <div
@@ -110,11 +108,11 @@ const RegionalPageDetail = () => {
           {banners.length > 0 ? (
             banners.map((banner, index) => (
               <div key={banner.documentId} className="w-full flex-shrink-0">
-                <div className="w-full h-64 md:h-80 lg:h-96 bg-gray-100 flex items-center justify-center">
+                <div className="w-full bg-gray-100 flex items-center justify-center">
                   <img
                     src={banner.image.formats.large.url}
                     alt={banner.altname || 'Banner'}
-                    className="max-h-full w-full object-contain"
+                    className="max-h-full w-full"
                   />
                 </div>
               </div>
@@ -127,9 +125,52 @@ const RegionalPageDetail = () => {
         </div>
       </div>
 
+      {/* New Responsive Section after Banner */}
+      <div className="container mx-auto px-4 py-8 rounded-lg">
+        <div className="md:flex md:items-center md:justify-between gap-6">
+          <div className="md:w-1/2 mb-4 md:mb-0">
+            <img
+              src="/imgs/dummy-foto.jpg"
+              alt="Placeholder"
+              className="w-full h-auto rounded-lg object-cover"
+            />
+          </div>
+          <div className="md:w-1/2 md:pl-6">
+            <h2 className="text-3xl font-bold mb-4">Nikmati Keunggulan Internet Kami</h2>
+            <p className="text-gray-700 mb-4">
+              Kami menghadirkan koneksi internet fiber optik berkecepatan tinggi yang dirancang untuk kebutuhan digital keluarga modern. Nikmati streaming mulus, gaming tanpa lag, dan kerja dari rumah yang produktif.
+            </p>
+            <ul className="list-none space-y-2 mb-4">
+              <li className="flex items-center">
+                <span className="text-orange-500 mr-2">✔</span> Kecepatan Unggul untuk Semua Perangkat
+              </li>
+              <li className="flex items-center">
+                <span className="text-orange-500 mr-2">✔</span> Jaminan Kestabilan Jaringan 24/7
+              </li>
+              <li className="flex items-center">
+                <span className="text-orange-500 mr-2">✔</span> Pemasangan Mudah dan Cepat
+              </li>
+            </ul>
+            <button className="bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600">
+              Cek Paket & Harga
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* New Text Section above Product Card */}
+      <div className="container mx-auto p-6 text-center">
+        <h2 className="text-4xl font-bold text-orange-500 mb-2">Temukan Layanan yang Tepat di Daerahmu</h2>
+        <p className="text-lg text-gray-600 mb-2">
+          Kami paham, internet cepat bukan lagi pilihan — tapi kebutuhan utama.
+        </p>
+        <p className="text-xs text-gray-600">
+          Karena semua orang butuh koneksi yang bisa diandalkan, kapan pun dan di mana pun.
+        </p>
+      </div>
 
       {/* Product Section */}
-      <div className="mt-0 pt-8 z-10 w-full px-4 lg:px-8">
+      <div className="container mx-auto px-4 lg:px-8">
         <Carousel
           plugins={[
             Autoplay({
@@ -212,30 +253,57 @@ const RegionalPageDetail = () => {
         </Carousel>
       </div>
 
-      {/* Artikel Section */}
+      {/* Artikel Section as Carousel */}
       <div className="container mx-auto p-6">
         <h2 className="text-2xl font-semibold mb-6">Artikel</h2>
-        <p className="text-gray-600 mb-6">Biarakan Customer yang Menilai Produk Kita!</p>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-gray-100 p-4 rounded-lg">
-            <h3 className="text-lg font-semibold mb-2">Tips & Tricks</h3>
-            <p className="text-gray-700">Apa rencana internet rumah yang tepat untuk Anda?</p>
-            <p className="text-gray-700 mt-2">"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare."</p>
-            <button className="mt-4 bg-orange-500 text-white py-2 px-4 rounded hover:bg-orange-600">Learn More +</button>
-          </div>
-          <div className="bg-gray-100 p-4 rounded-lg">
-            <h3 className="text-lg font-semibold mb-2">Tips & Tricks</h3>
-            <p className="text-gray-700">Apa rencana internet rumah yang tepat untuk Anda?</p>
-            <p className="text-gray-700 mt-2">"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare."</p>
-            <button className="mt-4 bg-orange-500 text-white py-2 px-4 rounded hover:bg-orange-600">Learn More +</button>
-          </div>
-          <div className="bg-gray-100 p-4 rounded-lg">
-            <h3 className="text-lg font-semibold mb-2">Tips & Tricks</h3>
-            <p className="text-gray-700">Apa rencana internet rumah yang tepat untuk Anda?</p>
-            <p className="text-gray-700 mt-2">"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare."</p>
-            <button className="mt-4 bg-orange-500 text-white py-2 px-4 rounded hover:bg-orange-600">Learn More +</button>
-          </div>
-        </div>
+        <p className="text-gray-700 mb-6">Biarakan Customer yang Menilai Produk Kita!</p>
+        <Carousel
+          plugins={[
+            Autoplay({
+              delay: 3000
+            })
+          ]}
+          opts={{
+            align: 'start',
+            loop: true
+          }}
+          className="w-full mb-12"
+        >
+          <CarouselContent>
+            {[
+              {
+                title: 'Tips & Tricks',
+                description: 'Apa rencana internet rumah yang tepat untuk Anda?',
+                content: '"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare."'
+              },
+              {
+                title: 'Tips & Tricks',
+                description: 'Apa rencana internet rumah yang tepat untuk Anda?',
+                content: '"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare."'
+              },
+              {
+                title: 'Tips & Tricks',
+                description: 'Apa rencana internet rumah yang tepat untuk Anda?',
+                content: '"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare."'
+              }
+            ].map((article, index) => (
+              <CarouselItem key={index} className="basis-full md:basis-1/2 lg:basis-1/3">
+                <div className="bg-gray-100 p-4 rounded-lg h-full flex flex-col justify-between">
+                  <div>
+                    <h3 className="text-lg font-semibold mb-2">{article.title}</h3>
+                    <p className="text-gray-700 mb-2">{article.description}</p>
+                    <p className="text-gray-700">{article.content}</p>
+                  </div>
+                  <button className="mt-4 bg-orange-500 text-white py-2 px-4 rounded hover:bg-orange-600">
+                    Learn More +
+                  </button>
+                </div>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          <CarouselPrevious className="left-2" />
+          <CarouselNext className="right-2" />
+        </Carousel>
       </div>
     </div>
   );

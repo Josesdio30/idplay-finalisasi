@@ -55,7 +55,7 @@ const AddOnsFacts: React.FC = () => {
               </div>
               <button
                 onClick={() => {
-                  navigate.push('/payment');
+                  navigate.push('/entri-prospek');
                 }}
                 className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 rounded-lg flex items-center justify-center space-x-2 transition-colors"
               >

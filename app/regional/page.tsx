@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 
 interface RegionItem {
   documentId: string;
@@ -54,33 +55,16 @@ const RegionalPage = () => {
   }
 
   return (
-    <div className="min-h-screen pt-14 md:pt-16">
+    <div className="min-h-screen space-y-8"> {/* Gap konsisten antar section */}
       {/* Header Section */}
-      <div className="relative bg-orange-500 text-white p-6 lg:p-12 flex items-center justify-between mb-8">
-        <div>
-          <div className="flex items-center gap-2">
-            <span className="text-green-400 text-2xl lg:text-3xl font-bold">pi/y</span>
-            <h1 className="text-xl lg:text-3xl font-bold">Temukan Internet Cepat di Jawa Tengah</h1>
-          </div>
-          <p className="text-sm lg:text-base mt-2">Apa rencana internet rumah yang tepat untuk Anda?</p>
-          <ul className="list-disc list-inside text-sm lg:text-base mt-2 space-y-1">
-            <li>Internet Super Cepat untuk Streaming dan Gaming Tanpa Batas</li>
-            <li>Jaringan Handal, Nikmati Koneksi Stabil Setiap Saat</li>
-            <li>Pelayanan Pelanggan Terbaik, Sempurna untuk Kapasitas Saja</li>
-          </ul>
-          <button
-            onClick={() => router.push('/cek-ketersediaan')}
-            className="mt-4 bg-white text-orange-500 font-semibold py-2 px-4 rounded-lg flex items-center gap-2 hover:bg-gray-100"
-          >
-            Cek Ketersediaan Sekarang
-            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
-            </svg>
-          </button>
-        </div>
-        <div className="hidden lg:block">
-          <img src="/images/students.jpg" alt="Students" className="w-48 h-48 object-cover rounded-lg" />
-        </div>
+      <div className="relative container mx-auto pt-14">
+        <Image
+          src="/category/hero-kategori.svg"
+          width={1000}
+          height={400} // Sesuaikan tinggi agar responsif
+          alt="Kategori Rumah"
+          className="w-full h-auto object-cover"
+        />
       </div>
 
       {/* Region Selection Section */}

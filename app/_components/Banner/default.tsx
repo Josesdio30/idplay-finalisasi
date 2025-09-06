@@ -27,8 +27,6 @@ const DefaultBanner = ({ setShowBanner }: IProps) => {
               <br />
               Bisa Kamu Andalkan
             </h2>
-
-            {/* Feature badges */}
             <div className="flex flex-col gap-1 lg:gap-2 my-2 lg:my-6">
               <div className="flex items-center gap-1 lg:gap-2">
                 <Network className="w-3 h-3 lg:w-4 lg:h-4 text-green-700" />
@@ -51,11 +49,10 @@ const DefaultBanner = ({ setShowBanner }: IProps) => {
             </div>
 
             <div>
-              {/* Action buttons */}
               <div className="flex flex-col lg:flex-row gap-1 lg:gap-2 mt-2 lg:mt-4">
                 <Button
                   onClick={() => {
-                    navigate.push('/payment');
+                    navigate.push('/entri-prospek');
                   }}
                   className="rounded-full bg-orange-500 hover:bg-orange-600 border border-orange-500 text-white h-auto lg:h-9 px-2 lg:px-8 py-1 lg:py-3 font-medium transition-colors flex items-center justify-center gap-1 lg:gap-2 text-[10px] lg:text-base"
                 >
@@ -70,8 +67,6 @@ const DefaultBanner = ({ setShowBanner }: IProps) => {
               </div>
             </div>
           </div>
-
-          {/* Right side for image/people - now visible on both mobile and desktop */}
           <div
             className="col-span-1 relative z-10 h-full flex items-end justify-end hover:scale-105 hover:drop-shadow-xl transition-transform duration-300 ease-in-out cursor-pointer"
             onClick={() => setShowBanner(true)}
@@ -88,9 +83,7 @@ const DefaultBanner = ({ setShowBanner }: IProps) => {
           </div>
         </div>
       </div>
-      {/* Background decorative elements */}
       <div className="absolute bottom-0 right-0 w-full h-full lg:h-auto z-0">
-        {/* Grid pattern */}
         <Image
           src="/imgs/line-background-hero.svg"
           width={1000}

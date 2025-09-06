@@ -4,13 +4,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { FcGoogle } from "react-icons/fc";
-import { useState } from "react";
+import { useState, Suspense } from "react"; // Import Suspense
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 
-export default function LoginPage() {
-  const router = useRouter();
+// Separate component to handle useSearchParams
+function LoginRedirectHandler() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const { login } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -43,12 +44,10 @@ export default function LoginPage() {
         return;
       }
 
-      // Simpan data user dan token ke localStorage
       if (data.status === "success" && data.data) {
         login(data.data);
-        
         // Redirect ke tujuan jika ada, jika tidak ke dashboard
-        const redirect = searchParams.get('redirect');
+        const redirect = searchParams.get("redirect");
         router.push(redirect || "/dashboard");
       } else {
         setError("Login gagal. Periksa kredensial Anda.");
@@ -61,6 +60,70 @@ export default function LoginPage() {
   }
 
   return (
+    <form className="mt-8 w-full space-y-5" onSubmit={onSubmit}>
+      <Input
+        type="email"
+        placeholder="Email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        required
+        className="h-12 rounded-full border-0 bg-[#F3EBE7] px-5 text-[15px] placeholder:text-neutral-500"
+      />
+
+      <Input
+        type="password"
+        placeholder="Password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        required
+        className="h-12 rounded-full border-0 bg-[#F3EBE7] px-5 text-[15px] placeholder:text-neutral-500"
+      />
+
+      {error ? <p className="text-left text-sm text-red-600">{error}</p> : null}
+
+      <Button
+        type="submit"
+        disabled={isSubmitting}
+        className="h-12 w-full rounded-full bg-green-500 text-white hover:bg-green-600 disabled:opacity-60"
+      >
+        {isSubmitting ? "Memproses..." : "Masuk"}
+      </Button>
+
+      <div className="relative py-2 text-center">
+        <div className="absolute inset-0 flex items-center">
+          <div className="h-[1px] w-full bg-neutral-200" />
+        </div>
+        <div className="relative inline-block bg-[#FFFBF9] px-3 text-xs text-neutral-500">
+          or continue with
+        </div>
+      </div>
+
+      <Button
+        type="button"
+        variant="outline"
+        className="h-12 w-full rounded-full border-neutral-200 bg-white text-neutral-700 hover:bg-neutral-50"
+      >
+        <FcGoogle className="text-xl" />
+        Google
+      </Button>
+
+      <p className="pt-2 text-left text-sm text-neutral-600">
+        Belum punya akun?{" "}
+        <Link href="/register" className="font-medium text-neutral-800 underline">
+          Daftar di sini
+        </Link>
+      </p>
+      <p className="pt-2 text-left text-sm text-neutral-600">
+        <Link href="/forgot" className="font-medium text-neutral-800 underline">
+          Lupa Password?
+        </Link>
+      </p>
+    </form>
+  );
+}
+
+export default function LoginPage() {
+  return (
     <main className="min-h-[70vh] w-full bg-[#FFFBF9]">
       <section className="mx-auto flex w-full max-w-md md:max-w-xl flex-col items-center px-4 sm:px-6 py-16 sm:py-20 md:py-24 text-center">
         <h1 className="text-2xl font-semibold text-neutral-900 md:text-[28px]">
@@ -70,67 +133,10 @@ export default function LoginPage() {
           Akses tagihan, pengaturan layanan, dan lainnya.
         </p>
 
-        <form className="mt-8 w-full space-y-5" onSubmit={onSubmit}>
-          <Input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            className="h-12 rounded-full border-0 bg-[#F3EBE7] px-5 text-[15px] placeholder:text-neutral-500"
-          />
-
-          <Input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            className="h-12 rounded-full border-0 bg-[#F3EBE7] px-5 text-[15px] placeholder:text-neutral-500"
-          />
-
-          {error ? (
-            <p className="text-left text-sm text-red-600">{error}</p>
-          ) : null}
-
-          <Button
-            type="submit"
-            disabled={isSubmitting}
-            className="h-12 w-full rounded-full bg-green-500 text-white hover:bg-green-600 disabled:opacity-60"
-          >
-            {isSubmitting ? "Memproses..." : "Masuk"}
-          </Button>
-
-          <div className="relative py-2 text-center">
-            <div className="absolute inset-0 flex items-center">
-              <div className="h-[1px] w-full bg-neutral-200" />
-            </div>
-            <div className="relative inline-block bg-[#FFFBF9] px-3 text-xs text-neutral-500">
-              or continue with
-            </div>
-          </div>
-
-          <Button
-            type="button"
-            variant="outline"
-            className="h-12 w-full rounded-full border-neutral-200 bg-white text-neutral-700 hover:bg-neutral-50"
-          >
-            <FcGoogle className="text-xl" />
-            Google
-          </Button>
-
-          <p className="pt-2 text-left text-sm text-neutral-600">
-            Belum punya akun? {" "}
-            <Link href="/register" className="font-medium text-neutral-800 underline">
-              Daftar di sini
-            </Link>
-          </p>
-          <p className="pt-2 text-left text-sm text-neutral-600">
-            <Link href="/forgot" className="font-medium text-neutral-800 underline">
-              Lupa Password?
-            </Link>
-          </p>
-        </form>
+        {/* Wrap the component that uses useSearchParams in Suspense */}
+        <Suspense fallback={<div>Loading...</div>}>
+          <LoginRedirectHandler />
+        </Suspense>
       </section>
     </main>
   );

@@ -74,33 +74,25 @@ const CoverageMaps: React.FC<CoverageMapsProps> = ({
     libraries: ['places']
   });
 
-  // Update current location when userLocation prop changes
   useEffect(() => {
     setCurrentLocation(userLocation);
   }, [userLocation]);
 
-  // Reset all states when modal is closed
   useEffect(() => {
     if (!open) {
-      // Clear search timeout
       if (searchTimeoutRef.current) {
         clearTimeout(searchTimeoutRef.current);
         searchTimeoutRef.current = null;
       }
-
-      // Reset all states to initial values
       setSearchValue('');
       setSuggestions([]);
       setShowSuggestions(false);
       setIsSearching(false);
       setSelectedAddress('');
-
-      // Reset location to original userLocation prop
       setCurrentLocation(userLocation);
     }
   }, [open, userLocation]);
 
-  // Cleanup timeout on unmount
   useEffect(() => {
     return () => {
       if (searchTimeoutRef.current) {
@@ -109,7 +101,7 @@ const CoverageMaps: React.FC<CoverageMapsProps> = ({
     };
   }, []);
 
-  // Initialize Places Service when maps is loaded
+
   useEffect(() => {
     if (isLoaded && window.google) {
       const dummyDiv = document.createElement('div');
@@ -117,7 +109,7 @@ const CoverageMaps: React.FC<CoverageMapsProps> = ({
     }
   }, [isLoaded]);
 
-  // Search for places using Places API
+
   const searchPlaces = useCallback(
     async (query: string) => {
       if (!query.trim() || !isLoaded || !window.google) {

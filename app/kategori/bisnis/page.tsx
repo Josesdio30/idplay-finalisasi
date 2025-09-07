@@ -69,8 +69,8 @@ export default function KategoriBisnis() {
         </div>
       </section>
 
-      {/* Broadband Facts Cards */}
-      <ProductFacts />
+      {/* Broadband Facts Cards - NON_RETAIL/Bisnis */}
+      <ProductFacts customerType="NON_RETAIL" />
 
       {/* Compare Product Section */}
       <CompareProduct />

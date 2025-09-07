@@ -1,38 +1,42 @@
 import React from 'react';
-import { FaTags } from 'react-icons/fa';
-import { dummyCategories, type Category } from '@/data/dummyData';
+import { Button } from '@/components/ui/button';
+import { type Category } from '@/types/article';
 
 interface CategoryFilterProps {
   selectedCategory: number | null;
   onCategoryChange: (categoryId: number | null) => void;
+  categories: Category[];
 }
 
-const CategoryFilter: React.FC<CategoryFilterProps> = ({ selectedCategory, onCategoryChange }) => {
+const CategoryFilter: React.FC<CategoryFilterProps> = ({ selectedCategory, onCategoryChange, categories }) => {
   return (
     <div className="flex flex-wrap gap-3">
-      <button
+      <Button
         onClick={() => onCategoryChange(null)}
-        className={`px-6 py-3 rounded-full text-sm font-medium transition-all duration-200 ${
+        variant={selectedCategory === null ? "default" : "outline"}
+        size="sm"
+        className={`rounded-full transition-colors duration-200 ${
           selectedCategory === null
-            ? 'bg-orange-500 text-white shadow-lg transform scale-105'
-            : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200'
+            ? 'bg-orange-500 hover:bg-orange-600 text-white shadow-md'
+            : 'border-gray-200 text-gray-700 hover:bg-gray-100'
         }`}
       >
         All Categories
-      </button>
-      {dummyCategories.map((category: Category) => (
-        <button
+      </Button>
+      {categories.map((category: Category) => (
+        <Button
           key={category.id}
           onClick={() => onCategoryChange(category.id)}
-          className={`px-6 py-3 rounded-full text-sm font-medium transition-all duration-200 ${
+          variant={selectedCategory === category.id ? "default" : "outline"}
+          size="sm"
+          className={`rounded-full transition-colors duration-200 ${
             selectedCategory === category.id
-              ? 'bg-orange-500 text-white shadow-lg transform scale-105'
-              : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200'
+              ? 'bg-orange-500 hover:bg-orange-600 text-white shadow-md'
+              : 'border-gray-200 text-gray-700 hover:bg-gray-100'
           }`}
         >
-          <FaTags className="inline mr-2" />
           {category.name}
-        </button>
+        </Button>
       ))}
     </div>
   );

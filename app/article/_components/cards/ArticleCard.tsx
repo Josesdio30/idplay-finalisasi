@@ -1,10 +1,11 @@
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { FaCalendarAlt, FaClock } from 'react-icons/fa';
-import { type Article } from '@/data/dummyData';
-import { limitDescription, formatDate, getCategoryName } from '@/lib/articleUtils';
-import { Dot } from 'lucide-react'; 
+import { type Article } from '@/types/article';
+import { limitDescription, formatDate, calculateReadTime } from '@/lib/articleUtils';
+import { resolveThumbnailUrl } from '@/lib/services/imageService';
+import { useArticleAuthor } from '@/hooks/useAuthor';
+import { Dot } from 'lucide-react';
 
 interface ArticleCardProps {
   article: Article;
@@ -12,12 +13,19 @@ interface ArticleCardProps {
 }
 
 const ArticleCard: React.FC<ArticleCardProps> = ({ article, showCategory = false }) => {
+  const imageSrc = resolveThumbnailUrl((article as Article).thumbnail);
+  const author = useArticleAuthor(article);
+  const publishedDate = (article as any).publishedAt ?? (article as any).publish_date ?? (article as any).published_at ?? (article as any).createdAt ?? null;
+  const readTime = calculateReadTime((article as any).content ?? article.description ?? '');
+
   return (
     <article className="bg-white rounded-xl overflow-hidden group transform flex flex-col">
+
+      {/* Thumbnail */}
       <div className="relative overflow-hidden flex items-center justify-center" style={{ minHeight: 180 }}>
-        {article.image ? (
+        {imageSrc ? (
           <Image
-            src={article.image}
+            src={imageSrc}
             alt={article.title}
             width={400}
             height={250}
@@ -29,11 +37,10 @@ const ArticleCard: React.FC<ArticleCardProps> = ({ article, showCategory = false
           </div>
         )}
       </div>
-
       <div className="pt-4 pb-6 flex flex-col flex-1">
 
         {/* Category */}
-        <div className="text-s font-bold text-gray-700 mb-1">{getCategoryName(article.category_id)}</div>
+        <div className="text-s font-bold text-gray-700 mb-1">{(article as any).category?.name || 'Umum'}</div>
 
         {/* Title */}
         <Link href={`/article/${article.slug}`}>
@@ -50,25 +57,27 @@ const ArticleCard: React.FC<ArticleCardProps> = ({ article, showCategory = false
         {/* Author, Date, Reading Time */}
         <div className="flex items-center gap-4 mt-2">
           <div className="flex items-center gap-3">
-            {article.user.avatar ? (
-              <Image
-                src={article.user.avatar}
-                alt={article.user.name}
-                width={45}
-                height={45}
-                className="rounded-full bg-gray-200"
-              />
+            {author.avatar ? (
+              <div className="relative w-[45px] h-[45px] rounded-full overflow-hidden bg-gray-100">
+                <Image
+                  src={author.avatar}
+                  alt={author.name}
+                  width={80}
+                  height={80}
+                  className="absolute inset-0 w-full h-full object-cover"
+                />
+              </div>
             ) : (
               <div className="w-[45px] h-[45px] rounded-full bg-gray-200 flex items-center justify-center">
                 <svg width="22" height="22" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" fill="#bdbdbd"/><rect x="6" y="16" width="12" height="4" rx="2" fill="#bdbdbd"/></svg>
               </div>
             )}
             <div className="flex-col">
-              <span className="font-medium text-gray-900 text-sm leading-none">{article.user.name}</span>
+              <span className="font-medium text-gray-900 text-sm leading-none">{author.name}</span>
               <div className="flex items-center text-gray-500 ">
-                <span className="text-sm">{formatDate(article.publish_date)}</span>
+                <span className="text-sm">{formatDate(publishedDate)}</span>
                 <Dot size={30} className="mx-1 text-black" />
-                <span className="text-sm">{article.reading_time ? `${article.reading_time} min read` : ''}</span>
+                <span className="text-sm">{readTime}</span>
               </div>
             </div>
           </div>

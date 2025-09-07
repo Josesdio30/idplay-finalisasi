@@ -1,19 +1,21 @@
 import React from 'react';
-import { dummyCategories, type Category, type Article } from '@/data/dummyData';
+import { type Category, type Article } from '@/types/article';
 import ArticleGrid from './ArticleGrid';
 
 interface ArticlesByCategoryProps {
   articlesByCategory: { [key: number]: Article[] };
+  categories: Category[];
   onCategoryFilter: (categoryId: number) => void;
 }
 
 const ArticlesByCategory: React.FC<ArticlesByCategoryProps> = ({
   articlesByCategory,
+  categories,
   onCategoryFilter
 }) => {
   return (
     <div className="space-y-16">
-      {dummyCategories
+      {categories
         .filter((category) => articlesByCategory[category.id]?.length > 0)
         .map((category: Category) => (
           <div key={category.id}>
@@ -22,9 +24,6 @@ const ArticlesByCategory: React.FC<ArticlesByCategoryProps> = ({
                 <h2 className="text-3xl font-bold text-gray-900">{category.name}</h2>
                 <div className="w-20 h-1 bg-blue-600 mt-2"></div>
               </div>
-              {/* <span className="text-sm text-gray-500 bg-gray-100 px-4 py-2 rounded-full">
-                {articlesByCategory[category.id].length} articles
-              </span> */}
             </div>
 
             <ArticleGrid

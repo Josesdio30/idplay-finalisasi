@@ -1,5 +1,5 @@
 import React from 'react';
-import { type Article } from '@/data/dummyData';
+import { type Article } from '@/types/article';
 import ArticleCard from '../cards/ArticleCard';
 
 interface ArticleGridProps {

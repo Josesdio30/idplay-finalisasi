@@ -1,14 +1,15 @@
 'use client';
 
 import React, { useState } from 'react';
-import { dummyArticles } from '../../data/dummyData';
-import { useArticleFilter } from '@/hooks/useArticleFilter';
+import { useArticlesAPI } from '@/hooks/useArticlesAPI';
+import { getFeaturedArticles } from '@/lib/services/articleService';
+import { useEffect } from 'react';
+import { type Article } from '@/types/article';
 import BlogHeader from './_components/layout/BlogHeader';
 import FeaturedArticle from './_components/cards/FeaturedArticle';
 import ArticleGrid from './_components/layout/ArticleGrid';
-import ArticlesByCategory from './_components/layout/ArticlesByCategory';
 import LoadingSkeleton from './_components/detail/LoadingSkeleton';
-import Pagination from './_components/navigation/Pagination';
+import LoadMoreButton from './_components/navigation/LoadMoreButton';
 import EmptyState from './_components/layout/EmptyState';
 import CategoryFilter from './_components/filters/CategoryFilter';
 
@@ -16,45 +17,77 @@ const Blog: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
-  const articlesPerPage = 9;
+  const [featuredArticle, setFeaturedArticle] = useState<Article | null>(null);
+  const [hasInitialLoad, setHasInitialLoad] = useState(false);
+  const articlesPerLoad = 9;
 
-  const { filteredArticles, articlesByCategory, totalPages, paginatedArticles } = useArticleFilter(
-    {
-      searchQuery,
-      selectedCategory
-    },
-    currentPage,
-    articlesPerPage
-  );
+  const { 
+    articles: filteredArticles,
+    displayedArticles, 
+    categories,
+    articlesByCategory, 
+    hasMore, 
+    loadMore, 
+    resetPagination,
+    totalArticles,
+    displayedCount,
+    loading: apiLoading,
+    error,
+    refetch
+  } = useArticlesAPI({
+    searchQuery,
+    selectedCategory,
+    articlesPerLoad
+  });
+
+  // Track initial load completion
+  useEffect(() => {
+    if (!apiLoading && filteredArticles.length >= 0) {
+      setHasInitialLoad(true);
+    }
+  }, [apiLoading, filteredArticles.length]);
+
+  // Fetch featured article
+  useEffect(() => {
+    const fetchFeaturedArticle = async () => {
+      try {
+        const featured = await getFeaturedArticles(1);
+        if (featured.length > 0) {
+          setFeaturedArticle(featured[0]);
+        }
+      } catch (error) {
+        console.error('Error fetching featured article:', error);
+      }
+    };
+
+    fetchFeaturedArticle();
+  }, []);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    setCurrentPage(1);
+    resetPagination();
     setTimeout(() => setIsLoading(false), 500);
   };
 
   const handleCategoryFilter = (categoryId: number | null) => {
     setSelectedCategory(categoryId);
-    setCurrentPage(1);
+    resetPagination();
     setIsLoading(true);
     setTimeout(() => setIsLoading(false), 300);
   };
 
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+  const handleLoadMore = () => {
+    setIsLoading(true);
+    setTimeout(() => {
+      loadMore();
+      setIsLoading(false);
+    }, 500);
   };
 
-  const handleClearFilters = () => {
-    setSearchQuery('');
-    setSelectedCategory(null);
-    setCurrentPage(1);
-  };
+  const isAppLoading = isLoading || apiLoading;
 
   return (
-    // <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 font-sans">
     <div className="min-h-screen font-sans bg-white mb-24">
       <BlogHeader
         searchQuery={searchQuery}
@@ -63,48 +96,61 @@ const Blog: React.FC = () => {
         onSearchChange={setSearchQuery}
         onSearchSubmit={handleSearch}
         onCategoryChange={handleCategoryFilter}
-        isLoading={isLoading}
+        isLoading={isAppLoading}
       />
 
       <main>
         <section className="">
           <div className="container mx-auto px-4">
-            {currentPage === 1 && (
-              <FeaturedArticle article={dummyArticles[0]} />
+            {featuredArticle && (
+              <FeaturedArticle article={featuredArticle} />
             )}
-            {isLoading ? (
+            
+            {/* Category filter */}
+            <div className="flex justify-start mb-8">
+              <CategoryFilter
+                selectedCategory={selectedCategory}
+                onCategoryChange={handleCategoryFilter}
+                categories={categories}
+              />
+            </div>
+            
+            {!hasInitialLoad || (isAppLoading && displayedCount === 0) ? (
               <div className="space-y-16">
                 <LoadingSkeleton />
+              </div>
+            ) : error ? (
+              <div className="text-center py-16">
+                <div className="text-red-600 mb-4">Error: {error}</div>
+                <button
+                  onClick={refetch}
+                  className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+                >
+                  Try Again
+                </button>
               </div>
             ) : filteredArticles.length > 0 ? (
               <>
                 <div className="space-y-16">
-                  {/* category filter */}
-                  <div className="flex justify-start mb-8">
-                    <CategoryFilter
-                      selectedCategory={selectedCategory}
-                      onCategoryChange={handleCategoryFilter}
-                    />
-                  </div>
-
                   {/* show all articles */}
                   <ArticleGrid
-                    articles={paginatedArticles}
+                    articles={displayedArticles}
                     showCategory={true}
                   />
                 </div>
 
-                {/* <Pagination
-                  currentPage={currentPage}
-                  totalPages={totalPages}
-                  onPageChange={handlePageChange}
-                /> */}
+                <LoadMoreButton
+                  onLoadMore={handleLoadMore}
+                  isLoading={isAppLoading}
+                  hasMore={hasMore}
+                  totalArticles={totalArticles}
+                  displayedArticles={displayedCount}
+                />
               </>
             ) : (
               <EmptyState
                 searchQuery={searchQuery}
                 selectedCategory={selectedCategory}
-                onClearFilters={handleClearFilters}
               />
             )}
           </div>

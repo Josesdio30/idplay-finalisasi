@@ -1,11 +1,15 @@
 import React from 'react';
-import { FaShare, FaFacebook, FaTwitter, FaLinkedin } from 'react-icons/fa';
+import Image from 'next/image';
+import { FaShare, FaFacebook, FaLinkedin } from 'react-icons/fa';
 import { FaXTwitter } from 'react-icons/fa6';
-import { type Article } from '@/data/dummyData';
+import { type Article } from '@/types/article';
 import { sharePlatforms, getShareUrl } from '@/lib/shareUtils';
+import { resolveAvatarUrl } from '@/lib/services/imageService';
+import { getContentType, getContentText, type ContentType } from '@/lib/contentTypeUtils';
 
 interface ShareSectionProps {
   article: Article;
+  contentType?: ContentType;
 }
 
 interface ShareButtonProps {
@@ -45,31 +49,82 @@ const ShareButton: React.FC<ShareButtonProps> = ({ platform, url, title }) => {
   );
 };
 
-const ShareSection: React.FC<ShareSectionProps> = ({ article }) => {
-  const articleUrl = `https://idplay.co.id/article/${article.slug}`;
+const ShareSection: React.FC<ShareSectionProps> = ({ article, contentType }) => {
+  const detectedType = getContentType(contentType);
+  
+  const contentText = getContentText(detectedType);
+  
+  const articleUrl = detectedType === 'news' 
+    ? `https://idplay.co.id/news/${article.slug}`
+    : `https://idplay.co.id/article/${article.slug}`;
+  
+  const authorData = (article as any).author ?? (article as any).user;
+  const avatarData = authorData?.avatar;
+  const avatar = resolveAvatarUrl(avatarData);
+  const authorName = authorData?.name ?? 'Admin IdPlay';
+  const authorInterest = authorData?.interest ?? 'Content Writer';
+  const authorDescription = authorData?.description ?? '';
 
   return (
-    <div className="mt-12 bg-white rounded-xl p-6 shadow-sm">
-      <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-        <FaShare className="text-orange-500" />
-        Bagikan Artikel
-      </h3>
-      <div className="flex gap-4">
-        <ShareButton
-          platform="facebook"
-          url={articleUrl}
-          title={article.title}
-        />
-        <ShareButton
-          platform="x"
-          url={articleUrl}
-          title={article.title}
-        />
-        <ShareButton
-          platform="linkedin"
-          url={articleUrl}
-          title={article.title}
-        />
+    <div className="max-w-4xl mx-auto">
+      <div className="my-12 py-8 border-t border-gray-200">
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-lg font-semibold text-gray-900">
+            {contentText.shareTitle}
+          </h3>
+          <div className="flex gap-3">
+            <ShareButton
+              platform="facebook"
+              url={articleUrl}
+              title={article.title}
+            />
+            <ShareButton
+              platform="x"
+              url={articleUrl}
+              title={article.title}
+            />
+            <ShareButton
+              platform="linkedin"
+              url={articleUrl}
+              title={article.title}
+            />
+          </div>
+        </div>
+        
+        {/* Author info */}
+        <div className="bg-gray-50 rounded-xl p-6 mt-8">
+          <div className="flex items-center gap-4">
+            {avatar ? (
+              <div className="relative w-16 h-16 rounded-full overflow-hidden bg-gray-100">
+                <Image
+                  src={avatar}
+                  alt={authorName}
+                  width={80}
+                  height={80}
+                  className="absolute inset-0 w-full h-full object-cover"
+                />
+              </div>
+            ) : (
+              <div className="w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center">
+                <svg width="24" height="24" fill="none" viewBox="0 0 24 24">
+                  <circle cx="12" cy="8" r="4" fill="#9ca3af"/>
+                  <rect x="6" y="16" width="12" height="4" rx="2" fill="#9ca3af"/>
+                </svg>
+              </div>
+            )}
+            <div className="flex-1">
+              <h4 className="font-semibold text-gray-900 text-lg mb-1">
+                {authorName}
+              </h4>
+              <p className="text-gray-600 mb-2">
+                {authorInterest}
+              </p>
+              <p className="text-gray-700 text-sm">
+                {authorDescription}
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

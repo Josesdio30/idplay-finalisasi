@@ -72,8 +72,8 @@ export default function Kategori() {
         </div>
       </section>
 
-      {/* Broadband Facts Cards */}
-      <ProductFacts />
+      {/* Broadband Facts Cards - Retail/Rumah */}
+      <ProductFacts customerType="Retail" />
 
       {/* Compare Product Section */}
       <CompareProduct />

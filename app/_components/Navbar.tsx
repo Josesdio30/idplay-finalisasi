@@ -19,10 +19,24 @@ const menuItems = [
     subItems: [
       { label: 'Rumah', href: '/kategori/rumah' },
       { label: 'Bisnis', href: '/kategori/bisnis' },
-      { label: 'Add-ons', href: '/kategori/add-ons' },
+      // { label: 'Add-ons', href: '/kategori/add-ons' },
     ],
   },
-  { label: 'Berita & Informasi', href: '/article', hasDropdown: false }, // sementara false, menunggu subitem
+  { 
+    label: 'Berita & Informasi', 
+    // href: '/article', 
+    hasDropdown: true, 
+    subItems: [
+      {
+        label: 'Blog & Artikel',
+        href: '/article',
+      },
+      {
+        label: 'Berita',
+        href: '/news',
+      }
+    ]
+  }, 
   { label: 'Regional', href: '/regional', hasDropdown: false } // sementara false, menunggu subitem
 ];
 
@@ -151,18 +165,22 @@ const Navbar = () => {
                 </div>
               );
             }
-            return (
-              <Link
-                key={item.label}
-                href={item.href}
-                className={clsx(
-                  'text-gray-700 hover:text-orange-500 transition-colors flex items-center',
-                  isActive && 'text-orange-500'
-                )}
-              >
-                {item.label}
-              </Link>
-            );
+            // Only render Link if item.href exists
+            if (item.href) {
+              return (
+                <Link
+                  key={item.label}
+                  href={item.href}
+                  className={clsx(
+                    'text-gray-700 hover:text-orange-500 transition-colors flex items-center',
+                    isActive && 'text-orange-500'
+                  )}
+                >
+                  {item.label}
+                </Link>
+              );
+            }
+            return null;
           })}
         </div>
 
@@ -290,19 +308,23 @@ const Navbar = () => {
                 </div>
               );
             }
-            return (
-              <Link
-                key={item.label}
-                href={item.href}
-                className={clsx(
-                  'transition-colors flex items-center',
-                  isActive ? 'text-orange-500' : 'hover:text-orange-500'
-                )}
-                onClick={toggleMenu}
-              >
-                {item.label}
-              </Link>
-            );
+            // Only render Link if item.href exists
+            if (item.href) {
+              return (
+                <Link
+                  key={item.label}
+                  href={item.href}
+                  className={clsx(
+                    'transition-colors flex items-center',
+                    isActive ? 'text-orange-500' : 'hover:text-orange-500'
+                  )}
+                  onClick={toggleMenu}
+                >
+                  {item.label}
+                </Link>
+              );
+            }
+            return null;
           })}
           
           <div className="flex items-center space-x-4 pt-4 border-t border-gray-200 w-full justify-center">

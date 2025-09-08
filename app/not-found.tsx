@@ -19,7 +19,6 @@ export default function NotFound() {
             Sorry, the page you are looking for doesn't exist. Here are some helpful links:
           </p>
           
-          {/* Button Actions */}
           <div className="flex flex-row gap-3 max-[540px]:flex-col">
             <div className="flex-initial max-[540px]:flex-auto">
               <Button size="lg" asChild className="px-8 py-3 bg-green-600 text-white font-medium">

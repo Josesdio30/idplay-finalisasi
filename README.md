@@ -277,4 +277,4 @@ npm run type-check
 
 ## 📄 License
 
-This project is proprietary software. All rights reserved.
+This project is proprietary software. All rights reserved. 

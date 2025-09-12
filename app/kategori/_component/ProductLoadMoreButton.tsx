@@ -21,14 +21,14 @@ const ProductLoadMoreButton: React.FC<ProductLoadMoreButtonProps> = ({
 
   return (
     <div className="flex flex-col items-center mt-16 space-y-4">
-      <div className="text-sm text-gray-500">
+      {/* <div className="text-sm text-gray-500">
         Menampilkan {displayedProducts} dari {totalProducts > 0 ? totalProducts : 'banyak'} produk
-      </div>
+      </div> */}
       <Button
         onClick={onLoadMore}
         disabled={isLoading}
         size="lg"
-        className="px-8 py-3 bg-green-600 hover:bg-green-700 text-white font-medium"
+        className="px-12 py-5 bg-green-600 hover:bg-green-700 text-white font-bold text-lg rounded-lg"
       >
         {isLoading ? (
           <>

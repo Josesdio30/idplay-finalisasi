@@ -1,11 +1,13 @@
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
+import qs from 'qs';
 import ProductLoadMoreButton from './ProductLoadMoreButton';
 
+export type RegionType = string;
 interface ProductFactsProps {
   customerType?: 'Retail' | 'NON_RETAIL' | '';
   productType?: 'PROMO' | 'NORMAL';
-  region?: 'JABODETABEK' | 'JABAR' | 'JATENG' | 'JATIMBALINUSRA' | 'SULAWESI' | 'KALIMANTAN' | 'BANTEN';
+  region?: RegionType;
   productQuery?: string;
   zipCode?: string;
 }
@@ -26,45 +28,39 @@ const ProductFacts: React.FC<ProductFactsProps> = ({
   const PRODUCTS_PER_PAGE = 6;
 
   useEffect(() => {
-    fetchAllProducts(); // Fetch semua produk
+    fetchAllProducts();
   }, [customerType, productType, region, productQuery, zipCode]);
 
   const buildApiUrl = () => {
     const baseUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/common/products`;
-    const params = new URLSearchParams();
     
-    // Required parameters
-    params.append('offset', '1');
-    params.append('customer_type', customerType);
-    params.append('product_type', productType);
-    params.append('region', region);
-    
-    // Optional parameters
-    if (productQuery) {
-      params.append('product_query', productQuery);
-    }
-    if (zipCode) {
-      params.append('zip_code', zipCode);
-    }
-    
-    return `${baseUrl}?${params.toString()}`;
+    const params = {
+      offset: 1,
+      list_per_page: 100000,
+      customer_type: customerType,
+      product_type: productType,
+      region: region,
+      product_query: productQuery,
+      zip_code: zipCode,
+    };
+
+    const queryString = qs.stringify(params, { skipNulls: true });
+
+    return `${baseUrl}?${queryString}`;
   };
 
   const fetchAllProducts = async () => {
     try {
       setLoading(true);
-      
       const apiUrl = buildApiUrl();
       const response = await fetch(apiUrl);
       const data = await response.json();
-      
       console.log(`API Response - All Products:`, {
         apiUrl,
         dataLength: data.data?.length,
         meta: data.meta,
         filters: { customerType, productType, region, productQuery, zipCode }
       });
-      
       if (data.data) {
         setAllProducts(data.data);
         setDisplayedProducts(data.data.slice(0, PRODUCTS_PER_PAGE));
@@ -79,13 +75,11 @@ const ProductFacts: React.FC<ProductFactsProps> = ({
 
   const handleLoadMore = () => {
     setLoadingMore(true);
-    
     setTimeout(() => {
       const nextPage = currentPage + 1;
-      const startIndex = 0;
       const endIndex = nextPage * PRODUCTS_PER_PAGE;
-      
-      setDisplayedProducts(allProducts.slice(startIndex, endIndex));
+
+      setDisplayedProducts(allProducts.slice(0, endIndex));
       setCurrentPage(nextPage);
       setLoadingMore(false);
     }, 500);
@@ -102,24 +96,56 @@ const ProductFacts: React.FC<ProductFactsProps> = ({
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {displayedProducts.map((product: any) => (
           <div key={product.ID} className="bg-white rounded-2xl shadow-lg overflow-hidden border border-transparent">
-            {/* Product Card */}
             <div className="flex items-center justify-center bg-orange-500 text-white px-4 py-6 sm:py-7 lg:py-9 text-center">
               <div className="text-[36px] sm:text-[40px] lg:text-[70px] tracking-[1%] leading-[45px] font-bold text-center">
-                {product.Product_Name.match(/Up To (\d+)/)?.[1] || 'N/A'}
+                {/* {product.Product_Name.match(/Up To (\d+)/)?.[1] || 'N/A'} */}
+                {product.Product_Name.match(/(\d+)\s*Mbps/)?.[1] || 'N/A'}
                 <span className="text-[16px] sm:text-[20px]">/Mbps</span>
               </div>
             </div>
-            <div className="relative flex flex-col justify-center items-center p-4 lg:p-6">
-              <div className="text-xl sm:text-2xl lg:text-[36px] tracking-[1%] leading-[45px] font-bold text-orange-500 mb-2 sm:mb-3 lg:mb-5">
+            {/* version 1 */}
+            {/* <div className="flex flex-col justify-center items-center p-4 lg:p-6">
+
+              <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-orange-500 mb-3 sm:mb-4 lg:mb-5 leading-tight">
                 Rp.{(product.Price * 12).toLocaleString('id-ID')}
-                <span className="text-[16px] sm:text-[20px]">/Tahun</span>
+                <span className="text-lg sm:text-xl">/Tahun</span>
               </div>
-              <img src="/icons/arrow-pricing.svg" alt="" width={65} height={65} className="size-[45px] sm:size-[55px] lg:size-[65px] absolute z-10 left-10 sm:left-12 lg:left-9 top-10 lg:top-13" />
-              <div className="text-base lg:text-[30px] tracking-[1%] leading-[26px] font-medium text-orange-700 mb-2">
+
+              <div className="flex items-center justify-center gap-x-2 sm:gap-x-4 mb-2">
+              <img 
+                src="/icons/arrow-pricing.svg" 
+                alt="arrow" 
+                className="size-10 sm:size-12 lg:size-16 relative -translate-y-3" 
+              />
+
+              <div className="text-xl sm:text-2xl lg:text-3xl font-medium text-orange-700 leading-tight">
                 Rp.{product.Price.toLocaleString('id-ID')}
-                <span className="text-[16px] sm:text-[20px]">/Bulan</span>
+                <span className="text-lg sm:text-xl">/Bulan</span>
               </div>
-              <p className="text-sm lg:text-[15px] tracking-[1%] leading-[26px] font-medium text-orange-500">Mau langganan setahun? Bisa dicicil, kok!</p>
+            </div>
+              
+              <p className="text-sm sm:text-base text-center font-medium text-orange-500">Mau langganan setahun? Bisa dicicil, kok!</p>
+            </div> */}
+            {/* version 2 */}
+            {/* Product Price */}
+            <div className="flex flex-col justify-center items-center p-4 lg:p-6">
+              <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-orange-500 mb-3 sm:mb-4 lg:mb-5 leading-tight">
+                Rp.{(product.Price * 12).toLocaleString('id-ID')}
+                <span className="text-lg sm:text-xl">/Tahun</span>
+              </div>
+              <div className="flex justify-center items-center w-full mb-2">
+              <img 
+                src="/icons/arrow-pricing.svg" 
+                alt="arrow" 
+                className="size-10 sm:size-12 lg:size-16 relative -translate-y-4" 
+              />
+              <div className="text-center text-xl sm:text-2xl lg:text-3xl font-medium text-orange-700 leading-tight mx-2 sm:mx-4">
+                Rp.{product.Price.toLocaleString('id-ID')}
+                <span className="text-lg sm:text-xl">/Bulan</span>
+              </div>
+                <div className="size-10 sm:size-12 lg:size-16"></div>
+              </div>
+              <p className="text-sm sm:text-base text-center font-medium text-orange-500">Mau langganan setahun? Bisa dicicil, kok!</p>
             </div>
             {/* Feature block */}
             <div className="mx-4 mb-4 rounded-xl bg-orange-50 border border-orange-100 p-4 text-black">
@@ -138,15 +164,14 @@ const ProductFacts: React.FC<ProductFactsProps> = ({
                 <span className="text-xs font-semibold">∞ Unlimited</span>
               </div>
             </div>
-            {/* Bottom action buttons */}
             <div className="px-4 pb-6 flex flex-col gap-3">
-              <button
+              {/* <button
                 className="w-full border border-orange-500 text-orange-600 hover:bg-orange-50 font-semibold py-3 rounded-lg flex items-center justify-center gap-2"
                 onClick={() => router.push('/kategori/rumah')}
               >
                 <span>Selengkapnya</span>
                 <span className="transition-transform">▾</span>
-              </button>
+              </button> */}
               <button
                 onClick={() => router.push('/entri-prospek')}
                 className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-lg flex items-center justify-center gap-2"
@@ -161,7 +186,6 @@ const ProductFacts: React.FC<ProductFactsProps> = ({
         ))}
       </div>
       
-      {/* Load More Button */}
       <ProductLoadMoreButton
         onLoadMore={handleLoadMore}
         isLoading={loadingMore}

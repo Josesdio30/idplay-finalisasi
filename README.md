@@ -207,29 +207,6 @@ docker build -t idplay .
 docker run -p 3000:3000 idplay
 ```
 
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit changes (`git commit -m 'Add amazing feature'`)
-4. Push to branch (`git push origin feature/amazing-feature`)
-5. Open Pull Request
-
-### Development Guidelines
-- Use TypeScript for all new code
-- Follow existing code patterns
-- Add proper error handling
-- Include tests for new features
-- Update documentation
-
-## 📚 Documentation
-
-- **[📖 Full Documentation](./DOCUMENTATION.md)** - Comprehensive project documentation
-- **[🔧 Development Setup](./DEVELOPMENT_SETUP.md)** - Development environment setup
-- **[📡 API Documentation](./API_DOCUMENTATION.md)** - API endpoints and integration
-- **[✨ Features List](./README_FEATURES.md)** - Detailed features documentation
-- **[🔗 Strapi Integration](./STRAPI_INTEGRATION.md)** - CMS integration guide
-
 ## 🐛 Troubleshooting
 
 ### Common Issues

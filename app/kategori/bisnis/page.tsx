@@ -1,59 +1,20 @@
 'use client';
 
+import { useState } from 'react';
 import Image from 'next/image';
-import { useState, useEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
-import CompareProduct from '../../_components/CompareProduct';
-import ProductFacts, { type RegionType } from '../_component/ProductFacts';
-
-interface RegionOption {
-  value: string;
-  label: string;
-}
+import CompareProduct from '@/app/_components/CompareProduct';
+import ProductFacts from '../_component/ProductFacts';
+import RegionSelector, { type RegionType } from '../_component/RegionSelector';
 
 export default function Kategori() {
-  const [regionOptions, setRegionOptions] = useState<RegionOption[]>([]);
   const [selectedRegion, setSelectedRegion] = useState<RegionType>('');
-  const [isLoadingRegions, setIsLoadingRegions] = useState(true);
-  const searchParams = useSearchParams();
 
-  useEffect(() => {
-    const fetchAndSetRegions = async () => {
-      try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_CMS_URL}/api/regionals/`);
-        const data = await response.json();
-        if (data.data && Array.isArray(data.data)) {
-          const formattedRegions: RegionOption[] = data.data.map((item: { region: string }) => ({
-            value: item.region.toUpperCase().replace(/ /g, ''),
-            label: item.region,
-          }));
-          setRegionOptions(formattedRegions);
-          // Ambil region dari query string jika ada, untuk case page regional
-          const regionFromQuery = searchParams.get('region');
-          if (regionFromQuery && formattedRegions.some(r => r.value === regionFromQuery)) {
-            setSelectedRegion(regionFromQuery);
-          } else if (formattedRegions.length > 0) {
-            setSelectedRegion(formattedRegions[0].value);
-          }
-        }
-      } catch (error) {
-        console.error('Error fetching regions:', error);
-      } finally {
-        setIsLoadingRegions(false);
-      }
-    };
-    fetchAndSetRegions();
-  }, []);
-
-  const handleRegionChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedRegion(event.target.value as RegionType);
-  };
   return (
     <div className="min-h-screen font-sans bg-white">
-      {/* Banner/Card Section for Bisnis */}
+      {/* Banner/Card Section */}
       <div className="relative container mx-auto lg:pt-14">
         <Image
-          src="/category/hero-bisnis.svg"
+          src="/category/hero-kategori.svg"
           width={1000}
           height={1000}
           alt="Kategori Bisnis"
@@ -111,34 +72,15 @@ export default function Kategori() {
           </div>
         </div>
       </section>
-
+      
       {/* Region Selection */}
       <div className="container mx-auto px-4">
-        <div className="mb-16 mt-6 flex flex-col items-center">
-            <label htmlFor="region-select" className="text-lg font-semibold text-gray-700 mb-2">
-              Pilih Wilayah Anda:
-            </label>
-            <select
-              id="region-select"
-              value={selectedRegion}
-              onChange={handleRegionChange}
-              disabled={isLoadingRegions}
-              className="w-full max-w-xs p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 bg-white"
-              style={{ background: 'white' }}
-            >
-              {isLoadingRegions ? (
-                <option style={{ background: 'white', color: '#888' }}>Memuat wilayah...</option>
-              ) : (
-                regionOptions.map(option => (
-                  <option key={option.value} value={option.value} style={{ background: 'white', color: '#222' }}>
-                    {option.label}
-                  </option>
-                ))
-              )}
-            </select>
-        </div>
+        <RegionSelector 
+          selectedRegion={selectedRegion} 
+          onRegionChange={setSelectedRegion} 
+        />
         
-        {/* Broadband Facts Cards - NON_RETAIL/Bisnis */}
+        {/* Broadband Facts Cards - Corporate/Bisnis */}
         {selectedRegion && (
             <ProductFacts customerType="NON_RETAIL" region={selectedRegion} />
         )}

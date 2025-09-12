@@ -1,11 +1,4 @@
-# IDPlay - Internet Service Provider Website
-
-> Modern, responsive website for IDPlay Internet Service Provider built with Next.js 15, TypeScript, and Tailwind CSS.
-
-[![Next.js](https://img.shields.io/badge/Next.js-15-black?style=flat-square&logo=next.js)](https://nextjs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind-3-38B2AC?style=flat-square&logo=tailwind-css)](https://tailwindcss.com/)
-[![Strapi](https://img.shields.io/badge/Strapi-CMS-blueviolet?style=flat-square&logo=strapi)](https://strapi.io/)
+# IDPlay
 
 ## 🌟 Features
 
@@ -20,7 +13,7 @@
 ### 📝 **Content Management**
 - **Blog System** dengan kategori dan pencarian
 - **News & Press Releases** dengan featured content
-- **Dynamic Content** dari Strapi CMS
+- **Dynamic Content** CMS
 - **SEO Optimized** dengan static generation
 - **Content Sharing** ke social media
 
@@ -84,7 +77,7 @@ NEXT_PUBLIC_GOOGLE_API_KEY=your-google-api-key
 - **Animations**: Framer Motion
 
 ### Backend Integration
-- **CMS**: Strapi (Headless CMS)
+- **CMS**: (Headless CMS)
 - **API**: RESTful APIs
 - **Authentication**: JWT Token
 - **Maps**: Google Maps API, Leaflet
@@ -172,7 +165,7 @@ npm run test:watch # Run tests in watch mode
 - `/api/subscription/*` - Subscription management
 
 ### External APIs
-- **Strapi CMS** - Content management
+- **CMS** - Content management
 - **Google Maps** - Location services
 - **Main Backend** - Business logic APIs
 

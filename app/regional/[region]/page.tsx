@@ -238,7 +238,7 @@ const RegionalPageDetail = () => {
                   <div className="px-4 pb-6 flex flex-col gap-3">
                     <button
                       className="w-full border border-orange-500 text-orange-600 hover:bg-orange-50 font-semibold py-3 rounded-lg flex items-center justify-center gap-2"
-                      onClick={() => router.push('/kategori/rumah')}
+                      onClick={() => router.push(`/kategori/rumah?region=${encodeURIComponent(region ?? '')}`)}
                     >
                       <span>Selengkapnya</span>
                       <span className="transition-transform">▾</span>

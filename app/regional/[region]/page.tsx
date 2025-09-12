@@ -10,6 +10,9 @@ import {
   CarouselPrevious
 } from '@/components/ui/carousel';
 import Autoplay from 'embla-carousel-autoplay';
+import ArticleCard from '@/app/article/_components/cards/ArticleCard';
+import { type Article } from '@/types/article';
+
 
 interface BannerImage {
   id: number;
@@ -42,30 +45,43 @@ const RegionalPageDetail = () => {
   const [regionData, setRegionData] = useState<any | null>(null);
   const [banners, setBanners] = useState<BannerData[]>([]);
   const [products, setProducts] = useState<ProductData[]>([]);
+  const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentSlide, setCurrentSlide] = useState(0);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch region data based on region name
         if (region) {
-          const regionResponse = await fetch(`https://inspiring-power-f8fa08a4a5.strapiapp.com/api/regionals?filters[region][$eq]=${encodeURIComponent(region)}`);
+          const regionResponse = await fetch(`${process.env.NEXT_PUBLIC_CMS_URL}/api/regionals?filters[region][$eq]=${encodeURIComponent(region)}`);
           const regionDataResult = await regionResponse.json();
           if (regionDataResult.data.length > 0) {
             setRegionData(regionDataResult.data[0]);
           }
-
-          // Fetch banners based on selected region
-          const bannerResponse = await fetch(`https://inspiring-power-f8fa08a4a5.strapiapp.com/api/regional-banners?filters[regional][region][$eq]=${encodeURIComponent(region)}&populate=image`);
+          const bannerResponse = await fetch(`${process.env.NEXT_PUBLIC_CMS_URL}/api/regional-banners?filters[regional][region][$eq]=${encodeURIComponent(region)}&populate=image`);
           const bannerData = await bannerResponse.json();
           if (bannerData.data) {
             setBanners(bannerData.data);
           }
-        }
-
-        // Fetch product data based on selected region
-        if (region) {
+          const articleResponse = await fetch(
+            `${process.env.NEXT_PUBLIC_CMS_URL}/api/articles?filters[regionals][region][$eq]=${encodeURIComponent(region)}&populate[author]=true&populate[category]=true&populate[thumbnail]=true&populate[regionals]=true`
+          );
+          const articleData = await articleResponse.json();
+          if (articleData.data) {
+            const mappedArticles: Article[] = articleData.data.map((item: any) => ({
+              id: item.id,
+              documentId: item.documentId,
+              title: item.title,
+              slug: item.slug,
+              description: item.description,
+              content: item.content,
+              publishedAt: item.publishedAt,
+              category: item.category ? { name: item.category.name, slug: item.category.slug } : null,
+              author: item.author ? { name: item.author.name, avatar: item.author.avatar?.url || null } : null,
+              thumbnail: item.thumbnail ? { formats: item.thumbnail.formats } : null,
+            }));
+            setArticles(mappedArticles);
+          }
           const productResponse = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/common/products?offset=1&list_per_page=100000&customer_type=Retail&product_type=NORMAL&region=${encodeURIComponent(region)}`);
           const productData = await productResponse.json();
           if (productData.data) {
@@ -98,7 +114,7 @@ const RegionalPageDetail = () => {
   }
 
   return (
-    <div className="min-h-screen space-y-8"> {/* Gap konsisten antar section */}
+    <div className="min-h-screen space-y-8">
       {/* Hero Section with Banner Slider */}
       <div className="relative w-full overflow-hidden pb-8">
         <div
@@ -106,7 +122,7 @@ const RegionalPageDetail = () => {
           style={{ transform: `translateX(-${currentSlide * 100}%)` }}
         >
           {banners.length > 0 ? (
-            banners.map((banner, index) => (
+            banners.map((banner) => (
               <div key={banner.documentId} className="w-full flex-shrink-0">
                 <div className="w-full bg-gray-100 flex items-center justify-center">
                   <img
@@ -172,15 +188,8 @@ const RegionalPageDetail = () => {
       {/* Product Section */}
       <div className="container mx-auto px-4 lg:px-8">
         <Carousel
-          plugins={[
-            Autoplay({
-              delay: 3000
-            })
-          ]}
-          opts={{
-            align: 'start',
-            loop: true
-          }}
+          plugins={[Autoplay({ delay: 3000 })]}
+          opts={{ align: 'start', loop: true }}
           className="w-full mb-12"
         >
           <CarouselContent>
@@ -258,48 +267,24 @@ const RegionalPageDetail = () => {
         <h2 className="text-2xl font-semibold mb-6">Artikel</h2>
         <p className="text-gray-700 mb-6">Biarakan Customer yang Menilai Produk Kita!</p>
         <Carousel
-          plugins={[
-            Autoplay({
-              delay: 3000
-            })
-          ]}
-          opts={{
-            align: 'start',
-            loop: true
-          }}
+          plugins={[Autoplay({ delay: 3000 })]}
+          opts={{ align: 'start', loop: true }}
           className="w-full mb-12"
         >
           <CarouselContent>
-            {[
-              {
-                title: 'Tips & Tricks',
-                description: 'Apa rencana internet rumah yang tepat untuk Anda?',
-                content: '"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare."'
-              },
-              {
-                title: 'Tips & Tricks',
-                description: 'Apa rencana internet rumah yang tepat untuk Anda?',
-                content: '"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare."'
-              },
-              {
-                title: 'Tips & Tricks',
-                description: 'Apa rencana internet rumah yang tepat untuk Anda?',
-                content: '"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare."'
-              }
-            ].map((article, index) => (
-              <CarouselItem key={index} className="basis-full md:basis-1/2 lg:basis-1/3">
-                <div className="bg-gray-100 p-4 rounded-lg h-full flex flex-col justify-between">
-                  <div>
-                    <h3 className="text-lg font-semibold mb-2">{article.title}</h3>
-                    <p className="text-gray-700 mb-2">{article.description}</p>
-                    <p className="text-gray-700">{article.content}</p>
-                  </div>
-                  <button className="mt-4 bg-orange-500 text-white py-2 px-4 rounded hover:bg-orange-600">
-                    Learn More +
-                  </button>
+            {articles.length > 0 ? (
+              articles.map((article) => (
+                <CarouselItem key={article.documentId} className="basis-full md:basis-1/2 lg:basis-1/3">
+                  <ArticleCard article={article} showCategory={true} />
+                </CarouselItem>
+              ))
+            ) : (
+              <CarouselItem className="basis-full">
+                <div className="bg-gray-100 p-4 rounded-lg h-full flex items-center justify-center">
+                  <p className="text-gray-700">No articles available</p>
                 </div>
               </CarouselItem>
-            ))}
+            )}
           </CarouselContent>
           <CarouselPrevious className="left-2" />
           <CarouselNext className="right-2" />

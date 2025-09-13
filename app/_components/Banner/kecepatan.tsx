@@ -57,56 +57,41 @@ const KecepatanBanner = ({
     <>
       {!startedQuiz && (
         <div className="bg-gradient-to-b from-[#B0DEC8] to-[#00934C] relative rounded-2xl overflow-hidden shadow-2xl h-[350px] lg:h-[700px]">
-          <div className="bg-gradient-to-b from-[#B0DEC8] to-[#00934C] relative rounded-2xl overflow-hidden shadow-2xl h-[350px] lg:h-[700px]">
-            <div className="relative flex justify-end z-10 h-full">
-              {startedQuiz && (
-                <button
-                  className="absolute right-6 lg:right-6 top-4 lg:top-6 cursor-pointer z-20"
-                  onClick={() => {
-                    setActiveTab('default');
-                    setStartedQuiz(false);
-                    resetQuiz();
-                  }}
+          <div className="relative flex justify-start z-10 h-full">
+            <div className="flex items-center justify-start px-4 lg:px-6 lg:basis-2/3 py-6 lg:py-24 text-left h-full">
+              <div>
+                <h3 className="text-lg lg:text-4xl lg:leading-[59px] tracking-[3%] font-bold text-white">
+                  Kecepatan berapa yang cocok untuk Anda?
+                </h3>
+                <p className="text-sm lg:text-3xl mt-5 text-white font-extralight lg:leading-[59px] lg:tracking-[3%]">
+                  Jawablah pertanyaan berikut untuk <br /> mengetahui paket Fiber mana yang
+                  terbaik <br />
+                  untuk rumah Anda.
+                </p>
+                <p className="text-xs font-light mt-4 text-white">
+                  Ketersediaan terbatas di area tertentu.
+                </p>
+                <Button
+                  className="bg-white text-green-700 hover:bg-green-100 mt-4 "
+                  onClick={() => setStartedQuiz(true)}
                 >
-                  <X className="w-8 h-8 lg:w-12 lg:h-12 text-green-700" />
-                </button>
-              )}
-              <div className="flex items-center justify-end space-y-6 px-4 lg:px-6 lg:basis-2/3 py-6 lg:py-24 text-right h-full">
-                <div className="">
-                  <h3 className="text-lg lg:text-4xl lg:leading-[59px] tracking-[3%] font-bold text-white">
-                    Kecepatan berapa yang cocok untuk Anda?
-                  </h3>
-                  <p className="text-sm lg:text-3xl mt-5 text-white font-extralight lg:leading-[59px] lg:tracking-[3%]">
-                    Jawablah pertanyaan berikut untuk <br /> mengetahui paket Fiber mana yang
-                    terbaik <br />
-                    untuk rumah Anda.
-                  </p>
-                  <p className="text-xs font-light mt-4 text-white">
-                    Ketersediaan terbatas di area tertentu.
-                  </p>
-                  <Button
-                    className="bg-white text-green-700 hover:bg-green-100 mt-4 "
-                    onClick={() => setStartedQuiz(true)}
-                  >
-                    Ikuti Kuisnya!
-                  </Button>
-                </div>
+                  Ikuti Kuisnya!
+                </Button>
               </div>
             </div>
           </div>
-          {/* Background decorative elements */}
-          <div className="block absolute bottom-0 left-0 w-full h-auto z-0">
-            {/* Grid pattern */}
+          <div className="absolute bottom-0 right-0 z-0 pointer-events-none">
             <Image
               src="/imgs/house.png"
-              width={1000}
-              height={1000}
+              width={764}
+              height={764}
               alt=" "
-              className="w-full max-w-[250px] lg:max-w-[764px] h-auto object-contain"
+              className="max-w-[250px] lg:max-w-[764px] h-auto object-contain transform scale-x-[-1]"
             />
           </div>
         </div>
       )}
+
       {startedQuiz && (
         <div className="bg-[#B0DEC8] relative rounded-2xl overflow-hidden shadow-2xl h-[350px] lg:h-[700px]">
           <div className="bg-[#B0DEC8] relative rounded-2xl overflow-hidden shadow-2xl h-[350px] lg:h-[700px]">
@@ -135,9 +120,7 @@ const KecepatanBanner = ({
 
               {!showQuizResult && (
                 <>
-                  {/* Left side - Quiz Question */}
                   <div className="row-start-2 col-start-1 lg:col-span-2 lg:row-start-1 lg:col-start-1 space-y-6 px-4 lg:px-[100px] py-4 lg:py-24">
-                    {/* Progress indicator */}
                     <div className="mb-2 lg:mb-8">
                       <div
                         className="grid gap-2 mb-4"

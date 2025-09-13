@@ -59,11 +59,6 @@ const DefaultBanner = ({ setShowBanner }: IProps) => {
                   <MdEmail className="w-2 h-2 lg:w-4 lg:h-4" />
                   Subscribe Now
                 </Button>
-
-                <Button className="rounded-full bg-white hover:bg-orange-100 text-orange-500 border border-orange-500 h-auto lg:h-9 px-2 lg:px-8 py-1 lg:py-3 font-medium transition-colors flex items-center justify-center gap-1 lg:gap-2 text-[10px] lg:text-base">
-                  <FaPhone className="w-2 h-2 lg:w-4 lg:h-4" />
-                  Call Center
-                </Button>
               </div>
             </div>
           </div>

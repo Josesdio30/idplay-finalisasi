@@ -22,18 +22,25 @@ const ArticleDetailHeader: React.FC<ArticleDetailHeaderProps> = ({ article, cont
   
   const detectedType = getContentType(contentType);
   
-  const categoryName = (article as any).category?.name || 'Umum';
-  const showCategory = detectedType === 'article' && categoryName;
+  const categories = article.categories || [];
+  const showCategories = detectedType === 'article' && categories.length > 0;
 
   return (
     <div className="max-w-4xl mx-auto">
       <header className="mb-12">
-        {/* Category Badge - Only show for articles */}
-        {showCategory && (
+        {/* Category Badges - Only show for articles */}
+        {showCategories && (
           <div className="mb-6">
-            <span className="inline-flex items-center px-3 py-1 rounded-full text-md font-medium bg-orange-200 text-green-700 border border-orange-200">
-              {categoryName}
-            </span>
+            <div className="flex flex-wrap gap-2">
+              {categories.map((category, index) => (
+                <span 
+                  key={index} 
+                  className="inline-flex items-center px-3 py-1 rounded-full text-md font-medium bg-orange-200 text-green-700 border border-orange-200"
+                >
+                  {category.name}
+                </span>
+              ))}
+            </div>
           </div>
         )}
 
@@ -72,20 +79,27 @@ const ArticleDetailHeader: React.FC<ArticleDetailHeaderProps> = ({ article, cont
             )}
             <div>
               <div className="font-semibold text-gray-900">{authorName}</div>
-              <div className="flex items-center text-sm text-gray-600">
-                <span>{authorInterest}</span>
-                {published && (
-                  <>
-                    <Dot size={20} className="mx-1" />
+              <div className="flex flex-col sm:flex-row sm:items-center text-sm sm:text-sm text-gray-600 gap-1 sm:gap-2 sm:text-left">
+                {/* Mobile: satu per baris tanpa dot */}
+                <span className="sm:hidden mt-1">{authorInterest}</span>
+                {/* Mobile: published dot readtime satu baris */}
+                {published && detectedType === 'article' && (
+                  <span className="sm:hidden flex items-center justify-center">
                     <span>{formatDate(published)}</span>
-                  </>
-                )}
-                {detectedType === 'article' && (
-                  <>
-                    <Dot size={20} className="mx-1" />
+                    <Dot size={16} className="mx-1" />
                     <span>{readTime}</span>
-                  </>
+                  </span>
                 )}
+                {/* Jika hanya published (bukan article), tampilkan sendiri */}
+                {published && detectedType !== 'article' && (
+                  <span className="sm:hidden mt-1">{formatDate(published)}</span>
+                )}
+                {/* Desktop: inline dengan dot */}
+                <div className="hidden sm:flex items-center gap-2">
+                  <span>{authorInterest}</span>
+                  {published && <><Dot size={16} className="mx-1" /><span>{formatDate(published)}</span></>}
+                  {detectedType === 'article' && <><Dot size={16} className="mx-1" /><span>{readTime}</span></>}
+                </div>
               </div>
             </div>
           </div>

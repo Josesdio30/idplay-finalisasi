@@ -70,8 +70,28 @@ const RelatedArticles: React.FC<RelatedArticlesProps> = ({ currentArticle, relat
 
                   {/* Category */}
                   {detectedType === 'article' && (
-                    <div className="text-sm text-orange-500 font-medium">
-                      {(article as any).category?.name || contentText.badgeText}
+                    <div className="flex flex-wrap gap-1 mb-2">
+                      {article.categories && article.categories.length > 0 ? (
+                        <>
+                          {article.categories.slice(0, 2).map((category, index) => (
+                            <span 
+                              key={category.id} 
+                              className="text-xs font-medium text-orange-600 bg-orange-50 px-2 py-1 rounded-full"
+                            >
+                              {category.name}
+                            </span>
+                          ))}
+                          {article.categories.length > 2 && (
+                            <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
+                              +{article.categories.length - 2}
+                            </span>
+                          )}
+                        </>
+                      ) : (
+                        <span className="text-xs font-medium text-gray-600 bg-gray-100 px-2 py-1 rounded-full">
+                          {contentText.badgeText}
+                        </span>
+                      )}
                     </div>
                   )}
 

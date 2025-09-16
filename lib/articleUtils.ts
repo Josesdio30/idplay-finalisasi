@@ -21,6 +21,23 @@ export const getCategoryName = (categoryId: number, categories?: Category[]): st
   return categories.find((cat) => cat.id === categoryId)?.name || 'Unknown';
 };
 
+export const getCategoryNames = (article: { categories?: Category[] | null }): string[] => {
+  if (!article.categories || !Array.isArray(article.categories)) return [];
+  return article.categories.map(cat => cat.name);
+};
+
+export const getPrimaryCategoryName = (article: { categories?: Category[] | null }): string => {
+  if (!article.categories || !Array.isArray(article.categories) || article.categories.length === 0) {
+    return 'Umum';
+  }
+  return article.categories[0].name;
+};
+
+export const hasCategory = (article: { categories?: Category[] | null }, categoryId: number): boolean => {
+  if (!article.categories || !Array.isArray(article.categories)) return false;
+  return article.categories.some(cat => cat.id === categoryId);
+};
+
 export const calculateReadTime = (content: string): string => {
   if (!content) return '1 min read';
   

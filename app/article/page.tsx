@@ -6,7 +6,7 @@ import { getFeaturedArticles } from '@/lib/services/articleService';
 import { useEffect } from 'react';
 import { type Article } from '@/types/article';
 import BlogHeader from './_components/layout/BlogHeader';
-import FeaturedArticle from './_components/cards/FeaturedArticle';
+import FeaturedArticleCarousel from './_components/cards/FeaturedArticleCarousel';
 import ArticleGrid from './_components/layout/ArticleGrid';
 import LoadingSkeleton from './_components/detail/LoadingSkeleton';
 import LoadMoreButton from './_components/navigation/LoadMoreButton';
@@ -16,8 +16,7 @@ import CategoryFilter from './_components/filters/CategoryFilter';
 const Blog: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [featuredArticle, setFeaturedArticle] = useState<Article | null>(null);
+  const [featuredArticles, setFeaturedArticles] = useState<Article[]>([]);
   const [hasInitialLoad, setHasInitialLoad] = useState(false);
   const articlesPerLoad = 9;
 
@@ -30,7 +29,6 @@ const Blog: React.FC = () => {
     loadMore, 
     resetPagination,
     totalArticles,
-    displayedCount,
     loading: apiLoading,
     error,
     refetch
@@ -40,52 +38,41 @@ const Blog: React.FC = () => {
     articlesPerLoad
   });
 
-  // Track initial load completion
   useEffect(() => {
     if (!apiLoading && filteredArticles.length >= 0) {
       setHasInitialLoad(true);
     }
   }, [apiLoading, filteredArticles.length]);
 
-  // Fetch featured article
+  // Fetch featured articles
   useEffect(() => {
-    const fetchFeaturedArticle = async () => {
+    const fetchFeaturedArticles = async () => {
       try {
-        const featured = await getFeaturedArticles(1);
-        if (featured.length > 0) {
-          setFeaturedArticle(featured[0]);
-        }
+        const featured = await getFeaturedArticles(); // set berapa featured articles
+        setFeaturedArticles(featured);
       } catch (error) {
-        console.error('Error fetching featured article:', error);
+        console.error('Error fetching featured articles:', error);
       }
     };
 
-    fetchFeaturedArticle();
+    fetchFeaturedArticles();
   }, []);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
     resetPagination();
-    setTimeout(() => setIsLoading(false), 500);
   };
 
   const handleCategoryFilter = (categoryId: number | null) => {
     setSelectedCategory(categoryId);
     resetPagination();
-    setIsLoading(true);
-    setTimeout(() => setIsLoading(false), 300);
   };
 
   const handleLoadMore = () => {
-    setIsLoading(true);
-    setTimeout(() => {
-      loadMore();
-      setIsLoading(false);
-    }, 500);
+    loadMore();
   };
 
-  const isAppLoading = isLoading || apiLoading;
+  const isAppLoading = apiLoading;
 
   return (
     <div className="min-h-screen font-sans bg-white mb-24">
@@ -102,8 +89,8 @@ const Blog: React.FC = () => {
       <main>
         <section className="">
           <div className="container mx-auto px-4">
-            {featuredArticle && (
-              <FeaturedArticle article={featuredArticle} />
+            {featuredArticles.length > 0 && (
+              <FeaturedArticleCarousel articles={featuredArticles} />
             )}
             
             {/* Category filter */}
@@ -115,7 +102,7 @@ const Blog: React.FC = () => {
               />
             </div>
             
-            {!hasInitialLoad || (isAppLoading && displayedCount === 0) ? (
+            {!hasInitialLoad || (isAppLoading && displayedArticles.length === 0) ? (
               <div className="space-y-16">
                 <LoadingSkeleton />
               </div>
@@ -144,7 +131,7 @@ const Blog: React.FC = () => {
                   isLoading={isAppLoading}
                   hasMore={hasMore}
                   totalArticles={totalArticles}
-                  displayedArticles={displayedCount}
+                  displayedArticles={displayedArticles.length}
                 />
               </>
             ) : (

@@ -69,5 +69,5 @@ export interface Article {
   content: string;
   thumbnail: Media;
   author: Author;
-  category: Category | null;
+  categories: Category[] | null;
 }

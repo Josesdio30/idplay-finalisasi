@@ -6,7 +6,7 @@ import { getBreakingNews } from '@/lib/services/newsService';
 import { useEffect } from 'react';
 import { type Article } from '@/types/article';
 import NewsHeader from './_components/layout/NewsHeader';
-import FeaturedNews from './_components/cards/FeaturedNews';
+import FeaturedNewsCarousel from './_components/cards/FeaturedNewsCarousel';
 import NewsGrid from './_components/layout/NewsGrid';
 import LoadingSkeleton from '../article/_components/detail/LoadingSkeleton'; // Reuse from article
 import LoadMoreButton from '../article/_components/navigation/LoadMoreButton'; // Reuse from article
@@ -15,7 +15,7 @@ import NewsEmptyState from './_components/layout/NewsEmptyState';
 const News: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [featuredNews, setFeaturedNews] = useState<Article | null>(null);
+  const [featuredNews, setFeaturedNews] = useState<Article[]>([]);
   const [hasInitialLoad, setHasInitialLoad] = useState(false);
   const newsPerLoad = 9;
 
@@ -44,10 +44,8 @@ const News: React.FC = () => {
   useEffect(() => {
     const fetchFeaturedNews = async () => {
       try {
-        const breaking = await getBreakingNews(1);
-        if (breaking.length > 0) {
-          setFeaturedNews(breaking[0]);
-        }
+        const breaking = await getBreakingNews(3); // Get 3 featured news
+        setFeaturedNews(breaking);
       } catch (error) {
         console.error('Error fetching featured news:', error);
       }
@@ -86,8 +84,8 @@ const News: React.FC = () => {
       <main>
         <section className="">
           <div className="container mx-auto px-4">
-            {featuredNews && (
-              <FeaturedNews news={featuredNews} />
+            {featuredNews.length > 0 && (
+              <FeaturedNewsCarousel articles={featuredNews} />
             )}
             
             {!hasInitialLoad || (isAppLoading && displayedCount === 0) ? (

@@ -33,7 +33,7 @@ export const getNews = async (filters: NewsFilters = {}): Promise<NewsResponse> 
         author: {
             populate: ['avatar']
         },
-        category: true,
+        // No category populate for news - keep it null for consistency
         thumbnail: true
       },
       sort: ['publishedAt:desc']
@@ -92,7 +92,7 @@ export const getNewsBySlug = async (slug: string): Promise<Article | null> => {
         author: {
           populate: ['avatar']
         },
-        category: true,
+        // No category populate for news
         thumbnail: true
       },
       filters: {

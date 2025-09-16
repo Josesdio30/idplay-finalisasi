@@ -5,7 +5,7 @@ import { type Article } from '@/types/article';
 import { limitDescription, formatDate, calculateReadTime } from '@/lib/articleUtils';
 import { useArticleAuthor } from '@/hooks/useAuthor';
 import { resolveHeroImageUrl } from '@/lib/services/imageService';
-import { Dot } from 'lucide-react';
+import { Dot, ArrowDownFromLine, ArrowUpFromLine } from 'lucide-react';
 
 interface FeaturedArticleProps {
   article: Article;
@@ -16,6 +16,7 @@ const FeaturedArticle: React.FC<FeaturedArticleProps> = ({ article }) => {
   const author = useArticleAuthor(article); 
   const published = (article as any).publishedAt ?? (article as any).publish_date ?? null;
   const readTime = calculateReadTime((article as any).content ?? article.description ?? '');
+  const [showAllCategories, setShowAllCategories] = React.useState(false);
 
   return (
     <div className="mb-16">
@@ -36,24 +37,75 @@ const FeaturedArticle: React.FC<FeaturedArticleProps> = ({ article }) => {
               <div className="w-full h-64 bg-gray-200" />
             )}
           </div>
-          <div className="md:w-1/2 p-10 flex flex-col justify-center">
+          <div className="md:w-1/2 py-4 md:px-10 md:py-10 flex flex-col justify-center">
 
             {/* Category */}
-            <div className="flex items-center gap-3 mb-4">
-              <span className="text-md rounded-full font-bold">
-                {(article as any).category?.name || 'Umum'}
-              </span>
+            <div className="flex flex-wrap gap-2 mb-4">
+              {article.categories && article.categories.length > 0 ? (
+                <>
+                  <div className="flex flex-wrap gap-2">
+                    {/* Main category */}
+                    <span
+                      key={article.categories[0].id}
+                      className="inline-flex items-center px-3 py-1 rounded-full text-sm md:text-md font-medium bg-orange-200 text-green-700 border border-orange-200"
+                    >
+                      {article.categories[0].name}
+                    </span>
+                    {/* Expand/collapse button */}
+                    {article.categories.length > 1 && !showAllCategories && (
+                      <button
+                        type="button"
+                        className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-600 border border-gray-200 cursor-pointer gap-1"
+                        onClick={() => setShowAllCategories(true)}
+                        aria-label="Show all categories"
+                        title="Tampilkan semua kategori"
+                      >
+                        {/* <ArrowDownFromLine size={16} /> */}
+                        +{article.categories.length - 1} more
+                      </button>
+                    )}
+                    {article.categories.length > 1 && showAllCategories && (
+                      <button
+                        type="button"
+                        className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-600 border border-gray-200 cursor-pointer gap-1"
+                        onClick={() => setShowAllCategories(false)}
+                        aria-label="Show less categories"
+                        title="Sembunyikan kategori tambahan"
+                      >
+                        <ArrowUpFromLine size={16} />
+                      </button>
+                    )}
+                  </div>
+                  {/* Expanded categories */}
+                  {showAllCategories && (
+                    <div className="w-full flex flex-wrap gap-2 mt-2">
+                      {article.categories.slice(1).map((category) => (
+                        <span
+                          key={category.id}
+                          className="inline-flex items-center px-3 py-1 rounded-full text-sm md:text-md font-medium bg-orange-200 text-green-700 border border-orange-200"
+                        >
+                          {category.name}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </>
+              ) : (
+                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm md:text-md font-medium bg-orange-200 text-green-700 border border-orange-200">
+                  Umum
+                </span>
+              )}
             </div>
 
             {/* Title */}
             <Link href={`/article/${article.slug}`}>
-              <h3 className="text-4xl font-bold text-orange-500 mb-2 hover:underline line-clamp-2">
+              <h3 className="text-2xl md:text-4xl font-bold text-orange-500 mb-2 hover:underline line-clamp-2">
                 {article.title}
               </h3>
             </Link>
 
             {/* Description */}
-            <p className="text-gray-600 mb-6 leading-relaxed text-xl">
+              <p className="text-gray-600 mb-6 leading-relaxed text-base md:text-xl">
               {limitDescription(article.description, 150)}
             </p>
 

@@ -1,3 +1,4 @@
+"use client";
 import React from 'react';
 import Image from 'next/image';
 import { type Article } from '@/types/article';
@@ -41,45 +42,45 @@ const ArticleContent: React.FC<ArticleContentProps> = ({ article }) => {
             components={{
               // Headings - rehype-slug
               h1: (props: any) => (
-                <h1 {...props} className="text-3xl md:text-4xl font-bold text-gray-900 mt-12 mb-6 leading-tight">
+                <h1 {...props} className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mt-12 mb-6 leading-tight">
                   {props.children}
                 </h1>
               ),
               h2: (props: any) => (
-                <h2 {...props} className="text-2xl md:text-3xl font-bold text-gray-900 mt-10 mb-5 leading-tight">
+                <h2 {...props} className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 mt-10 mb-5 leading-tight">
                   {props.children}
                 </h2>
               ),
               h3: (props: any) => (
-                <h3 {...props} className="text-xl md:text-2xl font-semibold text-gray-900 mt-8 mb-4 leading-tight">
+                <h3 {...props} className="text-lg sm:text-xl md:text-2xl font-semibold text-gray-900 mt-8 mb-4 leading-tight">
                   {props.children}
                 </h3>
               ),
               h4: (props: any) => (
-                <h4 {...props} className="text-lg md:text-xl font-semibold text-gray-900 mt-6 mb-3">
+                <h4 {...props} className="text-base sm:text-lg md:text-xl font-semibold text-gray-900 mt-6 mb-3">
                   {props.children}
                 </h4>
               ),
               // Paragraphs
               p: (props: any) => (
-                <p className="text-gray-700 leading-relaxed mb-6 text-lg">
+                <p className="text-gray-700 leading-relaxed mb-6 text-base sm:text-lg">
                   {props.children}
                 </p>
               ),
               // Lists
               ul: (props: any) => (
-                <ul className="space-y-2 mb-6 ml-6">
+                <ul className="space-y-2 mb-6 ml-6 text-base sm:text-lg">
                   {props.children}
                 </ul>
               ),
               ol: (props: any) => (
-                <ol className="space-y-2 mb-6 ml-6">
+                <ol className="space-y-2 mb-6 ml-6 text-base sm:text-lg">
                   {props.children}
                 </ol>
               ),
               li: (props: any) => (
-                <li className="text-gray-700 leading-relaxed text-lg relative">
-                  <span className="absolute -left-6 text-blue-600 font-bold">•</span>
+                <li className="text-gray-700 leading-relaxed text-base sm:text-lg relative">
+                  <span className="absolute -left-6 text-black font-bold">•</span>
                   {props.children}
                 </li>
               ),
@@ -96,27 +97,26 @@ const ArticleContent: React.FC<ArticleContentProps> = ({ article }) => {
               ),
               // Blockquotes
               blockquote: (props: any) => (
-                <blockquote className="border-l-4 border-blue-500 pl-6 py-4 my-6 bg-gray-50 rounded-r-lg">
-                  <div className="text-gray-700 italic text-lg">
+                <blockquote className="border-l-4 border-orange-500 pl-6 py-4 my-6 bg-gray-50 rounded-r-lg">
+                  <div className="text-gray-700 italic text-base sm:text-lg">
                     {props.children}
                   </div>
                 </blockquote>
               ),
-              // Images
               img: (props: any) => {
                 const src = props.src;
                 if (!src) return null;
                 return (
-                  <div className="my-8 rounded-xl overflow-hidden shadow-md">
+                  <>
                     <Image 
                       src={src} 
                       alt={props.alt || ''} 
                       width={800}
                       height={600}
-                      className="w-full object-cover"
+                      className="my-8 rounded-xl overflow-hidden shadow-md w-full object-cover"
                       sizes="(max-width: 768px) 100vw, 800px"
                     />
-                  </div>
+                  </>
                 );
               },
               // Code blocks
@@ -128,13 +128,38 @@ const ArticleContent: React.FC<ArticleContentProps> = ({ article }) => {
                     </code>
                   );
                 }
+                // Split code into lines and remove trailing empty line
+                const codeString = String(props.children);
+                let lines = codeString.split(/\r?\n/);
+                if (lines.length > 1 && lines[lines.length - 1].trim() === "") {
+                  lines = lines.slice(0, -1);
+                }
+                // Copy button logic
+                const [copied, setCopied] = React.useState(false);
+                const handleCopy = () => {
+                  navigator.clipboard.writeText(codeString);
+                  setCopied(true);
+                  setTimeout(() => setCopied(false), 1200);
+                };
                 return (
-                  <div className="my-6 rounded-xl overflow-hidden shadow-lg">
-                    <div className="bg-gray-900 text-gray-100 px-4 py-2 text-sm font-medium">
-                      Code
-                    </div>
-                    <pre className="bg-gray-900 text-gray-100 p-4 overflow-auto text-sm leading-relaxed">
-                      <code>{props.children}</code>
+                  <div className="my-6 rounded-xl overflow-hidden shadow-lg relative">
+                    <button
+                      type="button"
+                      onClick={handleCopy}
+                      className="absolute top-2 right-2 bg-gray-800 text-gray-100 px-2 py-1 rounded text-xs font-medium hover:bg-gray-700 transition"
+                      aria-label="Copy code"
+                    >
+                      {copied ? "Copied!" : "Copy"}
+                    </button>
+                    <pre className="bg-gray-900 text-gray-100 p-4 overflow-x-auto w-full text-sm leading-relaxed">
+                      <code className="grid grid-cols-[32px_1fr] gap-x-4 min-w-max">
+                        {lines.map((line, idx) => (
+                          <React.Fragment key={idx}>
+                            <span className="text-gray-400 select-none text-right pr-2 font-mono">{idx + 1}</span>
+                            <span className="whitespace-pre font-mono">{line}</span>
+                          </React.Fragment>
+                        ))}
+                      </code>
                     </pre>
                   </div>
                 );

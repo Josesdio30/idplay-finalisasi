@@ -68,11 +68,11 @@ const ShareSection: React.FC<ShareSectionProps> = ({ article, contentType }) => 
   return (
     <div className="max-w-4xl mx-auto">
       <div className="my-12 py-8 border-t border-gray-200">
-        <div className="flex items-center justify-between mb-6">
-          <h3 className="text-lg font-semibold text-gray-900">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-6">
+          <h3 className="text-base sm:text-lg font-semibold text-gray-900">
             {contentText.shareTitle}
           </h3>
-          <div className="flex gap-3">
+          <div className="flex gap-2 sm:gap-3">
             <ShareButton
               platform="facebook"
               url={articleUrl}
@@ -92,7 +92,7 @@ const ShareSection: React.FC<ShareSectionProps> = ({ article, contentType }) => 
         </div>
         
         {/* Author info */}
-        <div className="bg-gray-50 rounded-xl p-6 mt-8">
+        <div className="bg-gray-50 rounded-xl p-3 sm:p-6 mt-8">
           <div className="flex items-center gap-4">
             {avatar ? (
               <div className="relative w-16 h-16 rounded-full overflow-hidden bg-gray-100">

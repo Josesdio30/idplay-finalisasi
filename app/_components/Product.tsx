@@ -129,8 +129,8 @@ const ProductSection = () => {
             <span className="text-xs font-semibold border border-orange-400 px-2 py-1 rounded">
               1080p FULLHD
             </span>
-            <span className="text-xs font-semibold">🎮 Gaming</span>
-            <span className="text-xs font-semibold">∞ Unlimited</span>
+            <span className="text-xs font-semibold border border-orange-400 px-2 py-1 rounded">🎮 Gaming</span>
+            <span className="text-xs font-semibold border border-orange-400 px-2 py-1 rounded">∞ Unlimited</span>
           </div>
         </div>
 

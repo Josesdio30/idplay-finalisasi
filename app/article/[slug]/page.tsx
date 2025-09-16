@@ -25,10 +25,9 @@ export default async function ArticleDetail({ params }: ArticleDetailProps) {
     article = await getArticleBySlug(slug);
     
     if (article) {
-      // Get related articles from the same category
-      const categoryId = article.category?.id;
-      if (categoryId) {
-        relatedArticles = await getRelatedArticles(categoryId, article.id);
+      const firstCategory = article.categories?.[0];
+      if (firstCategory) {
+        relatedArticles = await getRelatedArticles(firstCategory.id, article.id);
       }
     }
   } catch (error) {

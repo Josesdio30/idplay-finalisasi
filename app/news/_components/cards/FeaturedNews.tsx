@@ -39,10 +39,11 @@ const FeaturedNews: React.FC<FeaturedNewsProps> = ({ news }) => {
             )}
           </div>
           
-          <div className="md:w-1/2 p-10 flex flex-col justify-center">
+          {/* <div className="md:w-1/2 p-10 flex flex-col justify-center"> */}
+          <div className="md:w-1/2 py-4 md:px-10 md:py-10 flex flex-col justify-center">
             {news.featured && (
               <div className="flex items-center gap-3 mb-4">
-                <span className="bg-red-600 text-white px-3 py-1 rounded-full text-sm font-bold uppercase">
+                <span className="bg-red-600 text-white px-3 py-1 rounded-full text-sm md:text-md font-bold uppercase">
                   Breaking News
                 </span>
               </div>
@@ -50,13 +51,13 @@ const FeaturedNews: React.FC<FeaturedNewsProps> = ({ news }) => {
 
             {/* Title */}
             <Link href={`/news/${news.slug}`}>
-              <h3 className="text-4xl font-bold text-orange-500 mb-2 hover:underline line-clamp-2">
+              <h3 className="text-2xl md:text-4xl font-bold text-orange-500 mb-2 hover:underline line-clamp-2">
                 {news.title}
               </h3>
             </Link>
 
             {/* Description */}
-            <p className="text-gray-600 mb-6 leading-relaxed text-xl">
+            <p className="text-gray-600 mb-6 leading-relaxed text-base md:text-xl">
               {limitDescription(news.description, 150)}
             </p>
 

@@ -5,7 +5,7 @@ import { type Article } from '@/types/article';
 import { limitDescription, formatDate, calculateReadTime } from '@/lib/articleUtils';
 import { resolveThumbnailUrl } from '@/lib/services/imageService';
 import { useArticleAuthor } from '@/hooks/useAuthor';
-import { Dot } from 'lucide-react';
+import { Dot, ArrowDownFromLine, ArrowUpFromLine } from 'lucide-react';
 
 interface ArticleCardProps {
   article: Article;
@@ -17,6 +17,8 @@ const ArticleCard: React.FC<ArticleCardProps> = ({ article, showCategory = false
   const author = useArticleAuthor(article);
   const publishedDate = (article as any).publishedAt ?? (article as any).publish_date ?? (article as any).published_at ?? (article as any).createdAt ?? null;
   const readTime = calculateReadTime((article as any).content ?? article.description ?? '');
+
+  const [showAllCategories, setShowAllCategories] = React.useState(false);
 
   return (
     <article className="bg-white rounded-xl overflow-hidden group transform flex flex-col">
@@ -40,7 +42,61 @@ const ArticleCard: React.FC<ArticleCardProps> = ({ article, showCategory = false
       <div className="pt-4 pb-6 flex flex-col flex-1">
 
         {/* Category */}
-        <div className="text-s font-bold text-gray-700 mb-1">{(article as any).category?.name || 'Umum'}</div>
+        <div className="flex flex-wrap gap-2 mb-2">
+          {article.categories && article.categories.length > 0 ? (
+            <>
+              {/* Main category */}
+              <span
+                key={article.categories[0].id}
+                className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-orange-200 text-green-700 border border-orange-200"
+              >
+                {article.categories[0].name}
+              </span>
+              {/* +N more or lebih sedikit button always in same position */}
+              {article.categories.length > 1 && !showAllCategories && (
+                <button
+                  type="button"
+                  className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600 border border-gray-200 cursor-pointer gap-1"
+                  onClick={() => setShowAllCategories(true)}
+                  aria-label="Show all categories"
+                  title='Tampilkan semua kategori'
+                >
+                  {/* <ArrowDownFromLine size={14} /> */}
+                  {/* <ArrowDownFromLine size={14} className="mr-1" /> */}
+                  +{article.categories.length - 1} more
+                </button>
+              )}
+              {article.categories.length > 1 && showAllCategories && (
+                <button
+                  type="button"
+                  className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600 border border-gray-200 cursor-pointer gap-1"
+                  onClick={() => setShowAllCategories(false)}
+                  aria-label="Show less categories"
+                  title='Sembunyikan kategori'
+                >
+                  <ArrowUpFromLine size={14} />
+                </button>
+              )}
+              {/* Expanded categories */}
+              {showAllCategories && (
+                <div className="w-full flex flex-wrap gap-2 mt-2">
+                  {article.categories.slice(1).map((category) => (
+                    <span
+                      key={category.id}
+                      className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-orange-200 text-green-700 border border-orange-200"
+                    >
+                      {category.name}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </>
+          ) : (
+            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600 border border-gray-200">
+              Umum
+            </span>
+          )}
+        </div>
 
         {/* Title */}
         <Link href={`/article/${article.slug}`}>

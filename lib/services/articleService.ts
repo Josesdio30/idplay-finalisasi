@@ -32,7 +32,7 @@ export const getArticles = async (filters: ArticleFilters = {}): Promise<Article
         author: {
           populate: ['avatar']
         },
-        category: true,
+        categories: true,
         thumbnail: true
       },
       sort: ['publishedAt:desc']
@@ -50,7 +50,7 @@ export const getArticles = async (filters: ArticleFilters = {}): Promise<Article
       queryObject.filters = {};
       
       if (filters.category) {
-        queryObject.filters.category = {
+        queryObject.filters.categories = {
           slug: { $eq: filters.category }
         };
       }
@@ -93,7 +93,7 @@ export const getArticleBySlug = async (slug: string): Promise<Article | null> =>
         author: {
           populate: ['avatar']
         },
-        category: true,
+        categories: true,
         thumbnail: true
       },
       filters: {
@@ -145,11 +145,11 @@ export const getRelatedArticles = async (categoryId: number, excludeId: number, 
         author: {
           populate: ['avatar']
         },
-        category: true,
+        categories: true,
         thumbnail: true
       },
       filters: {
-        category: {
+        categories: {
           id: { $eq: categoryId }
         },
         id: { $ne: excludeId }

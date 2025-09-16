@@ -1,4 +1,5 @@
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 import qs from 'qs';
 import ProductLoadMoreButton from './ProductLoadMoreButton';
@@ -95,13 +96,16 @@ const ProductFacts: React.FC<ProductFactsProps> = ({
     <section className="container mx-auto px-4 lg:px-8 mt-8">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {displayedProducts.map((product: any) => (
-          <div key={product.ID} className="bg-white rounded-2xl shadow-lg overflow-hidden border border-transparent">
-            <div className="flex items-center justify-center bg-orange-500 text-white px-4 py-6 sm:py-7 lg:py-9 text-center">
-              <div className="text-[36px] sm:text-[40px] lg:text-[70px] tracking-[1%] leading-[45px] font-bold text-center">
-                {/* {product.Product_Name.match(/Up To (\d+)/)?.[1] || 'N/A'} */}
-                {product.Product_Name.match(/(\d+)\s*Mbps/)?.[1] || 'N/A'}
-                <span className="text-[16px] sm:text-[20px]">/Mbps</span>
-              </div>
+          <div key={product.ID} className="bg-white rounded-2xl shadow-lg overflow-hidden border border-transparent flex flex-col">
+            <div className="flex flex-1 items-center justify-center w-full bg-orange-50 rounded-t-2xl" style={{ minHeight: '90px' }}>
+              <Image
+                src="/package/home-2-doubleplay2.jpeg"
+                alt="Product Image"
+                width={180}
+                height={70}
+                className="object-contain w-full"
+                priority
+              />
             </div>
             {/* version 1 */}
             {/* <div className="flex flex-col justify-center items-center p-4 lg:p-6">
@@ -130,7 +134,8 @@ const ProductFacts: React.FC<ProductFactsProps> = ({
             {/* Product Price */}
             <div className="flex flex-col justify-center items-center p-4 lg:p-6">
               <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-orange-500 mb-3 sm:mb-4 lg:mb-5 leading-tight">
-                Rp.{(product.Price * 12).toLocaleString('id-ID')}
+                {/* <span className="line-through font-extrabold">Rp.{(product.Price * 12).toLocaleString('id-ID')}</span> */}
+                <span className="line-through" style={{ textDecorationThickness: '3px' }}>Rp.{(product.Price * 12).toLocaleString('id-ID')}</span>
                 <span className="text-lg sm:text-xl">/Tahun</span>
               </div>
               <div className="flex justify-center items-center w-full mb-2">
@@ -160,8 +165,8 @@ const ProductFacts: React.FC<ProductFactsProps> = ({
               <div className="my-4 h-0.5 w-full bg-orange-300" />
               <div className="flex items-center justify-around text-orange-600">
                 <span className="text-xs font-semibold border border-orange-400 px-2 py-1 rounded">1080p FULLHD</span>
-                <span className="text-xs font-semibold">🎮 Gaming</span>
-                <span className="text-xs font-semibold">∞ Unlimited</span>
+                <span className="text-xs font-semibold border border-orange-400 px-2 py-1 rounded">🎮 Gaming</span>
+                <span className="text-xs font-semibold border border-orange-400 px-2 py-1 rounded">∞ Unlimited</span>
               </div>
             </div>
             <div className="px-4 pb-6 flex flex-col gap-3">

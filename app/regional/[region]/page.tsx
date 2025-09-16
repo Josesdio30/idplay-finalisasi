@@ -76,7 +76,7 @@ const RegionalPageDetail = () => {
               description: item.description,
               content: item.content,
               publishedAt: item.publishedAt,
-              category: item.category ? { name: item.category.name, slug: item.category.slug } : null,
+              categories: item.categories ? item.categories.map((cat: any) => ({ name: cat.name, slug: cat.slug })) : null,
               author: item.author ? { name: item.author.name, avatar: item.author.avatar?.url || null } : null,
               thumbnail: item.thumbnail ? { formats: item.thumbnail.formats } : null,
             }));
@@ -229,8 +229,8 @@ const RegionalPageDetail = () => {
                     <div className="my-4 h-0.5 w-full bg-orange-300" />
                     <div className="flex items-center justify-around text-orange-600">
                       <span className="text-xs font-semibold border border-orange-400 px-2 py-1 rounded">1080p FULLHD</span>
-                      <span className="text-xs font-semibold">🎮 Gaming</span>
-                      <span className="text-xs font-semibold">∞ Unlimited</span>
+                      <span className="text-xs font-semibold border border-orange-400 px-2 py-1 rounded">🎮 Gaming</span>
+                      <span className="text-xs font-semibold border border-orange-400 px-2 py-1 rounded">∞ Unlimited</span>
                     </div>
                   </div>
 

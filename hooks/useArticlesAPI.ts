@@ -19,7 +19,6 @@ interface UseArticlesAPIReturn {
   loadMore: () => void;
   resetPagination: () => void;
   totalArticles: number;
-  displayedCount: number;
   refetch: () => void;
   articlesByCategory: { [key: number]: Article[] };
 }
@@ -31,10 +30,11 @@ export const useArticlesAPI = ({
 }: UseArticlesAPIProps): UseArticlesAPIReturn => {
   const [articles, setArticles] = useState<Article[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
-  const [displayedCount, setDisplayedCount] = useState(articlesPerLoad);
+  const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [totalArticles, setTotalArticles] = useState(0);
+  const [hasMorePages, setHasMorePages] = useState(false);
 
   // Fetch categories
   const fetchCategories = useCallback(async () => {
@@ -47,13 +47,14 @@ export const useArticlesAPI = ({
   }, []);
 
   // Fetch articles from API
-  const fetchArticles = useCallback(async () => {
+  const fetchArticles = useCallback(async (page: number = 1, append: boolean = false) => {
     setLoading(true);
     setError(null);
     
     try {
       const filters: ArticleFilters = {
-        limit: 12,
+        limit: articlesPerLoad,
+        page: page
       };
 
       // Add search filter
@@ -61,7 +62,7 @@ export const useArticlesAPI = ({
         filters.search = searchQuery.trim();
       }
 
-      // For category filtering, we need to find the category slug
+      // For category filtering, find the category slug
       if (selectedCategory && categories.length > 0) {
         const category = categories.find(cat => cat.id === selectedCategory);
         if (category && (category as any).slug) {
@@ -72,53 +73,74 @@ export const useArticlesAPI = ({
       const response = await getArticles(filters);
       let fetchedArticles = response.data;
 
-      // Client-side category filtering as fallback (if API filtering didn't work)
       if (selectedCategory && !filters.category) {
         fetchedArticles = fetchedArticles.filter((article: Article) => {
-          const categoryId = (article as any).category?.id || (article as any).categoryId;
-          return categoryId === selectedCategory;
+          const categories = article.categories;
+          if (categories && Array.isArray(categories)) {
+            return categories.some(cat => cat.id === selectedCategory);
+          }
+          return false;
         });
       }
 
-      setArticles(fetchedArticles);
-      setTotalArticles(fetchedArticles.length);
+      // Update state
+      if (append) {
+        setArticles(prev => [...prev, ...fetchedArticles]);
+      } else {
+        setArticles(fetchedArticles);
+        setCurrentPage(1);
+      }
+      
+      // Update pagination info
+      if (response.meta?.pagination) {
+        setTotalArticles(response.meta.pagination.total);
+        setHasMorePages(page < response.meta.pagination.pageCount);
+      } else {
+        setTotalArticles(fetchedArticles.length);
+        setHasMorePages(false);
+      }
     } catch (err) {
       console.error('Error fetching articles:', err);
       setError('Failed to load articles');
-      setArticles([]);
-      setTotalArticles(0);
+      if (!append) {
+        setArticles([]);
+        setTotalArticles(0);
+        setHasMorePages(false);
+      }
     } finally {
       setLoading(false);
     }
-  }, [searchQuery, selectedCategory, categories]);
+  }, [searchQuery, selectedCategory, categories, articlesPerLoad]);
 
-  // Reset pagination when filters change
+  // Reset pagination
   const resetPagination = useCallback(() => {
-    setDisplayedCount(articlesPerLoad);
-  }, [articlesPerLoad]);
+    setCurrentPage(1);
+    setHasMorePages(false);
+  }, []);
 
   // Load more articles
   const loadMore = useCallback(() => {
-    setDisplayedCount(prev => Math.min(prev + articlesPerLoad, articles.length));
-  }, [articlesPerLoad, articles.length]);
+    if (hasMorePages && !loading) {
+      const nextPage = currentPage + 1;
+      setCurrentPage(nextPage);
+      fetchArticles(nextPage, true);
+    }
+  }, [currentPage, hasMorePages, loading, fetchArticles]);
 
   // Refetch articles
   const refetch = useCallback(() => {
-    fetchArticles();
+    fetchArticles(1, false);
   }, [fetchArticles]);
-
-  // Get displayed articles
-  const displayedArticles = articles.slice(0, displayedCount);
-  const hasMore = displayedCount < articles.length;
 
   // Group articles by category
   const articlesByCategory = articles.reduce((acc: { [key: number]: Article[] }, article) => {
-    const categoryId = (article as any).category?.id || (article as any).categoryId;
-    if (categoryId) {
-      if (!acc[categoryId]) {
-        acc[categoryId] = [];
-      }
-      acc[categoryId].push(article);
+    if (article.categories && Array.isArray(article.categories)) {
+      article.categories.forEach(category => {
+        if (!acc[category.id]) {
+          acc[category.id] = [];
+        }
+        acc[category.id].push(article);
+      });
     }
     return acc;
   }, {});
@@ -131,14 +153,14 @@ export const useArticlesAPI = ({
   // Fetch articles when categories are loaded or filters change
   useEffect(() => {
     if (categories.length > 0 || !selectedCategory) {
-      fetchArticles();
+      setCurrentPage(1);
+      setHasMorePages(false);
+      fetchArticles(1, false);
     }
-  }, [fetchArticles, categories.length]);
+  }, [categories.length, selectedCategory, searchQuery, fetchArticles]);
 
-  // Reset pagination when filters change
-  useEffect(() => {
-    resetPagination();
-  }, [searchQuery, selectedCategory, resetPagination]);
+  const displayedArticles = articles;
+  const hasMore = hasMorePages && !loading;
 
   return {
     articles,
@@ -150,7 +172,6 @@ export const useArticlesAPI = ({
     loadMore,
     resetPagination,
     totalArticles,
-    displayedCount: displayedArticles.length,
     refetch,
     articlesByCategory
   };

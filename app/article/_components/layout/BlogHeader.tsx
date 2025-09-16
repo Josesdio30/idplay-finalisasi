@@ -1,7 +1,4 @@
 import React from 'react';
-// import SearchForm from '../filters/SearchForm';
-// import CategoryFilter from '../filters/CategoryFilter';
-// import { getCategoryName } from '@/lib/articleUtils';
 
 interface BlogHeaderProps {
   searchQuery: string;
@@ -14,20 +11,13 @@ interface BlogHeaderProps {
 }
 
 const BlogHeader: React.FC<BlogHeaderProps> = ({
-  // searchQuery,
-  // selectedCategory,
-  // filteredArticlesCount,
-  // onSearchChange,
-  // onSearchSubmit,
-  // onCategoryChange,
-  // isLoading
 }) => {
   return (
-    <section className="py-16 ">
+    <section className="py-4 md:py-16">
       <div className="container mx-auto px-4">
         <div className="mb-8 mt-8 text-left">
-          <h1 className="text-8xl font-medium text-gray-900 mb-4">Blog</h1>
-          <p className="text-xl text-gray-600 max-w-3xl leading-relaxed">
+          <h1 className="text-6xl md:text-8xl font-medium text-gray-900 mb-4">Blog</h1>
+          <p className="text-base md:text-xl text-gray-600 max-w-3xl leading-relaxed">
             Cek berita terbaru kita!
           </p>
         </div>

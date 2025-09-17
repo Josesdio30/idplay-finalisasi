@@ -1,47 +1,23 @@
-// API configuration and service
-const BASE_URL = process.env.NEXT_PUBLIC_CMS_URL;
-const API_URL = `${BASE_URL}/api`;
-
-// Helper function to construct API URLs
-export const getAPIURL = (path: string = ''): string => {
-  return `${BASE_URL}${path}`;
+const getBaseUrl = () => {
+  if (process.env.NEXT_PHASE === 'phase-production-build') {
+    return process.env.CMS_URL;
+  }
+  if (typeof window !== 'undefined') return '';
+  return process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
 };
 
-// Helper function to fetch data from API
-export const fetchAPI = async (path: string, options: RequestInit = {}): Promise<any> => {
-  const defaultOptions: RequestInit = {
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  };
+export const fetchAPI = async (path: string): Promise<any> => {
+  const baseUrl = getBaseUrl();
+  const normalizedPath = path.startsWith('/') ? path : `/${path}`;
+  const requestPath = process.env.NEXT_PHASE === 'phase-production-build' ? `/api${normalizedPath}` : `/api/cms${normalizedPath}`;
+  // console.log('Fetching from:', `${baseUrl}${requestPath}`); // Debug
+  const response = await fetch(`${baseUrl}${requestPath}`, {
+    next: { revalidate: 60 },
+  });
 
-  const mergedOptions = {
-    ...defaultOptions,
-    ...options,
-    headers: {
-      ...defaultOptions.headers,
-      ...options.headers,
-    },
-  };
-
-  const requestUrl = `${API_URL}${path}`;
-  
-  // Debug logging
-  // console.log('API Request:', requestUrl);
-
-  try {
-    const response = await fetch(requestUrl, mergedOptions);
-    
-    if (!response.ok) {
-      console.error('API Error - Status:', response.status, 'URL:', requestUrl);
-      throw new Error(`HTTP error! status: ${response.status} - URL: ${requestUrl}`);
-    }
-    
-    const data = await response.json();
-    // console.log('API Success:', requestUrl, 'Data:', data?.data?.length || 0, 'items');
-    return data;
-  } catch (error) {
-    console.error('API Error:', error);
-    throw error;
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
   }
+
+  return response.json();
 };

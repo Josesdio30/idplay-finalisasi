@@ -37,7 +37,7 @@
 //     return [
 //       {
 //         source: '/uploads/:path*',
-//         destination: `${process.env.NEXT_PUBLIC_CMS_URL || 'http://localhost:1337'}/uploads/:path*`,
+//         destination: `${process.env.CMS_URL || 'http://localhost:1337'}/uploads/:path*`,
 //       },
 //     ];
 //   },
@@ -46,13 +46,12 @@
 // export default nextConfig;
 
 
-// next.config.ts
 import type { NextConfig } from "next";
 
-const cmsUrlString = process.env.NEXT_PUBLIC_CMS_URL;
+const cmsUrlString = process.env.CMS_URL;
 
 if (!cmsUrlString) {
-  throw new Error("Environment variable NEXT_PUBLIC_CMS_URL is not set");
+  throw new Error("Environment variable CMS_URL is not set");
 }
 
 const cmsUrl = new URL(cmsUrlString);
@@ -66,12 +65,12 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'picsum.photos',
       },
-      // CMS API uploads
+      // CMS API uploads kalau pakai cloud media seperti strapi cloud
       {
         protocol: 'https',
         hostname: cmsMediaHostname,
       },
-      // CMS Cloud Media CDN
+      // CMS Cloud Media CDN kalau pakai cloud media seperti strapi cloud
       {
         protocol: 'https',
         hostname: cmsMediaHostname,

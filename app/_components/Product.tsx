@@ -10,128 +10,162 @@ import {
   CarouselPrevious
 } from '@/components/ui/carousel';
 import Autoplay from 'embla-carousel-autoplay';
+import { Metadata, Product } from '../type';
 
-const ProductSection = () => {
+interface IProps {
+  products: Product[];
+  loading: boolean;
+  fetching: boolean;
+  pagination: Metadata['pagination'];
+}
+
+const ProductSection = ({ products, loading, fetching, pagination }: IProps) => {
   const [paketTab, setPaketTab] = useState<'bulan' | 'tahun'>('bulan');
   const [regionTab, setRegionTab] = useState<'Jawa' | 'Sulawesi' | 'Kalimantan' | 'Sumatera'>(
     'Jawa'
   );
+  const [openId, setOpenId] = useState<number | null>(null);
   const navigate = useRouter();
 
-  const products = {
-    Jawa: [
-      { id: 1, speed: '700', yearlyPrice: '1.700.000', monthlyPrice: '350.000' },
-      { id: 2, speed: '700', yearlyPrice: '1.700.000', monthlyPrice: '350.000' },
-      { id: 3, speed: '700', yearlyPrice: '1.700.000', monthlyPrice: '350.000' }
-    ],
-    Sulawesi: [
-      { id: 1, speed: '700', yearlyPrice: '1.800.000', monthlyPrice: '370.000' },
-      { id: 2, speed: '700', yearlyPrice: '1.800.000', monthlyPrice: '370.000' },
-      { id: 3, speed: '700', yearlyPrice: '1.800.000', monthlyPrice: '370.000' }
-    ],
-    Kalimantan: [
-      { id: 1, speed: '700', yearlyPrice: '1.750.000', monthlyPrice: '360.000' },
-      { id: 2, speed: '700', yearlyPrice: '1.750.000', monthlyPrice: '360.000' },
-      { id: 3, speed: '700', yearlyPrice: '1.750.000', monthlyPrice: '360.000' }
-    ],
-    Sumatera: [
-      { id: 1, speed: '700', yearlyPrice: '1.650.000', monthlyPrice: '340.000' },
-      { id: 2, speed: '700', yearlyPrice: '1.650.000', monthlyPrice: '340.000' },
-      { id: 3, speed: '700', yearlyPrice: '1.650.000', monthlyPrice: '340.000' }
-    ]
+  // Mapping region names dari UI ke API
+  const regionMapping = {
+    Jawa: ['JABODETABEK', 'JABAR'],
+    Sulawesi: ['SULAWESI'],
+    Kalimantan: ['KALIMANTAN'],
+    Sumatera: ['SUMATERA']
   };
 
-  const broadbandPlans = [
-    {
-      id: 1,
-      title: 'IDPlay',
-      subtitle: '12 Months 25 MBp/S',
-      description: 'Lorem Ipsum Dolor Sit Amet'
-    },
-    {
-      id: 2,
-      title: 'IDPlay',
-      subtitle: '12 Months 25 MBp/S',
-      description: 'Lorem Ipsum Dolor Sit Amet'
-    },
-    {
-      id: 3,
-      title: 'IDPlay',
-      subtitle: '12 Months 25 MBp/S',
-      description: 'Lorem Ipsum Dolor Sit Amet'
-    }
-  ];
+  // Filter products berdasarkan billing cycle dan region
+  const getFilteredProducts = () => {
+    const billingCycle = paketTab === 'bulan' ? 'Bulanan' : 'Tahunan';
+    const regionNames = regionMapping[regionTab] || [];
 
-  const [openId, setOpenId] = useState<number | null>(null);
-  const toggleOpen = (id: number) => setOpenId((prev) => (prev === id ? null : id));
+    return products.filter((product) => {
+      // Filter by billing cycle
+      const matchesBilling = product.billingCycle === billingCycle;
+
+      // Filter by region - check if product has any of the required regions
+      const matchesRegion = product.regionals.some((regional) =>
+        regionNames.includes(regional.region)
+      );
+
+      return matchesBilling && matchesRegion;
+    });
+  };
+
+  const filteredProducts = getFilteredProducts();
 
   // Komponen ProductCard untuk reusability
-  const ProductCard = ({ product, idx }: { product: any; idx: number }) => {
-    const plan = broadbandPlans[idx];
+  const ProductCard = ({ product }: { product: Product }) => {
     const isOpen = openId === product.id;
+
+    // Helper function untuk format harga
+    const formatPrice = (price: number) => {
+      return new Intl.NumberFormat('id-ID').format(price);
+    };
 
     return (
       <div className="bg-white rounded-2xl shadow-lg overflow-hidden border border-transparent">
         {/* Product Card */}
-        <div className="flex items-center justify-center bg-orange-500 text-white px-4 py-6 sm:py-7 lg:py-9 text-center">
-          <div className="text-[36px] sm:text-[40px] lg:text-[70px] tracking-[1%] leading-[45px] font-bold text-center">
-            {product.speed}
+        <div className="flex items-center justify-center bg-orange-500 text-white text-center">
+          {/* px-4 py-6 sm:py-7 lg:py-9 */}
+          {/* <div className="text-[36px] sm:text-[40px] lg:text-[70px] tracking-[1%] leading-[45px] font-bold text-center">
+            {product.finalSpeedInMbps}
             <span className="text-[16px] sm:text-[20px]">/Mbps</span>
+          </div> */}
+          <Image
+            src={product.thumbnail.url}
+            alt={product.productName}
+            width={500}
+            height={500}
+            className="w-full h-auto object-cover aspect-auto object-center"
+            loading="lazy"
+            priority={false}
+          />
+        </div>
+
+        <div className="px-4 pt-4 lg:px-6">
+          <h3 className="text-lg font-bold text-orange-500 text-center">{product.productName}</h3>
+
+          <div className="flex items-center justify-center gap-1.5 mt-2">
+            {product.originalSpeedInMbps && product.finalSpeedInMbps && (
+              <p className="relative text-lg font-semibold text-gray-300 text-center px-0.5">
+                <span className="absolute left-0 right-0 top-1/2 -translate-y-1/2 bg-gray-300 w-full h-0.5 rounded-full" />
+                {product.originalSpeedInMbps} Mbps
+              </p>
+            )}
+            <p className="text-lg font-semibold text-orange-500 text-center">
+              {product.finalSpeedInMbps || product.originalSpeedInMbps} Mbps
+            </p>
           </div>
         </div>
-        <div className="relative flex flex-col justify-center items-center p-4 lg:p-6">
-          <div className="text-xl sm:text-2xl lg:text-[36px] tracking-[1%] leading-[45px] font-bold text-orange-500 mb-2 sm:mb-3 lg:mb-5">
+
+        <div className="relative flex flex-col justify-center items-center px-4 lg:px-6 lg:pt-2">
+          <div
+            className={cn(
+              'text-xl sm:text-2xl lg:text-[36px] tracking-[1%] leading-[45px] font-bold text-orange-500 mb-2 sm:mb-3',
+              product.promoPrice ? 'lg:mb-5' : 'lg:mb-0'
+            )}
+          >
             <span className="relative">
-              <div className="absolute top-1/2 left-0 transform -translate-y-1/2 bg-orange-500 w-full h-0.5 lg:h-1 rounded-full" />
-              Rp.{product.yearlyPrice}
+              {product.promoPrice && (
+                <div className="absolute top-1/2 left-0 transform -translate-y-1/2 bg-orange-500 w-full h-0.5 lg:h-1 rounded-full" />
+              )}
+              Rp.{formatPrice(product.originalPrice)}
             </span>
             <span className="text-[16px] sm:text-[20px]">
-              /{paketTab === 'bulan' ? 'Bulan' : 'Tahun'}
+              /{product.billingCycle === 'Bulanan' ? 'Bulan' : 'Tahun'}
             </span>
           </div>
-          <Image
-            src="/icons/arrow-pricing.svg"
-            alt=""
-            width={65}
-            height={65}
-            className="size-[45px] sm:size-[55px] lg:size-[65px] absolute z-10 left-10 sm:left-12 lg:left-9 top-10 lg:top-13"
-          />
-          <div className="text-base lg:text-[30px] tracking-[1%] leading-[26px] font-medium text-orange-700 mb-2">
-            Rp.{product.monthlyPrice}
-            <span className="text-[16px] sm:text-[20px]">
-              /{paketTab === 'bulan' ? 'Bulan' : 'Tahun'}
-            </span>
-          </div>
+          {product.promoPrice && (
+            <>
+              <Image
+                src="/icons/arrow-pricing.svg"
+                alt=""
+                width={65}
+                height={65}
+                className="size-[45px] sm:size-[55px] lg:size-[65px] absolute z-10 left-10 sm:left-12 lg:left-9 top-10 lg:top-13"
+              />
+              <div className="text-base lg:text-[30px] tracking-[1%] leading-[26px] font-medium text-orange-700 mb-2">
+                Rp.{formatPrice(product.promoPrice)}
+                <span className="text-[16px] sm:text-[20px]">
+                  /{product.billingCycle === 'Bulanan' ? 'Bulan' : 'Tahun'}
+                </span>
+              </div>
+            </>
+          )}
           <p className="text-sm lg:text-[15px] tracking-[1%] leading-[26px] font-medium text-orange-500">
-            Mau langganan setahun? Bisa dicicil, kok!
+            {product.priceHint || 'Mau langganan setahun? Bisa dicicil, kok!'}
           </p>
         </div>
 
         {/* Feature block between product and broadband */}
-        <div className="mx-4 mb-4 rounded-xl bg-orange-50 border border-orange-100 p-4 text-black">
+        <div className="mx-4 my-4 rounded-xl bg-orange-50 border border-orange-100 p-4 text-black">
           <div className="space-y-3">
-            {['Fast and reliable connection', 'No contract required', 'Easy setup Process'].map(
-              (text, i) => (
-                <div
-                  key={i}
-                  className="flex items-start gap-3"
-                >
-                  <span className="mt-0.5 inline-flex h-5 w-5 items-center justify-center rounded-full bg-orange-500 text-white text-xs">
-                    ✓
-                  </span>
-                  <span className="text-sm text-gray-800">{text}</span>
-                </div>
-              )
-            )}
+            {product.benefits.map((benefit, i) => (
+              <div
+                key={benefit.id}
+                className="flex items-start gap-3"
+              >
+                <span className="mt-0.5 inline-flex h-5 w-5 items-center justify-center rounded-full bg-orange-500 text-white text-xs">
+                  ✓
+                </span>
+                <span className="text-sm text-gray-800">{benefit.name}</span>
+              </div>
+            ))}
           </div>
-          <div className="my-4 h-0.5 w-full bg-orange-300" />
+          {/* <div className="my-4 h-0.5 w-full bg-orange-300" />
           <div className="flex items-center justify-around text-orange-600">
             <span className="text-xs font-semibold border border-orange-400 px-2 py-1 rounded">
               1080p FULLHD
             </span>
-            <span className="text-xs font-semibold border border-orange-400 px-2 py-1 rounded">🎮 Gaming</span>
-            <span className="text-xs font-semibold border border-orange-400 px-2 py-1 rounded">∞ Unlimited</span>
-          </div>
+            <span className="text-xs font-semibold border border-orange-400 px-2 py-1 rounded">
+              🎮 Gaming
+            </span>
+            <span className="text-xs font-semibold border border-orange-400 px-2 py-1 rounded">
+              ∞ Unlimited
+            </span>
+          </div> */}
         </div>
 
         {/* Bottom action buttons: Selengkapnya (di atas) dan Subscribe (di bawah) */}
@@ -254,7 +288,7 @@ const ProductSection = () => {
         </div>
       </div>
 
-      <div className="-mt-10 z-10 w-full px-4 lg:px-8">
+      <div className="-mt-10 z-10 w-full px-4 lg:px-8 min-h-[800px]">
         {/* Mobile Carousel */}
         <div className="block md:hidden mb-12">
           <Carousel
@@ -270,15 +304,12 @@ const ProductSection = () => {
             className="w-full"
           >
             <CarouselContent className="-ml-2 md:-ml-4">
-              {products[regionTab].map((product, idx) => (
+              {filteredProducts.map((product: Product) => (
                 <CarouselItem
                   key={product.id}
                   className="pl-2 md:pl-4 basis-full"
                 >
-                  <ProductCard
-                    product={product}
-                    idx={idx}
-                  />
+                  <ProductCard product={product} />
                 </CarouselItem>
               ))}
             </CarouselContent>
@@ -289,11 +320,10 @@ const ProductSection = () => {
 
         {/* Desktop Grid */}
         <div className="hidden md:grid grid-cols-1 md:grid-cols-3 gap-5 lg:gap-12 mb-12">
-          {products[regionTab].map((product, idx) => (
+          {filteredProducts.map((product: Product) => (
             <ProductCard
               key={product.id}
               product={product}
-              idx={idx}
             />
           ))}
         </div>

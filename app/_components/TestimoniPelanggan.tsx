@@ -1,78 +1,51 @@
 'use client';
+
 import { useEffect, useRef, useState } from 'react';
 import { motion, useAnimation, useMotionValue } from 'framer-motion';
 import { MdFormatQuote } from 'react-icons/md';
 import { Star } from 'lucide-react';
 import Image from 'next/image';
+import { useTestimonials } from '@/hooks/useTestimoni';
+import { type Testimonial } from '@/types/testimoni';
+import LoadingSkeletonTestimoni from './loadingSkeletonTestimoni';
 
-const testimonials = [
-  {
-    quote: 'The signal is super stable with no buffering when streaming movies!',
-    name: 'Emily Carter',
-    role: 'Content Creator',
-    rating: 5,
-    avatar: 'https://picsum.photos/40/40?random=1'
-  },
-  {
-    quote: 'Gaming is smooth with zero lag just the way I like it!',
-    name: 'Ethan Davis',
-    role: 'Gamer & Streamer',
-    rating: 5,
-    avatar: 'https://picsum.photos/40/40?random=2'
-  },
-  {
-    quote: 'Been using it for months, and the signal stays strong with no issues!',
-    name: 'Chloe Anderson',
-    role: 'Graphic Designer',
-    rating: 5,
-    avatar: 'https://picsum.photos/40/40?random=3'
-  },
-  {
-    quote: 'The internet is perfect for remote work and meetings!',
-    name: 'James Walker',
-    role: 'Remote Worker',
-    rating: 5,
-    avatar: 'https://picsum.photos/40/40?random=4'
-  },
-  {
-    quote: 'Fast downloads and uploads make my work so much easier!',
-    name: 'Sarah Johnson',
-    role: 'Video Editor',
-    rating: 5,
-    avatar: 'https://picsum.photos/40/40?random=5'
-  },
-  {
-    quote: 'Customer support is amazing, always ready to help!',
-    name: 'Michael Brown',
-    role: 'Business Owner',
-    rating: 5,
-    avatar: 'https://picsum.photos/40/40?random=6'
-  },
-  {
-    quote: 'No data limits means I can stream and work without worry!',
-    name: 'Lisa Martinez',
-    role: 'Marketing Manager',
-    rating: 5,
-    avatar: 'https://picsum.photos/40/40?random=7'
-  },
-  {
-    quote: 'Installation was quick and the technicians were professional!',
-    name: 'David Wilson',
-    role: 'Freelancer',
-    rating: 5,
-    avatar: 'https://picsum.photos/40/40?random=8'
-  }
-];
-
-const TestimonialCard = ({ testimonial }: { testimonial: (typeof testimonials)[0] }) => {
+const TestimonialCard = ({ testimonial }: { testimonial: Testimonial }) => {
   const renderStars = (rating: number) => {
-    return Array.from({ length: 5 }, (_, i) => (
-      <Star
-        key={i}
-        className={`inline-block w-4 h-4 ${i < rating ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'}`}
-      />
-    ));
+    
+    return Array.from({ length: 5 }, (_, i) => {
+      const isFilled = i < Math.floor(rating);
+      const isHalfFilled = i === Math.floor(rating) && rating % 1 !== 0;
+      
+      if (isHalfFilled) {
+        // Bintang setengah terisi menggunakan gradient
+        return (
+          <div key={i} className="inline-block w-4 h-4 relative">
+            <Star className="absolute w-4 h-4 text-gray-400" />
+            <Star 
+              className="absolute w-4 h-4 text-yellow-400 fill-yellow-400" 
+              style={{
+                clipPath: 'polygon(0 0, 51% 0, 51% 100%, 0 100%)'
+              }}
+            />
+          </div>
+        );
+      }
+      
+      return (
+        <Star
+          key={i}
+          className={`inline-block w-4 h-4 ${
+            isFilled 
+              ? 'text-yellow-400 fill-yellow-400' // Bintang kuning penuh
+              : 'text-gray-400'                     // Bintang abu-abu outline
+          }`}
+        />
+      );
+    });
   };
+
+  // Get avatar URL with fallback, thumbnail format for compressed size
+  const avatarUrl = testimonial.avatar?.url || testimonial.avatar?.formats?.thumbnail?.url;
 
   return (
     <div className="bg-white rounded-2xl p-6 w-[347px] mx-3 flex-shrink-0">
@@ -80,28 +53,32 @@ const TestimonialCard = ({ testimonial }: { testimonial: (typeof testimonials)[0
       <p className="text-black font-semibold text-xl lg:text-2xl">"{testimonial.quote}"</p>
       <div className="flex items-center gap-3 mt-3">
         <div className="w-11 lg:w-12 h-11 lg:h-12 rounded-full bg-gray-200 overflow-hidden">
-          <img
-            src={testimonial.avatar}
-            alt={testimonial.name}
-            className="w-full h-full object-cover"
-            onError={(e) => {
-              // Fallback to initials if image fails to load
-              const target = e.target as HTMLImageElement;
-              const initials = testimonial.name
+          {avatarUrl ? (
+            <div className="relative w-full h-full">
+              <Image
+                src={avatarUrl}
+                alt={testimonial.name}
+                width={180}
+                height={180}
+                className="absolute inset-0 w-full h-full object-cover"
+                onError={() => {
+                  console.log(`Failed to load avatar for ${testimonial.name}`);
+                }}
+              />
+            </div>
+          ) : (
+            // initials if no avatar
+            <div className="w-full h-full bg-[#00934C] text-white flex items-center justify-center font-semibold">
+              {testimonial.name
                 .split(' ')
                 .map((n) => n[0])
-                .join('');
-              target.style.display = 'none';
-              const parent = target.parentElement;
-              if (parent) {
-                parent.innerHTML = `<div class="w-full h-full bg-[#00934C] text-white flex items-center justify-center font-semibold">${initials}</div>`;
-              }
-            }}
-          />
+                .join('')}
+            </div>
+          )}
         </div>
         <div className="flex-1">
           <h4 className="font-semibold text-gray-900 text-sm">{testimonial.name}</h4>
-          <p className="text-gray-500 text-xs">{testimonial.role}</p>
+          <p className="text-gray-500 text-xs">{testimonial.job}</p>
           <div className="flex gap-1 mt-1">{renderStars(testimonial.rating)}</div>
         </div>
       </div>
@@ -114,6 +91,9 @@ const TestimoniPelanggan = () => {
   const controls = useAnimation();
   const x = useMotionValue(0);
   const [isDragging, setIsDragging] = useState(false);
+
+  // Fetch testimonials from API
+  const { testimonials, loading, error } = useTestimonials();
 
   // Duplicate testimonials for seamless loop
   const duplicatedTestimonials = [...testimonials, ...testimonials];
@@ -175,23 +155,41 @@ const TestimoniPelanggan = () => {
 
         {/* Testimonials Marquee */}
         <div className="relative">
-          <motion.div
-            ref={marqueeRef}
-            className="flex"
-            animate={controls}
-            style={{ x }}
-            drag="x"
-            dragConstraints={{ left: -1000, right: 0 }}
-            onDragStart={() => setIsDragging(true)}
-            onDragEnd={() => setIsDragging(false)}
-          >
-            {duplicatedTestimonials.map((testimonial, index) => (
-              <TestimonialCard
-                key={index}
-                testimonial={testimonial}
-              />
-            ))}
-          </motion.div>
+          {loading ? (
+            <div className="flex gap-6">
+              {[...Array(6)].map((_, index) => (
+                <LoadingSkeletonTestimoni key={index} />
+              ))}
+            </div>
+          ) : error ? (
+            <div className="flex justify-center items-center py-16">
+              <p className="text-red-500">Error loading testimonials: {error}</p>
+            </div>
+          ) : testimonials.length === 0 ? (
+            <div className="flex gap-6">
+              {[...Array(6)].map((_, index) => (
+                <LoadingSkeletonTestimoni key={index} />
+              ))}
+            </div>
+          ) : (
+            <motion.div
+              ref={marqueeRef}
+              className="flex"
+              animate={controls}
+              style={{ x }}
+              drag="x"
+              dragConstraints={{ left: -1000, right: 0 }}
+              onDragStart={() => setIsDragging(true)}
+              onDragEnd={() => setIsDragging(false)}
+            >
+              {duplicatedTestimonials.map((testimonial, index) => (
+                <TestimonialCard
+                  key={`${testimonial.id}-${index}`}
+                  testimonial={testimonial}
+                />
+              ))}
+            </motion.div>
+          )}
         </div>
       </div>
     </section>

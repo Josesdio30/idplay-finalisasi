@@ -1,7 +1,6 @@
 import { fetchAPI } from '../cmsService';
 import type { Article } from '@/types/article';
 import qs from 'qs';
-import { ca } from 'zod/v4/locales';
 
 export interface NewsFilters {
   category?: string;

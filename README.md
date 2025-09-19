@@ -61,8 +61,8 @@ Open [http://localhost:3000](http://localhost:3000) to view the application.
 
 ### Environment Variables
 ```env
-NEXT_PUBLIC_BASE_URL=https://staging.supercorridor.co.id/api/
-NEXT_PUBLIC_CMS_URL=https://inspiring-power-f8fa08a4a5.strapiapp.com
+NEXT_PUBLIC_BASE_URL=https://domain.com
+NEXT_PUBLIC_CMS_URL=https://cmsdomain.com
 NEXT_PUBLIC_GOOGLE_API_KEY=your-google-api-key
 ```
 

@@ -8,6 +8,7 @@ import ShareSection from '../../article/_components/detail/ShareSection';
 import RelatedArticles from '../../article/_components/detail/RelatedArticles';
 import ProgressBar from '../../article/_components/detail/ProgressBar';
 import TableOfContents from '../../article/_components/detail/TableOfContents';
+import DiscoverSection from '@/app/article/_components/detail/DiscoverSection';
 
 interface NewsDetailProps {
   params: Promise<{
@@ -66,13 +67,18 @@ export default async function NewsDetail({ params }: NewsDetailProps) {
       </div>
       
       {/* Share & Related News */}
-      <div className="max-w-4xl mx-auto px-4 py-8">
+      <div className="max-w-4xl mx-auto px-4 pt-8">
         <ShareSection 
           article={news} 
           contentType="news"
         />
+      </div>
+      <div className='mx-auto px-4'>
+        <DiscoverSection />
+      </div>
+      <div className="mx-auto px-4 pb-8">
         <RelatedArticles 
-          currentArticle={news}
+          currentArticle={news} 
           relatedArticles={relatedNews}
           contentType="news"
         />

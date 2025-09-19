@@ -67,7 +67,6 @@ const TestimonialCard = ({ testimonial }: { testimonial: Testimonial }) => {
               />
             </div>
           ) : (
-            // initials if no avatar
             <div className="w-full h-full bg-[#00934C] text-white flex items-center justify-center font-semibold">
               {testimonial.name
                 .split(' ')
@@ -92,10 +91,8 @@ const TestimoniPelanggan = () => {
   const x = useMotionValue(0);
   const [isDragging, setIsDragging] = useState(false);
 
-  // Fetch testimonials from API
   const { testimonials, loading, error } = useTestimonials();
 
-  // Duplicate testimonials for seamless loop
   const duplicatedTestimonials = [...testimonials, ...testimonials];
 
   const startMarquee = async (fromX = 0) => {
@@ -118,13 +115,11 @@ const TestimoniPelanggan = () => {
   }, []);
 
   useEffect(() => {
-    if (isDragging) {
-      controls.stop();
-    } else {
-      const currentX = x.get();
-      startMarquee(currentX);
-    }
-  }, [isDragging]);
+  if (!isDragging && testimonials.length > 0) {
+    const currentX = x.get();
+    startMarquee(currentX);
+  }
+}, [isDragging, testimonials]);
 
   return (
     <section className="w-full py-14 text-black overflow-hidden">

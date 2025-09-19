@@ -67,7 +67,7 @@ const ShareSection: React.FC<ShareSectionProps> = ({ article, contentType }) => 
 
   return (
     <div className="max-w-4xl mx-auto">
-      <div className="my-12 py-8 border-t border-gray-200">
+      <div className="my-2 py-8 border-t border-b border-gray-200">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-6">
           <h3 className="text-base sm:text-lg font-semibold text-gray-900">
             {contentText.shareTitle}

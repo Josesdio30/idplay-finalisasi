@@ -8,6 +8,7 @@ import ShareSection from '../_components/detail/ShareSection';
 import RelatedArticles from '../_components/detail/RelatedArticles';
 import ProgressBar from '../_components/detail/ProgressBar';
 import TableOfContents from '../_components/detail/TableOfContents';
+import DiscoverSection from '../_components/detail/DiscoverSection';
 
 interface ArticleDetailProps {
   params: Promise<{
@@ -68,12 +69,17 @@ export default async function ArticleDetail({ params }: ArticleDetailProps) {
         <ArticleContent article={article} />
       </div>
       
-      {/* Share & Related Articles */}
-      <div className="max-w-4xl mx-auto px-4 py-8">
+      {/* Share & Discover & Related Articles */}
+      <div className="mx-auto px-4 pt-8">
         <ShareSection 
           article={article} 
           contentType="article"
         />
+      </div>
+      <div className='mx-auto px-4'>
+        <DiscoverSection />
+      </div>
+      <div className="mx-auto px-4 pb-8">
         <RelatedArticles 
           currentArticle={article} 
           relatedArticles={relatedArticles}
@@ -125,7 +131,6 @@ export async function generateStaticParams() {
       }));
     }
     
-    // Return empty array if no articles
     return [];
   } catch (error) {
     console.error('Error generating static params from CMS:', error);

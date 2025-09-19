@@ -24,7 +24,7 @@ const RelatedArticles: React.FC<RelatedArticlesProps> = ({ currentArticle, relat
 
   return (
     <div className="max-w-4xl mx-auto">
-      <section className="mt-16 pt-12 border-t border-gray-200">
+      <section className="mt-4 pt-12 border-t border-gray-200">
         <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-8">{contentText.relatedTitle}</h2>
         <p className="text-gray-600 mb-8">{contentText.relatedDescription}</p>
 

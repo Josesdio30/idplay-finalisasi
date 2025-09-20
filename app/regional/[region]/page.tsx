@@ -12,7 +12,9 @@ import {
 import Autoplay from 'embla-carousel-autoplay';
 import ArticleCard from '@/app/article/_components/cards/ArticleCard';
 import { type Article } from '@/types/article';
-
+import API from '@/lib/axios';
+import Image from 'next/image';
+import { cn } from '@/lib/utils';
 
 interface BannerImage {
   id: number;
@@ -31,11 +33,51 @@ interface BannerData {
   image: BannerImage;
 }
 
-interface ProductData {
-  ID: number;
-  Product_Name: string;
-  Region: string;
-  Price: number;
+interface NationalBanner {
+  id: number;
+  documentId: string;
+  altname: string;
+  image: {
+    id: number;
+    url: string;
+    alternativeText?: string;
+    width: number;
+    height: number;
+  };
+}
+
+interface Product {
+  id: number;
+  documentId: string;
+  productCode: string;
+  productName: string;
+  finalSpeedInMbps: number;
+  originalSpeedInMbps: number;
+  originalPrice: number;
+  promoPrice?: number;
+  billingCycle: 'Bulanan' | 'Tahunan';
+  priceHint?: string;
+  thumbnail: {
+    id: number;
+    documentId: string;
+    name: string;
+    url: string;
+    width: number;
+    height: number;
+    formats: {
+      thumbnail: {
+        url: string;
+        width: number;
+        height: number;
+      };
+    };
+  };
+  benefits: {
+    id: number;
+    documentId: string;
+    name: string;
+    type: string;
+  }[];
 }
 
 const RegionalPageDetail = () => {
@@ -43,28 +85,41 @@ const RegionalPageDetail = () => {
   const params = useParams();
   const region = params?.region as string | undefined;
   const [regionData, setRegionData] = useState<any | null>(null);
-  const [banners, setBanners] = useState<BannerData[]>([]);
-  const [products, setProducts] = useState<ProductData[]>([]);
+  const [regionalBanners, setRegionalBanners] = useState<BannerData[]>([]);
+  const [nationalBanners, setNationalBanners] = useState<NationalBanner[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
   const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [paketTab, setPaketTab] = useState<'bulan' | 'tahun'>('bulan');
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         if (region) {
+          // Fetch regional data
           const regionResponse = await fetch(`${process.env.NEXT_PUBLIC_CMS_URL}/api/regionals?filters[region][$eq]=${encodeURIComponent(region)}`);
           const regionDataResult = await regionResponse.json();
           if (regionDataResult.data.length > 0) {
             setRegionData(regionDataResult.data[0]);
           }
+
+          // Fetch regional banners
           const bannerResponse = await fetch(`${process.env.NEXT_PUBLIC_CMS_URL}/api/regional-banners?filters[regional][region][$eq]=${encodeURIComponent(region)}&populate=image`);
           const bannerData = await bannerResponse.json();
           if (bannerData.data) {
-            setBanners(bannerData.data);
+            setRegionalBanners(bannerData.data);
           }
+
+          // Fetch national banners
+          const nationalBannerResponse = await API.get(`${process.env.NEXT_PUBLIC_CMS_URL}/api/national-banners?populate=*`);
+          if (nationalBannerResponse.data && Array.isArray(nationalBannerResponse.data.data)) {
+            setNationalBanners(nationalBannerResponse.data.data);
+          }
+
+          // Fetch articles
           const articleResponse = await fetch(
-            `${process.env.NEXT_PUBLIC_CMS_URL}/api/articles?filters[regionals][region][$eq]=${encodeURIComponent(region)}&populate[author]=true&populate[category]=true&populate[thumbnail]=true&populate[regionals]=true`
+            `${process.env.NEXT_PUBLIC_CMS_URL}/api/articles?filters[regionals][region][$eq]=${encodeURIComponent(region)}&populate[author]=true&populate[categories]=true&populate[thumbnail]=true&populate[regionals]=true`
           );
           const articleData = await articleResponse.json();
           if (articleData.data) {
@@ -82,20 +137,31 @@ const RegionalPageDetail = () => {
             }));
             setArticles(mappedArticles);
           }
-          const productResponse = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/common/products?offset=1&list_per_page=100000&customer_type=Retail&product_type=NORMAL&region=${encodeURIComponent(region)}`);
+
+          // Fetch products
+          const billingCycle = paketTab === 'bulan' ? 'Bulanan' : 'Tahunan';
+          const productResponse = await fetch(
+            `https://inspiring-power-f8fa08a4a5.strapiapp.com/api/products?filters[regionals][region][$eq]=${encodeURIComponent(region)}&filters[billingCycle][$eq]=${encodeURIComponent(billingCycle)}&populate=*`
+          );
           const productData = await productResponse.json();
           if (productData.data) {
             setProducts(productData.data);
           } else {
-            const fallbackResponse = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/common/products?offset=1&list_per_page=100000&customer_type=Retail&product_type=NORMAL`);
+            // Fallback fetch without region filter
+            const fallbackResponse = await fetch(
+              `https://inspiring-power-f8fa08a4a5.strapiapp.com/api/products?filters[billingCycle][$eq]=${encodeURIComponent(billingCycle)}&populate=*`
+            );
             const fallbackData = await fallbackResponse.json();
             if (fallbackData.data) {
               setProducts(fallbackData.data);
+            } else {
+              setProducts([]);
             }
           }
         }
       } catch (error) {
         console.error('Error fetching data:', error);
+        setProducts([]);
       } finally {
         setLoading(false);
       }
@@ -104,10 +170,134 @@ const RegionalPageDetail = () => {
     fetchData();
 
     const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % (banners.length || 1));
+      setCurrentSlide((prev) => (prev + 1) % (regionalBanners.length + nationalBanners.length || 1));
     }, 5000);
     return () => clearInterval(interval);
-  }, [region, banners.length]);
+  }, [region, paketTab, regionalBanners.length, nationalBanners.length]);
+
+  // Combine and interleave banners (regional first, then national, alternating)
+  const combinedBanners = [];
+  const maxLength = Math.max(regionalBanners.length, nationalBanners.length);
+  for (let i = 0; i < maxLength; i++) {
+    if (i < regionalBanners.length) {
+      combinedBanners.push({ type: 'regional', data: regionalBanners[i] });
+    }
+    if (i < nationalBanners.length) {
+      combinedBanners.push({ type: 'national', data: nationalBanners[i] });
+    }
+  }
+
+  const formatPrice = (price: number) => {
+    return new Intl.NumberFormat('id-ID').format(price);
+  };
+
+  const ProductCard = ({ product }: { product: Product }) => {
+    return (
+      <div className="bg-white rounded-2xl shadow-lg overflow-hidden border border-transparent">
+        {/* Product Card */}
+        <div className="flex items-center justify-center bg-orange-500 text-white text-center">
+          <Image
+            src={product.thumbnail.url}
+            alt={product.productName}
+            width={500}
+            height={500}
+            className="w-full h-auto object-cover aspect-auto object-center"
+            loading="lazy"
+            priority={false}
+          />
+        </div>
+
+        <div className="px-4 pt-4 lg:px-6">
+          <h3 className="text-lg font-bold text-orange-500 text-center">{product.productName}</h3>
+
+          <div className="flex items-center justify-center gap-1.5 mt-2">
+            {product.originalSpeedInMbps && product.finalSpeedInMbps && (
+              <p className="relative text-lg font-semibold text-gray-300 text-center px-0.5">
+                <span className="absolute left-0 right-0 top-1/2 -translate-y-1/2 bg-gray-300 w-full h-0.5 rounded-full" />
+                {product.originalSpeedInMbps} Mbps
+              </p>
+            )}
+            <p className="text-lg font-semibold text-orange-500 text-center">
+              {product.finalSpeedInMbps || product.originalSpeedInMbps} Mbps
+            </p>
+          </div>
+        </div>
+
+        <div className="relative flex flex-col justify-center items-center px-4 lg:px-6 lg:pt-2">
+          <div
+            className={cn(
+              'text-xl sm:text-2xl lg:text-[36px] tracking-[1%] leading-[45px] font-bold text-orange-500 mb-2 sm:mb-3',
+              product.promoPrice ? 'lg:mb-5' : 'lg:mb-0'
+            )}
+          >
+            <span className="relative">
+              {product.promoPrice && (
+                <div className="absolute top-1/2 left-0 transform -translate-y-1/2 bg-orange-500 w-full h-0.5 lg:h-1 rounded-full" />
+              )}
+              Rp.{formatPrice(product.originalPrice)}
+            </span>
+            <span className="text-[16px] sm:text-[20px]">
+              /{product.billingCycle === 'Bulanan' ? 'Bulan' : 'Tahun'}
+            </span>
+          </div>
+          {product.promoPrice && (
+            <>
+              <Image
+                src="/icons/arrow-pricing.svg"
+                alt=""
+                width={65}
+                height={65}
+                className="size-[45px] sm:size-[55px] lg:size-[65px] absolute z-10 left-10 sm:left-12 lg:left-9 top-10 lg:top-13"
+              />
+              <div className="text-base lg:text-[30px] tracking-[1%] leading-[26px] font-medium text-orange-700 mb-2">
+                Rp.{formatPrice(product.promoPrice)}
+                <span className="text-[16px] sm:text-[20px]">
+                  /{product.billingCycle === 'Bulanan' ? 'Bulan' : 'Tahun'}
+                </span>
+              </div>
+            </>
+          )}
+          <p className="text-sm lg:text-[15px] tracking-[1%] leading-[26px] font-medium text-orange-500">
+            {product.priceHint || 'Mau langganan setahun? Bisa dicicil, kok!'}
+          </p>
+        </div>
+
+        {/* Feature block */}
+        <div className="mx-4 my-4 rounded-xl bg-orange-50 border border-orange-100 p-4 text-black">
+          <div className="space-y-3">
+            {product.benefits.map((benefit, i) => (
+              <div key={benefit.id} className="flex items-start gap-3">
+                <span className="mt-0.5 inline-flex h-5 w-5 items-center justify-center rounded-full bg-orange-500 text-white text-xs">
+                  ✓
+                </span>
+                <span className="text-sm text-gray-800">{benefit.name}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Bottom action buttons */}
+        <div className="px-4 pb-6 flex flex-col gap-3">
+          <button
+            className="w-full border border-orange-500 text-orange-600 hover:bg-orange-50 font-semibold py-3 rounded-lg flex items-center justify-center gap-2"
+            onClick={() => router.push(`/kategori/rumah?region=${encodeURIComponent(region ?? '')}`)}
+          >
+            <span>Selengkapnya</span>
+            <span className="transition-transform">▾</span>
+          </button>
+          <button
+            onClick={() => router.push('/entri-prospek')}
+            className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-lg flex items-center justify-center gap-2"
+          >
+            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" />
+            </svg>
+            Subscribe
+          </button>
+        </div>
+      </div>
+    );
+  };
 
   if (loading) {
     return <div className="container mx-auto p-6 text-center">Loading...</div>;
@@ -121,14 +311,18 @@ const RegionalPageDetail = () => {
           className="flex transition-transform duration-500 ease-in-out"
           style={{ transform: `translateX(-${currentSlide * 100}%)` }}
         >
-          {banners.length > 0 ? (
-            banners.map((banner) => (
-              <div key={banner.documentId} className="w-full flex-shrink-0">
+          {combinedBanners.length > 0 ? (
+            combinedBanners.map((banner, index) => (
+              <div key={`${banner.type}-${banner.data.id}-${index}`} className="w-full flex-shrink-0">
                 <div className="w-full bg-gray-100 flex items-center justify-center">
                   <img
-                    src={banner.image.formats.large.url}
-                    alt={banner.altname || 'Banner'}
-                    className="max-h-full w-full"
+                    src={
+                      banner.type === 'regional'
+                        ? (banner.data.image as BannerImage).formats.large.url
+                        : (banner.data.image as NationalBanner['image']).url
+                    }
+                    alt={banner.data.altname || 'Banner'}
+                    className="max-h-full w-full object-cover"
                   />
                 </div>
               </div>
@@ -187,75 +381,53 @@ const RegionalPageDetail = () => {
 
       {/* Product Section */}
       <div className="container mx-auto px-4 lg:px-8">
+        {/* Toggle Month/Year */}
+        <div className="flex justify-center mb-8">
+          <div className="flex items-center gap-1 bg-white rounded-lg p-1 shadow-md">
+            <button
+              className={cn(
+                'px-3 lg:px-6 py-1 lg:py-2 rounded-md text-sm lg:text-base font-medium lg:font-semibold transition-all ease-in-out duration-300',
+                paketTab === 'bulan'
+                  ? 'bg-orange-500 text-white'
+                  : 'bg-white hover:bg-orange-200 text-black hover:text-orange-500'
+              )}
+              onClick={() => setPaketTab('bulan')}
+            >
+              Bulan
+            </button>
+            <button
+              className={cn(
+                'px-3 lg:px-6 py-1 lg:py-2 rounded-md text-sm lg:text-base font-medium lg:font-semibold transition-all ease-in-out duration-300',
+                paketTab === 'tahun'
+                  ? 'bg-orange-500 text-white'
+                  : 'bg-white hover:bg-orange-200 text-black hover:text-orange-500'
+              )}
+              onClick={() => setPaketTab('tahun')}
+            >
+              Tahun
+            </button>
+          </div>
+        </div>
+
         <Carousel
           plugins={[Autoplay({ delay: 3000 })]}
           opts={{ align: 'start', loop: true }}
           className="w-full mb-12"
         >
           <CarouselContent>
-            {products.map((product) => (
-              <CarouselItem key={product.ID} className="basis-full md:basis-1/2 lg:basis-1/3">
-                <div className="bg-white rounded-2xl shadow-lg overflow-hidden border border-transparent">
-                  {/* Product Card */}
-                  <div className="flex items-center justify-center bg-orange-500 text-white px-4 py-6 sm:py-7 lg:py-9 text-center">
-                    <div className="text-[36px] sm:text-[40px] lg:text-[70px] tracking-[1%] leading-[45px] font-bold text-center">
-                      {product.Product_Name.match(/Up To (\d+)/)?.[1] || 'N/A'}
-                      <span className="text-[16px] sm:text-[20px]">/Mbps</span>
-                    </div>
-                  </div>
-                  <div className="relative flex flex-col justify-center items-center p-4 lg:p-6">
-                    <div className="text-xl sm:text-2xl lg:text-[36px] tracking-[1%] leading-[45px] font-bold text-orange-500 mb-2 sm:mb-3 lg:mb-5">
-                      Rp.{(product.Price * 12).toLocaleString('id-ID')}
-                      <span className="text-[16px] sm:text-[20px]">/Tahun</span>
-                    </div>
-                    <img src="/icons/arrow-pricing.svg" alt="" width={65} height={65} className="size-[45px] sm:size-[55px] lg:size-[65px] absolute z-10 left-10 sm:left-12 lg:left-9 top-10 lg:top-13" />
-                    <div className="text-base lg:text-[30px] tracking-[1%] leading-[26px] font-medium text-orange-700 mb-2">
-                      Rp.{product.Price.toLocaleString('id-ID')}
-                      <span className="text-[16px] sm:text-[20px]">/Bulan</span>
-                    </div>
-                    <p className="text-sm lg:text-[15px] tracking-[1%] leading-[26px] font-medium text-orange-500">Mau langganan setahun? Bisa dicicil, kok!</p>
-                  </div>
-
-                  {/* Feature block */}
-                  <div className="mx-4 mb-4 rounded-xl bg-orange-50 border border-orange-100 p-4 text-black">
-                    <div className="space-y-3">
-                      {['Fast and reliable connection', 'No contract required', 'Easy setup Process'].map((text, i) => (
-                        <div key={i} className="flex items-start gap-3">
-                          <span className="mt-0.5 inline-flex h-5 w-5 items-center justify-center rounded-full bg-orange-500 text-white text-xs">✓</span>
-                          <span className="text-sm text-gray-800">{text}</span>
-                        </div>
-                      ))}
-                    </div>
-                    <div className="my-4 h-0.5 w-full bg-orange-300" />
-                    <div className="flex items-center justify-around text-orange-600">
-                      <span className="text-xs font-semibold border border-orange-400 px-2 py-1 rounded">1080p FULLHD</span>
-                      <span className="text-xs font-semibold border border-orange-400 px-2 py-1 rounded">🎮 Gaming</span>
-                      <span className="text-xs font-semibold border border-orange-400 px-2 py-1 rounded">∞ Unlimited</span>
-                    </div>
-                  </div>
-
-                  {/* Bottom action buttons */}
-                  <div className="px-4 pb-6 flex flex-col gap-3">
-                    <button
-                      className="w-full border border-orange-500 text-orange-600 hover:bg-orange-50 font-semibold py-3 rounded-lg flex items-center justify-center gap-2"
-                      onClick={() => router.push(`/kategori/rumah?region=${encodeURIComponent(region ?? '')}`)}
-                    >
-                      <span>Selengkapnya</span>
-                      <span className="transition-transform">▾</span>
-                    </button>
-                    <button
-                      onClick={() => router.push('/entri-prospek')}
-                      className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-lg flex items-center justify-center gap-2"
-                    >
-                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" />
-                      </svg>
-                      Subscribe
-                    </button>
-                  </div>
+            {products.length > 0 ? (
+              products.map((product) => (
+                <CarouselItem key={product.id} className="basis-full md:basis-1/2 lg:basis-1/3">
+                  <ProductCard product={product} />
+                </CarouselItem>
+              ))
+            ) : (
+              <CarouselItem className="basis-full">
+                <div className="bg-gray-100 p-4 rounded-lg h-full flex items-center justify-center">
+                  <p className="text-gray-700">No products available</p>
                 </div>
               </CarouselItem>
-            ))}
+            )}
           </CarouselContent>
           <CarouselPrevious className="left-2" />
           <CarouselNext className="right-2" />

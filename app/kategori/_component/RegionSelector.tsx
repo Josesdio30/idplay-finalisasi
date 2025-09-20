@@ -1,7 +1,10 @@
 'use client';
 
-import { useState, useEffect, Suspense } from 'react';
+import { useState, useEffect, Suspense, useTransition } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { cn } from '@/lib/utils';
+import { getRegions } from '@/lib/services/productService';
+import type { Regional } from '@/types/product';
 
 export type RegionType = string;
 
@@ -18,30 +21,30 @@ interface RegionSelectorProps {
 function RegionSelectorContent({ onRegionChange, selectedRegion }: RegionSelectorProps) {
   const [regionOptions, setRegionOptions] = useState<RegionOption[]>([]);
   const [isLoadingRegions, setIsLoadingRegions] = useState(true);
+  const [fetchError, setFetchError] = useState<string | null>(null);
+  const [isPending, startTransition] = useTransition();
   const searchParams = useSearchParams();
 
   useEffect(() => {
     const fetchAndSetRegions = async () => {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_CMS_URL}/api/regionals/`);
-        const data = await response.json();
-        if (data.data && Array.isArray(data.data)) {
-          const formattedRegions: RegionOption[] = data.data.map((item: { region: string }) => ({
-            value: item.region.toUpperCase().replace(/ /g, ''),
-            label: item.region,
+        setFetchError(null);
+        const regionsData: Regional[] = await getRegions();
+        if (regionsData && Array.isArray(regionsData)) {
+          const formattedRegions: RegionOption[] = regionsData.map((regional: Regional) => ({
+            value: regional.region,
+            label: regional.region,
           }));
           setRegionOptions(formattedRegions);
-          
-          // Ambil region dari query string jika ada
+
           const regionFromQuery = searchParams.get('region');
           if (regionFromQuery && formattedRegions.some(r => r.value === regionFromQuery)) {
-            onRegionChange(regionFromQuery);
-          } else if (formattedRegions.length > 0) {
-            onRegionChange(formattedRegions[0].value);
+            startTransition(() => onRegionChange(regionFromQuery));
           }
         }
       } catch (error) {
         console.error('Error fetching regions:', error);
+        setFetchError('Gagal memuat wilayah. Silakan coba lagi.');
       } finally {
         setIsLoadingRegions(false);
       }
@@ -50,33 +53,41 @@ function RegionSelectorContent({ onRegionChange, selectedRegion }: RegionSelecto
     fetchAndSetRegions();
   }, [onRegionChange, searchParams]);
 
-  const handleRegionChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    onRegionChange(event.target.value as RegionType);
+  const handleRegionClick = (regionValue: string) => {
+    startTransition(() => onRegionChange(regionValue));
   };
 
   return (
     <div className="mb-12 mt-6 flex flex-col items-center">
-      <label htmlFor="region-select" className="text-lg font-semibold text-gray-700 mb-2">
-        Pilih Wilayah Anda:
-      </label>
-      <select
-        id="region-select"
-        value={selectedRegion}
-        onChange={handleRegionChange}
-        disabled={isLoadingRegions}
-        className="w-full max-w-xs p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 bg-white"
-        style={{ background: 'white' }}
-      >
-        {isLoadingRegions ? (
-          <option style={{ background: 'white', color: '#888' }}>Memuat wilayah...</option>
-        ) : (
-          regionOptions.map(option => (
-            <option key={option.value} value={option.value} style={{ background: 'white', color: '#222' }}>
+      <h3 className="text-xl font-bold text-gray-800 mb-4">Pilih Wilayah Anda:</h3>
+      
+      {fetchError ? (
+        <p className="text-red-500 text-sm mb-4">{fetchError}</p>
+      ) : isLoadingRegions || isPending ? (
+        <div className="flex items-center gap-2 bg-white rounded-lg p-2 shadow-md">
+          <div className="w-6 h-6 border-2 border-gray-300 border-t-orange-500 rounded-full animate-spin" />
+          <span className="text-gray-500 text-sm">Memuat wilayah...</span>
+        </div>
+      ) : (
+        <div className="flex flex-wrap justify-center items-center gap-2 bg-white rounded-lg p-2 shadow-md">
+          {regionOptions.map((option) => (
+            <button
+              key={option.value}
+              onClick={() => handleRegionClick(option.value)}
+              className={cn(
+                'px-4 lg:px-6 py-2 rounded-md text-sm lg:text-base font-semibold transition-all ease-in-out duration-300',
+                selectedRegion === option.value
+                  ? 'bg-green-600 text-white'
+                  : 'bg-white hover:bg-green-200 text-black hover:text-green-600'
+              )}
+              aria-label={`Pilih wilayah ${option.label}`}
+              disabled={isPending}
+            >
               {option.label}
-            </option>
-          ))
-        )}
-      </select>
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
@@ -85,11 +96,10 @@ export default function RegionSelector({ onRegionChange, selectedRegion }: Regio
   return (
     <Suspense fallback={
       <div className="mb-12 mt-6 flex flex-col items-center">
-        <label className="text-lg font-semibold text-gray-700 mb-2">
-          Pilih Wilayah Anda:
-        </label>
-        <div className="w-full max-w-xs p-2 border border-gray-300 rounded-md shadow-sm bg-gray-100">
-          <span className="text-gray-500">Memuat wilayah...</span>
+        <h3 className="text-xl font-bold text-gray-800 mb-4">Pilih Wilayah Anda:</h3>
+        <div className="flex items-center gap-2 bg-white rounded-lg p-2 shadow-md">
+          <div className="w-6 h-6 border-2 border-gray-300 border-t-orange-500 rounded-full animate-spin" />
+          <span className="text-gray-500 text-sm">Memuat wilayah...</span>
         </div>
       </div>
     }>

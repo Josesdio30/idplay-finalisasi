@@ -3,16 +3,18 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import CompareProduct from '@/app/_components/CompareProduct';
+import KeunggulanKamiSection from '@/app/_components/KeunggulanSection';
 import ProductFacts from '../_component/ProductFacts';
+import ProductFilters from '../_component/ProductFilters';
 import RegionSelector, { type RegionType } from '../_component/RegionSelector';
 
 export default function Kategori() {
   const [selectedRegion, setSelectedRegion] = useState<RegionType>('');
+  const [selectedSpeedRange, setSelectedSpeedRange] = useState<{ min?: number; max?: number } | null>(null);
+  const [selectedBillingCycle, setSelectedBillingCycle] = useState<'Bulanan' | 'Tahunan' | null>(null);
 
   return (
     <div className="min-h-screen font-sans bg-white">
-      
-      {/* Banner/Card Section */}
       <div className="relative container mx-auto lg:pt-14">
         <Image
           src="/category/hero-rumah.svg"
@@ -23,71 +25,35 @@ export default function Kategori() {
         />
       </div>
 
-      {/* Keunggulan Section */}
-      <section className="w-full py-8 bg-white mt-10 md:mt-14">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-col items-center mb-8">
-            <h2 className="text-xl lg:text-4xl font-bold text-center mb-2 text-green-700">Keunggulan Kami</h2>
-            <p className="text-center text-gray-500 text-base lg:text-lg mb-6">Mengapa memilih layanan kami? Berikut keunggulan utama yang kami tawarkan.</p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 justify-items-center items-start">
-            <div className="flex flex-col items-center">
-              <div className="bg-[#00934c] rounded-full w-24 h-24 flex items-center justify-center mb-4">
-                <Image
-                  src="/category/5g.svg"
-                  alt="5G"
-                  width={60}
-                  height={60}
-                  className="w-16 h-16"
-                />
-              </div>
-              <h3 className="text-lg font-bold text-center mb-2">Koneksi Full 5G</h3>
-              <p className="text-center text-gray-700 text-base">Akses Internet dengan koneksi Full 5G untuk pengalaman internet tanpa hambatan.</p>
-            </div>
-            <div className="flex flex-col items-center">
-              <div className="bg-[#00934c] rounded-full w-24 h-24 flex items-center justify-center mb-4">
-                <Image
-                  src="/category/Keamanan.svg"
-                  alt="Keamanan"
-                  width={60}
-                  height={60}
-                  className="w-16 h-16"
-                />
-              </div>
-              <h3 className="text-lg font-bold text-center mb-2">Keamanan Terjamin</h3>
-              <p className="text-center text-gray-700 text-base">Internet aman dengan enkripsi canggih dan proteksi real-time.</p>
-            </div>
-            <div className="flex flex-col items-center">
-              <div className="bg-[#00934c] rounded-full w-24 h-24 flex items-center justify-center mb-4">
-                <Image
-                  src="/category/Router.svg"
-                  alt="Router"
-                  width={60}
-                  height={60}
-                  className="w-16 h-16"
-                />
-              </div>
-              <h3 className="text-lg font-bold text-center mb-2">Wifi Super Cepat</h3>
-              <p className="text-center text-gray-700 text-base">Streaming, Gaming, dan Kerja tanpa Hambatan.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-      
-      {/* Region Selection */}
+      {/* Section Keunggulan */}
+      <KeunggulanKamiSection />
+
       <div className="container mx-auto px-4">
-        <RegionSelector 
-          selectedRegion={selectedRegion} 
-          onRegionChange={setSelectedRegion} 
+        <RegionSelector
+          selectedRegion={selectedRegion}
+          onRegionChange={setSelectedRegion}
         />
-        
-        {/* Broadband Facts Cards - Retail/Rumah */}
+
         {selectedRegion && (
-            <ProductFacts customerType="Retail" region={selectedRegion} />
+          <>
+            <ProductFilters
+              region={selectedRegion}
+              selectedSpeedRange={selectedSpeedRange}
+              selectedBillingCycle={selectedBillingCycle}
+              onSpeedRangeChange={setSelectedSpeedRange}
+              onBillingCycleChange={setSelectedBillingCycle}
+            />
+
+            <ProductFacts
+              category="RETAIL"
+              region={selectedRegion}
+              selectedSpeedRange={selectedSpeedRange || undefined}
+              selectedBillingCycle={selectedBillingCycle || undefined}
+            />
+          </>
         )}
       </div>
 
-      {/* Compare Product Section */}
       <CompareProduct />
     </div>
   );

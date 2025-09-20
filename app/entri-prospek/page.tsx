@@ -256,6 +256,7 @@ export default function EntriProspekPage() {
     setSubmitting(true);
 
     try {
+      const latlng = currentLocation ? `${currentLocation.lat}, ${currentLocation.lng}` : '';
       const redirectUrl = new URL("https://oss.supercorridor.co.id/idplayform/thankyou.php");
       redirectUrl.searchParams.set("key", "98733234567643fgtfr4eerty77t53w424356t7y8524354657687864534wert6yu7jmngrdWF$$z5678yun");
       redirectUrl.searchParams.set("namalengkap", fullname);
@@ -264,8 +265,10 @@ export default function EntriProspekPage() {
       redirectUrl.searchParams.set("alamatlengkap", address);
       redirectUrl.searchParams.set("provinsi80", provinsi);
       redirectUrl.searchParams.set("kotakabupaten81", kota);
-      redirectUrl.searchParams.set("kodepos", zipCode);
-      redirectUrl.searchParams.set("produk", selectedProduct);
+      redirectUrl.searchParams.set("kodepos82", zipCode);
+      redirectUrl.searchParams.set("pilihpaket", selectedProduct);
+      redirectUrl.searchParams.set("typea86", latlng);
+      redirectUrl.searchParams.set("typea88", selectedProduct);
       window.location.href = redirectUrl.toString();
     } catch (err) {
       alert("Terjadi kesalahan saat redirect");

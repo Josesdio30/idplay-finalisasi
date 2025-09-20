@@ -49,13 +49,14 @@ export default function EntriProspekPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [selectedProduct, setSelectedProduct] = useState('');
   const [isProductLoading, setIsProductLoading] = useState(false);
-
   const [fullname, setFullname] = useState('');
   const [email, setEmail] = useState('');
   const [address, setAddress] = useState('');
   const [phone, setPhone] = useState('');
   const [ktp, setKtp] = useState('');
   const [referralCode, setReferralCode] = useState('');
+  const [provinsi, setProvinsi] = useState('');
+  const [kota, setKota] = useState('');
 
   const [submitting, setSubmitting] = useState(false);
   const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -66,13 +67,6 @@ export default function EntriProspekPage() {
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_API_KEY!,
     libraries: ['places']
   });
-
-  // Auth guard: redirect to login when not authenticated
-  useEffect(() => {
-    if (!isLoading && !isLoggedIn) {
-      router.replace('/login?redirect=/entri-prospek');
-    }
-  }, [isLoading, isLoggedIn, router]);
 
   useEffect(() => {
     if (isLoaded && window.google) {
@@ -89,7 +83,6 @@ export default function EntriProspekPage() {
         setCurrentLocation(coords);
       },
       () => {
-        // Default ke Jakarta jika gagal
         setCurrentLocation({ lat: -6.200000, lng: 106.816666 });
       }
     );
@@ -172,6 +165,22 @@ export default function EntriProspekPage() {
     return '';
   };
 
+  const extractRegion = (place: google.maps.places.PlaceResult) => {
+    const comps = place.address_components || [];
+    let province = '';
+    let city = '';
+    for (const c of comps) {
+      if (c.types.includes('administrative_area_level_1')) {
+        province = c.long_name;
+      }
+      if (c.types.includes('administrative_area_level_2')) {
+        city = c.long_name;
+      }
+    }
+    setProvinsi(province);
+    setKota(city);
+  };
+
   const handleSuggestionSelect = useCallback((suggestion: PlacePrediction) => {
     if (!placesServiceRef.current) return;
     setSearchValue(suggestion.description);
@@ -194,6 +203,7 @@ export default function EntriProspekPage() {
           setSelectedAddress(addr);
           setAddress(addr);
           setZipCode(extractPostalCode(place));
+          extractRegion(place);
         }
       }
     });
@@ -213,7 +223,29 @@ export default function EntriProspekPage() {
           zoom={15}
           options={{ zoomControl: true, streetViewControl: false, mapTypeControl: false, fullscreenControl: false }}
         >
-          <Marker position={currentLocation} />
+          <Marker
+            position={currentLocation}
+            draggable={true}
+            onDragEnd={(e) => {
+              const lat = e.latLng?.lat();
+              const lng = e.latLng?.lng();
+              if (!lat || !lng) return;
+              const coords = { lat, lng };
+              setCurrentLocation(coords);
+              const geocoder = new google.maps.Geocoder();
+              geocoder.geocode({ location: coords }, (results, status) => {
+                if (status === 'OK' && results && results[0]) {
+                  const place = results[0];
+                  const addr = place.formatted_address;
+                  setSelectedAddress(addr);
+                  setAddress(addr);
+                  setZipCode(extractPostalCode(place));
+                  extractRegion(place);
+                }
+              });
+            }}
+          />
+
         </GoogleMap>
       </div>
     );
@@ -221,50 +253,22 @@ export default function EntriProspekPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!currentLocation || !selectedProduct) return;
     setSubmitting(true);
-    try {
-      const selectedProductData = products.find((p) => p.product_code === selectedProduct);
-      const payload = {
-        zip_code: zipCode || '',
-        provider_id: '150001170',
-        fullname,
-        email,
-        address,
-        phone,
-        latitude: String(currentLocation.lat),
-        longitude: String(currentLocation.lng),
-        ktp: ktp || '',
-        services: selectedProductData?.name || '',
-        harga: String(selectedProductData?.price || ''),
-        product_code: selectedProduct,
-        referral_code: referralCode || ''
-      };
 
-      const token = user?.token || localStorage.getItem('token') || '';
-      const resp = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}subscription/retail/entri-prospek`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-        body: JSON.stringify(payload)
-      });
-      const data = await resp.json().catch(() => ({}));
-      if (!resp.ok) {
-        alert(data?.error?.message || 'Gagal mengirim data');
-      } else {
-        alert('Pengajuan prospek berhasil dikirim');
-        setFullname('');
-        setEmail('');
-        setAddress('');
-        setPhone('');
-        setKtp('');
-        setSelectedProduct('');
-        setReferralCode('');
-      }
+    try {
+      const redirectUrl = new URL("https://oss.supercorridor.co.id/idplayform/thankyou.php");
+      redirectUrl.searchParams.set("key", "98733234567643fgtfr4eerty77t53w424356t7y8524354657687864534wert6yu7jmngrdWF$$z5678yun");
+      redirectUrl.searchParams.set("namalengkap", fullname);
+      redirectUrl.searchParams.set("nowhatsapp5", phone);
+      redirectUrl.searchParams.set("email", email);
+      redirectUrl.searchParams.set("alamatlengkap", address);
+      redirectUrl.searchParams.set("provinsi80", provinsi);
+      redirectUrl.searchParams.set("kotakabupaten81", kota);
+      redirectUrl.searchParams.set("kodepos", zipCode);
+      redirectUrl.searchParams.set("produk", selectedProduct);
+      window.location.href = redirectUrl.toString();
     } catch (err) {
-      alert('Terjadi kesalahan tak terduga');
+      alert("Terjadi kesalahan saat redirect");
     } finally {
       setSubmitting(false);
     }
@@ -278,6 +282,7 @@ export default function EntriProspekPage() {
 
         <div className="mt-6 grid grid-cols-1 gap-8 lg:grid-cols-2">
           <div className="space-y-4">
+            {/* search bar + map tetap sama */}
             <div className="relative">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-4 w-4" />
@@ -325,6 +330,7 @@ export default function EntriProspekPage() {
             </div>
           </div>
 
+          {/* Form tetap sama, hanya handleSubmit beda */}
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div>
@@ -374,10 +380,6 @@ export default function EntriProspekPage() {
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">KTP</label>
-              <Input value={ktp} onChange={(e) => setKtp(e.target.value)} placeholder="Nomor KTP" required />
-            </div>
-            <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Kode Referral (opsional)</label>
               <Input
                 value={referralCode}
@@ -389,7 +391,7 @@ export default function EntriProspekPage() {
 
             <Button
               type="submit"
-              disabled={submitting || !currentLocation || !selectedProduct || !ktp}
+              disabled={submitting || !currentLocation || !selectedProduct}
               className="bg-orange-600 hover:bg-orange-700 text-white"
             >
               {submitting ? (

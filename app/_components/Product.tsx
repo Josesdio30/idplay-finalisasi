@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import {
@@ -19,38 +19,66 @@ interface IProps {
   pagination: Metadata['pagination'];
 }
 
-const ProductSection = ({ products, loading, fetching, pagination }: IProps) => {
+type RegionKey = 'Jawa' | 'Sulawesi' | 'Kalimantan' | 'Sumatera';
+type RegionMapping = Record<RegionKey, string[]>;
+
+const ProductSection = ({ products: initialProducts, loading: initialLoading, fetching: initialFetching, pagination: initialPagination }: IProps) => {
   const [paketTab, setPaketTab] = useState<'bulan' | 'tahun'>('bulan');
-  const [regionTab, setRegionTab] = useState<'Jawa' | 'Sulawesi' | 'Kalimantan' | 'Sumatera'>(
-    'Jawa'
-  );
+  const [regionTab, setRegionTab] = useState<RegionKey>('Jawa');
   const [openId, setOpenId] = useState<number | null>(null);
+  const [products, setProducts] = useState<Product[]>(initialProducts);
+  const [loading, setLoading] = useState<boolean>(initialLoading);
+  const [fetching, setFetching] = useState<boolean>(initialFetching);
+  const [pagination, setPagination] = useState<Metadata['pagination']>(initialPagination);
   const navigate = useRouter();
 
   // Mapping region names dari UI ke API
-  const regionMapping = {
+  const regionMapping: RegionMapping = {
     Jawa: ['JABODETABEK', 'JABAR'],
     Sulawesi: ['SULAWESI'],
     Kalimantan: ['KALIMANTAN'],
     Sumatera: ['SUMATERA']
   };
 
-  // Filter products berdasarkan billing cycle dan region
-  const getFilteredProducts = () => {
+  // Fungsi untuk membangun URL API
+  const buildApiUrl = (regionTab: RegionKey, paketTab: string) => {
+    const regions = regionMapping[regionTab] || ['JABODETABEK'];
     const billingCycle = paketTab === 'bulan' ? 'Bulanan' : 'Tahunan';
-    const regionNames = regionMapping[regionTab] || [];
 
-    return products.filter((product) => {
-      // Filter by billing cycle
-      const matchesBilling = product.billingCycle === billingCycle;
+    const regionFilter = regions
+      .map((region) => `filters[regionals][region][$in][]=${encodeURIComponent(region)}`)
+      .join('&');
+    const billingFilter = `filters[billingCycle][$eq]=${encodeURIComponent(billingCycle)}`;
 
-      // Filter by region - check if product has any of the required regions
-      const matchesRegion = product.regionals.some((regional) =>
-        regionNames.includes(regional.region)
-      );
+    return `https://inspiring-power-f8fa08a4a5.strapiapp.com/api/products?${regionFilter}&${billingFilter}&populate=*`;
+  };
 
-      return matchesBilling && matchesRegion;
-    });
+  // Fetch data ketika regionTab atau paketTab berubah
+  useEffect(() => {
+    const fetchProducts = async () => {
+      setLoading(true);
+      setFetching(true);
+      try {
+        const url = buildApiUrl(regionTab, paketTab);
+        const response = await fetch(url);
+        const data = await response.json();
+        setProducts(data.data || []);
+        setPagination(data.meta.pagination);
+      } catch (error) {
+        console.error('Error fetching products:', error);
+        setProducts([]);
+      } finally {
+        setLoading(false);
+        setFetching(false);
+      }
+    };
+
+    fetchProducts();
+  }, [regionTab, paketTab]);
+
+  // Filter products berdasarkan billing cycle dan region (fallback jika diperlukan)
+  const getFilteredProducts = () => {
+    return products; // Karena sudah difilter di API, langsung return
   };
 
   const filteredProducts = getFilteredProducts();
@@ -68,11 +96,6 @@ const ProductSection = ({ products, loading, fetching, pagination }: IProps) => 
       <div className="bg-white rounded-2xl shadow-lg overflow-hidden border border-transparent">
         {/* Product Card */}
         <div className="flex items-center justify-center bg-orange-500 text-white text-center">
-          {/* px-4 py-6 sm:py-7 lg:py-9 */}
-          {/* <div className="text-[36px] sm:text-[40px] lg:text-[70px] tracking-[1%] leading-[45px] font-bold text-center">
-            {product.finalSpeedInMbps}
-            <span className="text-[16px] sm:text-[20px]">/Mbps</span>
-          </div> */}
           <Image
             src={product.thumbnail.url}
             alt={product.productName}
@@ -154,18 +177,6 @@ const ProductSection = ({ products, loading, fetching, pagination }: IProps) => 
               </div>
             ))}
           </div>
-          {/* <div className="my-4 h-0.5 w-full bg-orange-300" />
-          <div className="flex items-center justify-around text-orange-600">
-            <span className="text-xs font-semibold border border-orange-400 px-2 py-1 rounded">
-              1080p FULLHD
-            </span>
-            <span className="text-xs font-semibold border border-orange-400 px-2 py-1 rounded">
-              🎮 Gaming
-            </span>
-            <span className="text-xs font-semibold border border-orange-400 px-2 py-1 rounded">
-              ∞ Unlimited
-            </span>
-          </div> */}
         </div>
 
         {/* Bottom action buttons: Selengkapnya (di atas) dan Subscribe (di bawah) */}
@@ -245,17 +256,6 @@ const ProductSection = ({ products, loading, fetching, pagination }: IProps) => 
             >
               Kalimantan
             </button>
-            <button
-              className={cn(
-                'px-3 lg:px-6 py-1 lg:py-2 rounded-md text-white text-sm lg:text-base font-medium lg:font-semibold transition-all ease-in-out duration-300',
-                regionTab === 'Sumatera'
-                  ? 'bg-green-600'
-                  : 'bg-white hover:bg-green-200 text-black hover:text-green-600'
-              )}
-              onClick={() => setRegionTab('Sumatera')}
-            >
-              Sumatera
-            </button>
           </div>
         </div>
 
@@ -289,44 +289,53 @@ const ProductSection = ({ products, loading, fetching, pagination }: IProps) => 
       </div>
 
       <div className="-mt-10 z-10 w-full px-4 lg:px-8 min-h-[800px]">
-        {/* Mobile Carousel */}
-        <div className="block md:hidden mb-12">
-          <Carousel
-            plugins={[
-              Autoplay({
-                delay: 3000
-              })
-            ]}
-            opts={{
-              align: 'start',
-              loop: true
-            }}
-            className="w-full"
-          >
-            <CarouselContent className="-ml-2 md:-ml-4">
-              {filteredProducts.map((product: Product) => (
-                <CarouselItem
-                  key={product.id}
-                  className="pl-2 md:pl-4 basis-full"
-                >
-                  <ProductCard product={product} />
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-            <CarouselPrevious className="left-2" />
-            <CarouselNext className="right-2" />
-          </Carousel>
-        </div>
+        {loading ? (
+          <p className="text-center">Loading...</p>
+        ) : (
+          <>
+            {/* Mobile Carousel */}
+            <div className="block md:hidden mb-12">
+              <Carousel
+                plugins={[
+                  Autoplay({
+                    delay: 3000
+                  })
+                ]}
+                opts={{
+                  align: 'start',
+                  loop: true
+                }}
+                className="w-full"
+              >
+                <CarouselContent className="-ml-2 md:-ml-4">
+                  {filteredProducts.map((product: Product) => (
+                    <CarouselItem
+                      key={product.id}
+                      className="pl-2 md:pl-4 basis-full"
+                    >
+                      <ProductCard product={product} />
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+                <CarouselPrevious className="left-2" />
+                <CarouselNext className="right-2" />
+              </Carousel>
+            </div>
 
-        {/* Desktop Grid */}
-        <div className="hidden md:grid grid-cols-1 md:grid-cols-3 gap-5 lg:gap-12 mb-12">
-          {filteredProducts.map((product: Product) => (
-            <ProductCard
-              key={product.id}
-              product={product}
-            />
-          ))}
-        </div>
+            {/* Desktop Grid */}
+            <div className="hidden md:grid grid-cols-1 md:grid-cols-3 gap-5 lg:gap-12 mb-12">
+              {filteredProducts.map((product: Product) => (
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                />
+              ))}
+            </div>
+          </>
+        )}
+        {filteredProducts.length === 0 && !loading && (
+          <p className="text-center">Tidak ada produk tersedia untuk pilihan ini.</p>
+        )}
       </div>
     </section>
   );

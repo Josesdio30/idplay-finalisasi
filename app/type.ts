@@ -90,6 +90,25 @@ export interface Product {
   regionals: ProductRegional[];
 }
 
+// export Interface untuk Banner
+export interface Banner {
+  id: number;
+  documentId: string;
+  altname: string;
+  createdAt: string;
+  updatedAt: string;
+  publishedAt: string;
+  image: {
+    id: number;
+    url: string;
+    width: number;
+    height: number;
+    alternativeText?: string | null;
+    caption?: string | null;
+    formats?: Record<string, any>;
+  };
+}
+
 export interface Metadata {
   pagination?: {
     page: number;
@@ -103,4 +122,17 @@ export interface Metadata {
 export interface StrapiApiResponse {
   data: Product[];
   meta: Metadata;
+}
+
+
+export interface StrapiApiResponseBanner<T> {
+  data: T;
+  meta?: {
+    pagination?: {
+      page: number;
+      pageSize: number;
+      pageCount: number;
+      total: number;
+    };
+  };
 }

@@ -15,7 +15,7 @@ export default function Kategori() {
       {/* Banner/Card Section */}
       <div className="relative container mx-auto lg:pt-14">
         <Image
-          src="/category/hero-kategori.svg"
+          src="/category/hero-rumah.svg"
           width={1000}
           height={1000}
           alt="Kategori Rumah"

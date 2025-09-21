@@ -2,9 +2,9 @@ import { Box, Check, Image, X } from 'lucide-react';
 
 const CompareProduct = () => {
   return (
-    <section className="w-full py-14 text-black">
+    <section className="w-full pt-6 sm:pt-8 md:pt-14 text-black">
       <div className="container mx-auto">
-        <div className="mb-12">
+        <div className="mb-4 sm:mb-6">
           <div className="relative text-center">
             <div className="absolute -left-5 -top-3 space-y-1"></div>
             <h3 className="text-xl lg:text-3xl md:text-4xl md:leading-[181%] tracking-[-4%] font-semibold">
@@ -18,84 +18,56 @@ const CompareProduct = () => {
 
         {/* Testimonials Marquee */}
         <div className="relative flex gap-2 overflow-x-scroll">
-          <div className="flex-1 grid grid-rows-12 min-w-max">
-            <div className="row-span-7 px-6 py-4 pb-3 flex items-start flex-col justify-end">
-              <p className="font-bold">Product comparison</p>
+          <div className="flex-1 grid grid-rows-10 min-w-max">
+            <div className="row-span-3 px-2 sm:px-3 py-1 sm:py-2 flex items-center justify-center">
+              <p className="font-bold text-sm sm:text-base">Product comparison</p>
             </div>
-            <div className="px-6 py-4">Feature text goes here</div>
-            <div className="px-6 py-4">Feature text goes here</div>
-            <div className="px-6 py-4">Feature text goes here</div>
-            <div className="px-6 py-4">Feature text goes here</div>
-            <div className="px-6 py-4">Feature text goes here</div>
+            <div className="px-2 sm:px-6 py-1 sm:py-2">Teknologi</div>
+            <div className="px-2 sm:px-6 py-1 sm:py-2">Download vs Upload</div>
+            <div className="px-2 sm:px-6 py-1 sm:py-2">FUP</div>
+            <div className="px-2 sm:px-6 py-1 sm:py-2">Harga Paket</div>
           </div>
-          <div className="grid grid-rows-12 lg:basis-1/4 bg-orange-100">
-            <div className="row-span-7 flex items-center flex-col justify-end pb-3">
-              <div className="w-[244px] h-[244px] relative flex items-center justify-center gap-2">
-                <Image className="w-7 h-7" /> Logo
-              </div>
-              <Box className="w-6 h-6" />
-              <h3 className="text-base font-bold mt-1">Company Name</h3>
-              <p className="text-sm font-light mt-2">Lorem ipsum dolor sit.</p>
+          <div className="grid grid-rows-10 lg:basis-1/4 bg-orange-100">
+            <div className="row-span-3 flex items-center flex-col justify-center pb-0 px-2 sm:px-6">
+              <Box className="w-5 sm:w-6 h-5 sm:h-6" />
+              <h3 className="text-sm sm:text-base font-bold mt-1">idPlay</h3>
             </div>
-            <div className="px-6 py-4 text-center font-medium">Unlimited</div>
-            <div className="px-6 py-4 flex justify-center items-center">
-              <Check className="w-4 h-4" />
-            </div>
-            <div className="px-6 py-4 flex justify-center items-center">
-              <Check className="w-4 h-4" />
-            </div>
-            <div className="px-6 py-4 flex justify-center items-center">
-              <Check className="w-4 h-4" />
-            </div>
-            <div className="px-6 py-4 flex justify-center items-center">
-              <Check className="w-4 h-4" />
-            </div>
+            <div className="px-2 sm:px-6 py-1 sm:py-2 text-center font-medium">100%FTTH</div>
+            <div className="px-2 sm:px-6 py-1 sm:py-2 flex justify-center items-center">1:1</div>
+            <div className="px-2 sm:px-6 py-1 sm:py-2 flex justify-center items-center">Tanpa Batas</div>
+            <div className="px-2 sm:px-6 py-1 sm:py-2 flex justify-center items-center">Mulai dari 179rb</div>
           </div>
-          <div className="grid grid-rows-12 lg:basis-1/4">
-            <div className="row-span-7 flex items-center flex-col justify-end pb-3">
-              <div className="w-[244px] h-[244px] relative flex items-center justify-center gap-2">
-                <Image className="w-7 h-7" /> Logo
-              </div>
-              <Box className="w-6 h-6" />
-              <h3 className="text-base font-bold mt-1">Company Name</h3>
-              <p className="text-sm font-light mt-2">Lorem ipsum dolor sit.</p>
+          <div className="grid grid-rows-10 lg:basis-1/4">
+            <div className="row-span-3 flex items-center flex-col justify-center pb-0 px-2 sm:px-6">
+              <Box className="w-5 sm:w-6 h-5 sm:h-6" />
+              <h3 className="text-sm sm:text-base font-bold mt-1">Si Merah</h3>
             </div>
-            <div className="px-6 py-4 text-center font-medium">25</div>
-            <div className="px-6 py-4 flex justify-center items-center">
-              <Check className="w-4 h-4" />
-            </div>
-            <div className="px-6 py-4 flex justify-center items-center">
-              <Check className="w-4 h-4" />
-            </div>
-            <div className="px-6 py-4 flex justify-center items-center">
-              <Check className="w-4 h-4" />
-            </div>
-            <div className="px-6 py-4 flex justify-center items-center">
-              <X className="w-4 h-4" />
-            </div>
+            <div className="px-2 sm:px-6 py-1 sm:py-2 text-center font-medium">100%FTTH</div>
+            <div className="px-2 sm:px-6 py-1 sm:py-2 flex justify-center items-center">1:3</div>
+            <div className="px-2 sm:px-6 py-1 sm:py-2 flex justify-center items-center">Ada Batasan</div>
+            <div className="px-2 sm:px-6 py-1 sm:py-2 flex justify-center items-center">Mulai dari 309rb</div>
           </div>
-          <div className="grid grid-rows-12 lg:basis-1/4">
-            <div className="row-span-7 flex items-center flex-col justify-end pb-3">
-              <div className="w-[244px] h-[244px] relative flex items-center justify-center gap-2">
-                <Image className="w-7 h-7" /> Logo
-              </div>
-              <Box className="w-6 h-6" />
-              <h3 className="text-base font-bold mt-1">Company Name</h3>
-              <p className="text-sm font-light mt-2">Lorem ipsum dolor sit.</p>
+          <div className="grid grid-rows-10 lg:basis-1/4">
+            <div className="row-span-3 flex items-center flex-col justify-center pb-0 px-2 sm:px-6">
+              <Box className="w-5 sm:w-6 h-5 sm:h-6" />
+              <h3 className="text-sm sm:text-base font-bold mt-1">Si Ungu</h3>
             </div>
-            <div className="px-6 py-4 text-center font-medium">10</div>
-            <div className="px-6 py-4 flex justify-center items-center">
-              <Check className="w-4 h-4" />
+            <div className="px-2 sm:px-6 py-1 sm:py-2 text-center font-medium">100%FTTH</div>
+            <div className="px-2 sm:px-6 py-1 sm:py-2 flex justify-center items-center">1:1 dan 2:1</div>
+            <div className="px-2 sm:px-6 py-1 sm:py-2 flex justify-center items-center">Tanpa batas</div>
+            <div className="px-2 sm:px-6 py-1 sm:py-2 flex justify-center items-center">Mulai dari 260rb</div>
+          </div>
+          <div className="grid grid-rows-10 lg:basis-1/4">
+            <div className="row-span-3 flex items-center flex-col justify-center pb-0 px-2 sm:px-6">
+              <Box className="w-5 sm:w-6 h-5 sm:h-6" />
+              <h3 className="text-sm sm:text-base font-bold mt-1">Si Oranye</h3>
             </div>
-            <div className="px-6 py-4 flex justify-center items-center">
-              <Check className="w-4 h-4" />
+            <div className="px-2 sm:px-6 py-1 sm:py-2 text-center font-medium overflow-x-auto whitespace-nowrap flex-shrink-0">Sebagian menggunakan HFC</div>
+            <div className="px-2 sm:px-6 py-1 sm:py-2 flex justify-center items-center overflow-x-auto whitespace-nowrap flex-shrink-0">
+              FTTH 1:1 dan HFC 1:1
             </div>
-            <div className="px-6 py-4 flex justify-center items-center">
-              <X className="w-4 h-4" />
-            </div>
-            <div className="px-6 py-4 flex justify-center items-center">
-              <X className="w-4 h-4" />
-            </div>
+            <div className="px-2 sm:px-6 py-1 sm:py-2 flex justify-center items-center">Ada batasan</div>
+            <div className="px-2 sm:px-6 py-1 sm:py-2 flex justify-center items-center">Mulai dari 250rb</div>
           </div>
         </div>
       </div>

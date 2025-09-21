@@ -52,7 +52,7 @@ export default function EntriProspekPage() {
   const [fullname, setFullname] = useState('');
   const [email, setEmail] = useState('');
   const [address, setAddress] = useState('');
-  const [phone, setPhone] = useState('');
+  const [phone, setPhone] = useState('62'); // Default dengan "62"
   const [ktp, setKtp] = useState('');
   const [referralCode, setReferralCode] = useState('');
   const [provinsi, setProvinsi] = useState('');
@@ -245,7 +245,6 @@ export default function EntriProspekPage() {
               });
             }}
           />
-
         </GoogleMap>
       </div>
     );
@@ -255,12 +254,28 @@ export default function EntriProspekPage() {
     e.preventDefault();
     setSubmitting(true);
 
+    // Validasi email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      alert('Format email tidak valid. Gunakan format seperti email@contoh.com');
+      setSubmitting(false);
+      return;
+    }
+
+    // Validasi nomor WhatsApp
+    const phoneNumber = phone.replace(/\D/g, ''); // Hapus semua karakter non-digit
+    if (!phoneNumber.startsWith('62') || phoneNumber.length < 10 || phoneNumber.length > 13) {
+      alert('Nomor WhatsApp harus diawali dengan 62 dan panjang total 10-13 digit');
+      setSubmitting(false);
+      return;
+    }
+
     try {
       const latlng = currentLocation ? `${currentLocation.lat}, ${currentLocation.lng}` : '';
       const redirectUrl = new URL("https://oss.supercorridor.co.id/idplayform/thankyou.php");
       redirectUrl.searchParams.set("key", "98733234567643fgtfr4eerty77t53w424356t7y8524354657687864534wert6yu7jmngrdWF$$z5678yun");
       redirectUrl.searchParams.set("namalengkap", fullname);
-      redirectUrl.searchParams.set("nowhatsapp5", phone);
+      redirectUrl.searchParams.set("nowhatsapp5", phoneNumber); // Gunakan nomor tanpa format
       redirectUrl.searchParams.set("email", email);
       redirectUrl.searchParams.set("alamatlengkap", address);
       redirectUrl.searchParams.set("provinsi80", provinsi);
@@ -342,12 +357,30 @@ export default function EntriProspekPage() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Nomor Whatsapp</label>
-                <Input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Nomor Whatsapp" required />
+                <Input
+                  value={phone}
+                  onChange={(e) => {
+                    const value = e.target.value.replace(/\D/g, ''); // Hapus semua non-digit
+                    if (value.startsWith('62')) {
+                      if (value.length <= 13) setPhone(value); // Maks 13 digit total
+                    } else if (value === '' || value.length <= 11) {
+                      setPhone('62' + value); // Tambah "62" jika belum ada
+                    }
+                  }}
+                  placeholder="6281234567890"
+                  required
+                />
               </div>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-              <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="email@contoh.com" required />
+              <Input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="email@contoh.com"
+                required
+              />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Alamat</label>

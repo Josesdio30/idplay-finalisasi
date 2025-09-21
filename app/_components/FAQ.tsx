@@ -6,24 +6,29 @@ import React, { useState } from 'react';
 const FAQ: React.FC = () => {
   const faqItems = [
     {
-      question: 'Bagaimana cara mendaftar layanan idPlay?',
+      question: 'Apa itu idPlay?',
       answer:
-        'Anda dapat mendaftar melalui website kami, menghubungi pusat kontak, atau mengunjungi lokasi IdPlAy terdekat.'
+        'idPlay adalah layanan internet Broadband berbasis Fiber Optik yang dirancang untuk memenuhi kebutuhan internet yang #CepatHematHebat dengan harga terjangkau'
     },
     {
-      question: 'Apa saja pilihan paket internet yang tersedia?',
+      question: 'Apa Saja layanan idPlay',
       answer:
-        'Kami memiliki berbagai pilihan paket internet yang dapat disesuaikan dengan kebutuhan Anda, termasuk paket untuk rumah dan gamers.'
+        'Terdapat 5 Layanan yang dimiliki idPlay, berupa Internet Broadband Home, Internet Broadband Bisnis, Internet Dedicated, Local Loop Innercity, Local Loop Intercity'
     },
     {
-      question: 'Apakah layanan idPlay tersedia di wilayah saya?',
+      question: 'Apa perbedaan idPlay home dan business?',
       answer:
-        'Anda dapat memeriksa ketersediaan layanan di wilayah Anda melalui fitur Cek Coverage di website kami.'
+        'idPlay Home adalah pilihan tepat untuk kebutuhan rumah tangga, menawarkan internet cepat dan stabil yang cocok untuk streaming, browsing, dan aktivitas online sehari-hari dengan harga lebih terjangkau. Sementara itu, idPlay Business dirancang khusus untuk kebutuhan bisnis dengan kecepatan lebih tinggi dan koneksi lebih stabil. Selain itu, tersedia juga layanan tambahan seperti IP statis, yang memastikan operasional bisnis berjalan lebih lancar dan profesional.'
     },
     {
-      question: 'Bagaimana jika saya mengalami masalah dengan koneksi internet?',
+      question: 'Apakah idPlay menyediakan paket internet unlimited?',
       answer:
-        'Anda dapat menghubungi layanan Support 24/7 kami melalui telepon atau chat untuk bantuan teknis.'
+        'Ya, idPlay menawarkan layanan internet dengan sistem True Unlimited, yang memungkinkan Anda menggunakan internet tanpa batas kuota.'
+    },
+    {
+      question: 'Dimana saja jangkauan area idPlay?',
+      answer:
+        'idPlay kini hadir di Pulau Jawa, Kalimantan, dan Sulawesi. Kami akan terus memperluas jaringan layanan kami untuk memastikan bahwa setiap pelanggan dapat menikmati akses yang lebih luas dan lebih baik'
     }
   ];
 
@@ -35,16 +40,15 @@ const FAQ: React.FC = () => {
         <div className="flex flex-col-reverse lg:flex-row gap-8">
           <div className="basis-1/2">
             <h2 className="text-xl lg:text-3xl font-bold mb-2 lg:mb-6 text-gray-800">
-              Have Any Questions?
+              Butuh Bantuan?
             </h2>
             <p className="text-sm lg:text-base">
-              Our customer service team is ready to help with any questions about internet services.
-              Contact us now for a free consultation!
+              Tenang, tim kami selalu siap bantu! Tinggal masukin email kamu, dan dapatkan konsultasi gratis bareng  idPlay
             </p>
             <div className="relative mt-6 w-full">
               <Input
                 className="w-full rounded-full px-4 py-5 lg:p-7 text-black placeholder:text-black text-sm lg:text-lg"
-                placeholder="Enter your Email"
+                placeholder="Masukkan E-mail Anda"
               />
               <Button className="absolute top-1/2 -translate-y-1/2 right-2 lg:right-3 text-sm lg:text-base rounded-full bg-[#00a63e] text-white hover:bg-[#00a63e]/60 h-auto py-1 lg:py-2">
                 Submit

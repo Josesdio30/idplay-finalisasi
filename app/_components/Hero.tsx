@@ -13,7 +13,7 @@ import KecepatanBanner from './Banner/kecepatan';
 
 interface Question {
   id: string;
-  question: React.ReactNode; // Ubah dari string ke React.ReactNode
+  question: React.ReactNode;
   answer: string;
   category: 'intro' | 'technology' | 'gaming' | 'family' | 'home' | 'easy-setup';
   icon: (className?: string) => React.ReactNode;
@@ -24,12 +24,11 @@ const questions: Question[] = [
     id: '1',
     question: (
       <>
-        <span className="text-orange-800">IDPlay</span> adalah solusi internet masa depan dengan
-        teknologi serat optik tercanggih.
+        <span className="text-orange-800">idPlay itu UNLIMITED</span>
       </>
     ),
     answer:
-      'Ratusan helai serat kaca ultra-tipis yang dikemas rapat, menghantarkan data menggunakan pulsa cahaya berkecepatan tinggi menghadirkan koneksi yang lebih cepat, stabil, dan andal untuk kebutuhanAnda.',
+      'tanpa FUP, gak pakai basa-basi, jadi kamu bisa streaming, gaming, download sepuasmu sampai komputermu penuh.',
     category: 'intro',
     icon: (className?: string) => <Router className={cn(className)} />
   },
@@ -37,12 +36,11 @@ const questions: Question[] = [
     id: '2',
     question: (
       <>
-        <span className="text-orange-800">IDPlay</span> internet super cepat dengan teknologi serat
-        optik.
+        <span className="text-orange-800">idPlay itu 100% Fiber Optik</span>
       </>
     ),
     answer:
-      'Menggunakan ratusan serat kaca ultra-tipis yang dibundel dan menghantarkan data melalui pulsa cahaya, IDPlay Fiber menghadirkan koneksi dengan kecepatan tinggi dan stabilitas maksimal.',
+      'dari server sampai rumah kamu, makanya layanan idPlay stabil dan super kenceng.',
     category: 'technology',
     icon: (className?: string) => <Gauge className={cn(className)} />
   },
@@ -50,12 +48,11 @@ const questions: Question[] = [
     id: '3',
     question: (
       <>
-        <span className="text-orange-800">IDPlay</span> adalah internet super cepat yang bikin
-        pengalaman gaming jadi lebih menyenangkan.
+        <span className="text-orange-800">idPlay itu Jujur</span>
       </>
     ),
     answer:
-      'Dengan ratusan serat kaca ultra-tipis yang dibundel dan menghantarkan data lewat pulsa cahaya, kamu bisa main game online tanpa lag, tanpa delay—langsung responsif dan stabil!',
+      'kita kasih kejutan pakai promo dan hadiah, bukan pakai tagihan cilukba. Dompet kamu aman dan tentram deh kalau bareng idPlay.',
     category: 'gaming',
     icon: (className?: string) => <Gamepad className={cn(className)} />
   },
@@ -63,11 +60,11 @@ const questions: Question[] = [
     id: '4',
     question: (
       <>
-        <span className="text-orange-800">IDPlay</span> adalah untuk seluruh keluarga
+        <span className="text-orange-800">idPlay itu Komitmen Harga</span>
       </>
     ),
     answer:
-      'Dibangun dengan ratusan serat kaca ultra-tipis yang dibundel bersama dan menghantarkan data lewat pulsa cahaya, IDPlay Fiber menghadirkan internet cepat dan stabil untuk seluruh anggota keluarga — dari belajar online, bekerja dari rumah, hingga streaming hiburan tanpa gangguan.',
+      'jadi kamu bisa langganan tanpa perlu khawatir harga naik, gak bakal ada kenaikan Harga tanpa kenaikan layanan',
     category: 'family',
     icon: (className?: string) => <MdFamilyRestroom className={cn(className)} />
   },
@@ -75,11 +72,11 @@ const questions: Question[] = [
     id: '5',
     question: (
       <>
-        <span className="text-orange-800">IDPlay</span> adalah paling diandalkan untuk rumah Anda
+        <span className="text-orange-800">idPlay itu Prioritasin Kamu</span>
       </>
     ),
     answer:
-      'Dengan teknologi serat optik berisi ratusan serat kaca ultra tipis yang dibundel dan menghantarkan data menggunakan pulsa cahaya, IDPlay Fiber memberikan koneksi internet cepat dan stabil yang bisa diandalkan setiap saat.',
+      '24/7 pasti ada yang respon kalau kamu ngalamin gangguan, kontak tim Customer Experience kita terbuka lewat mana aja.',
     category: 'home',
     icon: (className?: string) => <FaHouseSignal className={cn(className)} />
   },
@@ -87,17 +84,16 @@ const questions: Question[] = [
     id: '6',
     question: (
       <>
-        <span className="text-orange-800">IDPlay</span> adalah Koneksi cepat, setup gampang
+        <span className="text-orange-800">idPlay itu Simpel dan Sat-set</span> adalah Koneksi cepat, setup gampang
       </>
     ),
     answer:
-      'Ditenagai oleh teknologi serat optik dengan ratusan serat kaca ultra-tipis yang menghantarkan data melalui pulsa cahaya, IDPlay Fiber menawarkan koneksi cepat dan stabil yang mudah dipasang dan dikelola—langsung aktif tanpa ribet.',
+      'cukup daftar, survei lokasi, bayar, udah deh, langsung dipasang. Kamu langsung bebas nikmatin hiburan digital favoritmu.',
     category: 'easy-setup',
     icon: (className?: string) => <FaWrench className={cn(className)} />
   }
 ] as const;
 
-// Tambahkan interface untuk quiz
 interface QuizQuestion {
   id: number;
   question: string;
@@ -109,17 +105,16 @@ interface QuizAnswers {
   [questionId: number]: string;
 }
 
-// Data quiz
 const quizQuestions: QuizQuestion[] = [
   {
     id: 1,
-    question: 'Berapa banyak orang di rumah tangga Anda yang saat ini menggunakan internet?',
+    question: 'Biasanya ada berapa orang di rumah yang sering pakai internet?',
     icon: <MdFamilyRestroom className="w-10 lg:w-40 h-10 lg:h-40 text-green-600" />,
-    options: ['1-5', '6-8', '9+']
+    options: ['1-5', '5-10', '10+']
   },
   {
     id: 2,
-    question: 'Berapa banyak perangkat di rumah Anda?',
+    question: 'Biasanya perangkat apa aja sih yang nyambung ke WiFi di rumah? (HP, laptop, Smart TV, dll)',
     icon: (
       <div className="flex flex-row lg:flex-col items-center justify-center gap-4 lg:gap-6">
         <Monitor className="w-10 lg:w-24 h-10 lg:h-24 text-green-600" />
@@ -129,40 +124,40 @@ const quizQuestions: QuizQuestion[] = [
         </div>
       </div>
     ),
-    options: ['1-5', '6-10', '10+']
+    options: ['2 Handphone, 1 Laptop, atau Keduanya', 'Lebih dari 2 Hp, lebih dari 1 Laptop, dan SmartTv', 'Lebih dari 2 Hp, Lebih dari 1 Laptop, SmartTv, CCTV, Smart Doorbell']
   },
   {
     id: 3,
     question:
-      'Pernyataan mana yang paling menggambarkan aktivitas streaming dan media sosial rumah tangga Anda?',
+      'Perangkat apa saja yang biasa dipakai buat streaming (YouTube, Netflix, musik, atau video HD)?',
     icon: (
-      <div className="flex flex-row lg:lex-col items-center justify-center gap-4 lg:gap-6">
+      <div className="flex flex-row lg:flex-col items-center justify-center gap-4 lg:gap-6">
         <Laptop className="w-10 lg:w-24 h-10 lg:h-24 text-green-600" />
         <Phone className="w-10 lg:w-24 h-10 lg:h-24 text-green-600" />
         <Monitor className="w-10 lg:w-24 h-10 lg:h-24 text-green-600" />
       </div>
     ),
     options: [
-      'Pencarian dan penayangan ringan',
-      'Cukup rutin menonton serial dan aktif di media sosial',
-      'Sering melakukan binge-watching dan membuat konten secara aktif'
+      'Hp dan Tablet saja',
+      'Hp, Tablet dan SmartTv',
+      'Hp, Tablet dan SmartTv 4K'
     ]
   },
   {
     id: 4,
-    question: 'Pernyataan mana yang paling menggambarkan gaya bermain game di rumah Anda?',
+    question: 'Seberapa gamer kamu di rumah?',
     icon: <Gamepad className="w-10 lg:w-24 h-10 lg:h-24 text-green-600" />,
-    options: ['Tidak Bermain Game', 'Sangat Sering Bermain Game', 'Bermain Game Adalah Hobi Saya']
+    options: ['Nggak main sama sekali!', 'Main kadang-kadang aja', 'Setiap hari!']
   },
   {
     id: 5,
     question:
-      'Pernyataan mana yang paling menggambarkan situasi bekerja dari rumah atau sekolah daring di rumah tangga Anda?',
+      'Internet di rumah sering dipakai buat kerja online atau sekolah daring nggak?',
     icon: <Monitor className="w-10 lg:w-24 h-10 lg:h-24 text-green-600" />,
     options: [
-      'Jarang digunakan untuk bekerja atau sekolah daring',
-      'Digunakan secara berkala untuk tugas atau rapat online',
-      'Digunakan setiap hari untuk kegiatan kerja atau belajar penuh waktu'
+      'Jarang banget, hanya sesekali',
+      'Kadang dipakai buat rapat atau tugas online',
+      'Hampir setiap hari dipakai full buat kerja atau belajar online'
     ]
   }
 ];
@@ -208,81 +203,91 @@ const HeroSection = () => {
     setShowQuizResult(false);
   };
 
-  const getRecommendedSpeed = () => {
-    // Logic untuk menentukan kecepatan berdasarkan jawaban
+  const getRecommendedSpeed = (): { speed: string; price: string; description: string } => {
     const answers = Object.values(quizAnswers);
     let score = 0;
 
-    answers.forEach((answer) => {
-      // Pertanyaan 1: Berapa banyak orang di rumah tangga yang menggunakan internet
-      if (answer === '9+') {
-        score += 3;
-      } else if (answer === '6-8') {
-        score += 2;
-      } else if (answer === '1-5') {
-        score += 1;
-      }
+    // Jika tidak ada jawaban, kembalikan paket default
+    if (answers.length === 0) {
+      return {
+        speed: '20 Mbps',
+        price: '', // Placeholder
+        description: 'Paket hemat untuk kebutuhan internet sehari-hari. Cocok untuk browsing, streaming HD, dan video call.'
+      };
+    }
 
-      // Pertanyaan 2: Berapa banyak perangkat di rumah
-      if (answer === '10+') {
-        score += 3;
-      } else if (answer === '6-10') {
-        score += 2;
-      } else if (answer === '1-5') {
-        score += 1;
-      }
-
-      // Pertanyaan 3: Aktivitas streaming dan media sosial
-      if (answer === 'Sering melakukan binge-watching dan membuat konten secara aktif') {
-        score += 3;
-      } else if (answer === 'Cukup rutin menonton serial dan aktif di media sosial') {
-        score += 2;
-      } else if (answer === 'Pencarian dan penayangan ringan') {
-        score += 1;
-      }
-
-      // Pertanyaan 4: Gaya bermain game
-      if (answer === 'Bermain Game Adalah Hobi Saya') {
-        score += 3;
-      } else if (answer === 'Sangat Sering Bermain Game') {
-        score += 2;
-      } else if (answer === 'Tidak Bermain Game') {
-        score += 1;
-      }
-
-      // Pertanyaan 5: Bekerja dari rumah atau sekolah daring
-      if (answer === 'Digunakan setiap hari untuk kegiatan kerja atau belajar penuh waktu') {
-        score += 3;
-      } else if (answer === 'Digunakan secara berkala untuk tugas atau rapat online') {
-        score += 2;
-      } else if (answer === 'Jarang digunakan untuk bekerja atau sekolah daring') {
-        score += 1;
+    answers.forEach((answer, index) => {
+      const question = quizQuestions[index];
+      switch (question.id) {
+        case 1: // Jumlah orang
+          if (answer === '1-5') score += 1;
+          else if (answer === '5-10') score += 2;
+          else if (answer === '10+') score += 3;
+          break;
+        case 2: // Jumlah perangkat
+          if (answer === '2 Handphone, 1 Laptop, atau Keduanya') score += 1;
+          else if (answer === 'Lebih dari 2 Hp, lebih dari 1 Laptop, dan SmartTv') score += 2;
+          else if (answer === 'Lebih dari 2 Hp, Lebih dari 1 Laptop, SmartTv, CCTV, Smart Doorbell') score += 3;
+          break;
+        case 3: // Aktivitas streaming
+          if (answer === 'Hp dan Tablet saja') score += 1;
+          else if (answer === 'Hp, Tablet dan SmartTv') score += 2;
+          else if (answer === 'Hp, Tablet dan SmartTv 4K') score += 3;
+          break;
+        case 4: // Gaming
+          if (answer === 'Nggak main sama sekali!') score += 1;
+          else if (answer === 'Main kadang-kadang aja') score += 2;
+          else if (answer === 'Setiap hari!') score += 3;
+          break;
+        case 5: // Kerja/belajar
+          if (answer === 'Jarang banget, hanya sesekali') score += 1;
+          else if (answer === 'Kadang dipakai buat rapat atau tugas online') score += 2;
+          else if (answer === 'Hampir setiap hari dipakai full buat kerja atau belajar online') score += 3;
+          break;
+        default:
+          break;
       }
     });
 
     // Berdasarkan total score (min: 5, max: 15)
-    if (score >= 12) {
+    if (score === 5) {
       return {
-        speed: '700 Mbps',
-        price: 'Rp.1.700.000/Tahun',
-        description:
-          'Anda butuh internet secepat Falcon dan setangguh Gajah. Tak ada kompromi untuk Anda yang mengincar keunggulan. Anda ingin berada di posisi terdepan — dengan kecepatan tinggi, stabilitas maksimal, dan performa tanpa batas untuk mendukung semua aktivitas Anda.'
+        speed: '20 Mbps',
+        price: '', // Placeholder
+        description: 'Paket hemat untuk kebutuhan internet sehari-hari. Cocok untuk browsing, streaming HD, dan video call.'
       };
-    } else if (score >= 8) {
+    } else if (score >= 6 && score <= 8) {
       return {
-        speed: '300 Mbps',
-        price: 'Rp.900.000/Tahun',
-        description:
-          'Paket ideal untuk keluarga aktif dengan multiple device. Streaming 4K, gaming online, dan work from home berjalan lancar tanpa buffering. Kecepatan stabil untuk mendukung semua aktivitas digital keluarga Anda.'
+        speed: '50 Mbps',
+        price: '', // Placeholder
+        description: 'Paket hemat untuk kebutuhan internet sehari-hari dengan performa lebih baik. Cocok untuk browsing, streaming HD, dan video call dengan beberapa perangkat.'
       };
-    } else {
+    } else if (score >= 9 && score <= 10) {
+      return {
+        speed: '75 Mbps',
+        price: '', // Placeholder
+        description: 'Paket ideal untuk keluarga dengan aktivitas digital ringan hingga menengah. Mendukung streaming HD, video call, dan penggunaan beberapa perangkat dengan stabil.'
+      };
+    } else if (score >= 11 && score <= 13) {
       return {
         speed: '100 Mbps',
-        price: 'Rp.600.000/Tahun',
-        description:
-          'Paket hemat untuk kebutuhan internet sehari-hari. Cocok untuk browsing, streaming HD, dan video call. Solusi ekonomis dengan kualitas terjamin untuk penggunaan ringan hingga menengah.'
+        price: '', // Placeholder
+        description: 'Paket ideal untuk keluarga dengan aktivitas digital ringan hingga menengah. Mendukung streaming HD, video call, dan penggunaan beberapa perangkat dengan stabil.'
+      };
+    } else if (score >= 14) {
+      return {
+        speed: '200 Mbps',
+        price: '', // Placeholder
+        description: 'Paket unggulan untuk kebutuhan internet berat. Cocok untuk streaming 4K, gaming online, dan kerja dari rumah dengan banyak perangkat tanpa buffering.'
       };
     }
+
+    // Default case
+    return {
+      speed: '20 Mbps',
+      price: '',
+      description: 'Paket hemat untuk kebutuhan internet sehari-hari. Cocok untuk browsing, streaming HD, dan video call.'
+    };
   };
 
   return (

@@ -61,12 +61,10 @@ const KecepatanBanner = ({
             <div className="flex items-center justify-start px-4 lg:px-6 lg:basis-2/3 py-6 lg:py-24 text-left h-full">
               <div>
                 <h3 className="text-lg lg:text-4xl lg:leading-[59px] tracking-[3%] font-bold text-white">
-                  Kecepatan berapa yang cocok untuk Anda?
+                  Kecepatan Internet Mana yang Cocok untuk kamu?
                 </h3>
                 <p className="text-sm lg:text-3xl mt-5 text-white font-extralight lg:leading-[59px] lg:tracking-[3%]">
-                  Jawablah pertanyaan berikut untuk <br /> mengetahui paket Fiber mana yang
-                  terbaik <br />
-                  untuk rumah Anda.
+                  Yuk isi sebentar,<br/> nanti kita kasih rekomendasi<br />paket internet terbaik buat kamu <br />
                 </p>
                 <p className="text-xs font-light mt-4 text-white">
                   Ketersediaan terbatas di area tertentu.

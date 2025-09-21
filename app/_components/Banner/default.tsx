@@ -17,33 +17,35 @@ const DefaultBanner = ({ setShowBanner }: IProps) => {
         <div className="grid grid-cols-2 items-center gap-2 lg:gap-8 relative z-10 h-full">
           <div className="col-span-1 space-y-2 lg:space-y-6 px-2 lg:px-8 py-4 lg:py-14">
             <h1 className="text-lg md:text-2xl lg:text-[50px] lg:leading-[59px] tracking-[-3%] font-bold text-gray-900">
-              <span className="text-orange-500">Kecepatan Tinggi</span>
+              <span className="text-orange-500">WiFi Andal,</span>
               <br />
-              <span className="text-orange-500">Jangkauan Luas</span>
+              <span className="text-orange-500">Aktivitas Maksimal!</span>
             </h1>
 
             <h2 className="text-xs md:text-base lg:text-[38px] lg:leading-[59px] tracking-[-3%] text-gray-800 font-base">
-              Wi-Fi Cepat dan Handal yang
+              Dari urusan kantor 
+              <br/> 
+              sampai rebahan di rumah
               <br />
-              Bisa Kamu Andalkan
+              semuanya lancar dengan internet ngebut
             </h2>
             <div className="flex flex-col gap-1 lg:gap-2 my-2 lg:my-6">
               <div className="flex items-center gap-1 lg:gap-2">
                 <Network className="w-3 h-3 lg:w-4 lg:h-4 text-green-700" />
                 <span className="text-green-700 font-semibold text-xs lg:text-base">
-                  Instalasi Gratis
+                  Kuota UNLIMITED
                 </span>
               </div>
               <div className="flex items-center gap-1 lg:gap-2">
                 <MapPin className="w-3 h-3 lg:w-4 lg:h-4 text-green-700" />
                 <span className="text-green-700 font-semibold text-xs lg:text-base">
-                  Layanan Nasional
+                  Stabil dengan 100% Fiber Optik
                 </span>
               </div>
               <div className="flex items-center gap-1 lg:gap-2">
                 <Wifi className="w-3 h-3 lg:w-4 lg:h-4 text-green-700" />
                 <span className="text-green-700 font-semibold text-xs lg:text-base">
-                  100% Fiber Optic
+                  Customer Service 24/7
                 </span>
               </div>
             </div>
@@ -57,7 +59,7 @@ const DefaultBanner = ({ setShowBanner }: IProps) => {
                   className="rounded-full bg-orange-500 hover:bg-orange-600 border border-orange-500 text-white h-auto lg:h-9 px-2 lg:px-8 py-1 lg:py-3 font-medium transition-colors flex items-center justify-center gap-1 lg:gap-2 text-[10px] lg:text-base"
                 >
                   <MdEmail className="w-2 h-2 lg:w-4 lg:h-4" />
-                  Subscribe Now
+                  Langganan Sekarang!
                 </Button>
               </div>
             </div>

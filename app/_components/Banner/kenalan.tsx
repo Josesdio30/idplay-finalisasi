@@ -88,23 +88,23 @@ const KenalanBanner = ({
             )}
             {selectedQuestion && (
               <div className="space-y-1 lg:space-y-5">
-                <h4 className="text-sm lg:text-[40px] lg:leading-[141%] tracking-[-3%] font-bold text-orange-500">
-                  Apa itu <span className="text-orange-800">IDPlay?</span>
-                </h4>
-                <p className="text-xs lg:text-xl font-bold leading-[141%] tracking-[-4%] text-black">
+                {/* <h4 className="text-sm lg:text-[40px] lg:leading-[141%] tracking-[-3%] font-bold text-orange-500">
+                  Apa itu <span className="text-orange-800">idPlay?</span>
+                </h4> */}
+                <h4 className="text-s lg:text-[40px] lg:leading-[141%] tracking-[-3%] font-bold text-orange-500">
                   {selectedQuestion?.question}
-                </p>
+                </h4>
                 <div>
                   <p className="text-xs lg:text-lg leading-[141%] tracking-[-4%]">
                     {selectedQuestion?.answer}
                   </p>
-                  {selectedQuestion?.category === 'technology' && (
+                  {/* {selectedQuestion?.category === 'technology' && (
                     <p className="text-[8px] lg:text-xs leading-normal text-black font-extralight mt-2 lg:mt-4">
                       ⓘ Tersedia di area tertentu. Bergantung pada cakupan jaringan. Kecepatan dapat
                       bervariasi dan tidak dijamin. Kecepatan maksimum per perangkat kabel hingga
                       4,7 Gbps.
                     </p>
-                  )}
+                  )} */}
                 </div>
               </div>
             )}

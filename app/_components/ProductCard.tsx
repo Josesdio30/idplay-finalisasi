@@ -43,13 +43,13 @@ const ProductCard = () => {
           Rp.{product.yearlyPrice}
           <span className="text-[16px] sm:text-[20px]">/Tahun</span>
         </div>
-        <Image
+        {/* <Image
           src="/icons/arrow-pricing.svg"
           alt=""
           width={65}
           height={65}
           className="size-[45px] sm:size-[55px] lg:size-[65px] absolute z-10 left-10 sm:left-12 lg:left-9 top-10 lg:top-13"
-        />
+        /> */}
         <div className="text-base lg:text-[30px] tracking-[1%] leading-[26px] font-medium text-orange-700 mb-2">
           Rp.{product.monthlyPrice}
           <span className="text-[16px] sm:text-[20px]">/Bulan</span>

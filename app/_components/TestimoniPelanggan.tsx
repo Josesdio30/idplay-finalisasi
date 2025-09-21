@@ -126,7 +126,7 @@ const TestimoniPelanggan = () => {
       <div className="container mx-auto pl-10 lg:pl-0">
         <div className="mb-6 lg:mb-12">
           <div className="relative ">
-            <div className="absolute -left-5 -top-3 space-y-1">
+            {/* <div className="absolute -left-5 -top-3 space-y-1">
               <Image
                 src="/icons/arrow-testimonials-title.svg"
                 alt=""
@@ -141,7 +141,7 @@ const TestimoniPelanggan = () => {
                 height={26}
                 className="-ml-2"
               />
-            </div>
+            </div> */}
             <h3 className="text-xl md:text-4xl md:leading-[181%] tracking-[-4%] font-semibold">
               Pelanggan yang Puas <br /> Adalah Layanan Terbaik Kami.
             </h3>

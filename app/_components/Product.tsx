@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils';
-import { useState, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import {
@@ -9,84 +9,40 @@ import {
   CarouselNext,
   CarouselPrevious
 } from '@/components/ui/carousel';
-import { Metadata, Product } from '../type';
 import Autoplay from 'embla-carousel-autoplay';
+import { RegionType } from '../kategori/_component/ProductFacts';
+import RegionSelector from '../kategori/_component/RegionSelector';
+import SpeedSelector from '../kategori/_component/SpeedSelector';
+import { Product, ProductFilters } from '@/types/product';
+import { useProducts } from '@/hooks/useProducts';
+import ProductBenefits from '../kategori/_component/ProductBenefits';
 
-interface IProps {
-  products: Product[];
-  loading: boolean;
-  fetching: boolean;
-  pagination: Metadata['pagination'];
-}
-
-type RegionKey = 'Jawa' | 'Sulawesi' | 'Kalimantan' | 'Sumatera';
-type RegionMapping = Record<RegionKey, string[]>;
-
-const ProductSection = ({
-  products: initialProducts,
-  loading: initialLoading,
-  fetching: initialFetching,
-  pagination: initialPagination
-}: IProps) => {
-  const [paketTab, setPaketTab] = useState<'bulan' | 'tahun'>('bulan');
-  const [regionTab, setRegionTab] = useState<RegionKey>('Jawa');
+const ProductSection = () => {
+  const [selectedBillingCycle, setSelectedBillingCycle] = useState<'Bulanan' | 'Tahunan' | null>(
+    null
+  );
   const [openId, setOpenId] = useState<number | null>(null);
-  const [products, setProducts] = useState<Product[]>(initialProducts);
-  const [loading, setLoading] = useState<boolean>(initialLoading);
-  const [fetching, setFetching] = useState<boolean>(initialFetching);
-  const [pagination, setPagination] = useState<Metadata['pagination']>(initialPagination);
+  const [selectedRegion, setSelectedRegion] = useState<RegionType>('');
+  const [selectedSpeedRange, setSelectedSpeedRange] = useState<{
+    min?: number;
+    max?: number;
+  } | null>(null);
+
   const navigate = useRouter();
 
-  // Mapping region names dari UI ke API
-  const regionMapping: RegionMapping = {
-    Jawa: ['JABODETABEK', 'JABAR'],
-    Sulawesi: ['SULAWESI'],
-    Kalimantan: ['KALIMANTAN'],
-    Sumatera: ['SUMATERA']
-  };
+  const filters = useMemo(() => {
+    const filterObj: ProductFilters = {};
+    if (selectedRegion) filterObj.region = selectedRegion;
+    // if (category) filterObj.category = category;
+    if (selectedSpeedRange) filterObj.speedRange = selectedSpeedRange;
+    if (selectedBillingCycle) filterObj.billingCycle = selectedBillingCycle;
+    return filterObj;
+  }, [selectedRegion, selectedSpeedRange, selectedBillingCycle]);
 
-  // Fungsi untuk membangun URL API
-  const buildApiUrl = (regionTab: RegionKey, paketTab: string) => {
-    const regions = regionMapping[regionTab] || ['JABODETABEK'];
-    const billingCycle = paketTab === 'bulan' ? 'Bulanan' : 'Tahunan';
-
-    const regionFilter = regions
-      .map((region) => `filters[regionals][region][$in][]=${encodeURIComponent(region)}`)
-      .join('&');
-    const billingFilter = `filters[billingCycle][$eq]=${encodeURIComponent(billingCycle)}`;
-
-    return `https://inspiring-power-f8fa08a4a5.strapiapp.com/api/products?${regionFilter}&${billingFilter}&populate=*`;
-  };
-
-  // Fetch data ketika regionTab atau paketTab berubah
-  useEffect(() => {
-    const fetchProducts = async () => {
-      setLoading(true);
-      setFetching(true);
-      try {
-        const url = buildApiUrl(regionTab, paketTab);
-        const response = await fetch(url);
-        const data = await response.json();
-        setProducts(data.data || []);
-        setPagination(data.meta.pagination);
-      } catch (error) {
-        console.error('Error fetching products:', error);
-        setProducts([]);
-      } finally {
-        setLoading(false);
-        setFetching(false);
-      }
-    };
-
-    fetchProducts();
-  }, [regionTab, paketTab]);
-
-  // Filter products berdasarkan billing cycle dan region (fallback jika diperlukan)
-  const getFilteredProducts = () => {
-    return products; // Karena sudah difilter di API, langsung return
-  };
-
-  const filteredProducts = getFilteredProducts();
+  const { displayedProducts, loading } = useProducts({
+    filters,
+    autoFetch: !!selectedRegion
+  });
 
   // Komponen Skeleton untuk loading state
   const ProductCardSkeleton = () => {
@@ -144,102 +100,128 @@ const ProductSection = ({
       return new Intl.NumberFormat('id-ID').format(price);
     };
 
+    const getImageUrl = (product: Product) => {
+      return product.thumbnail?.url || '/package/home-2-doubleplay2.jpeg';
+    };
+
+    const calculateMonthlyEquivalent = (price: number) => {
+      return Math.round(price / 12);
+    };
+
     return (
-      <div className="bg-white rounded-2xl shadow-lg overflow-hidden border border-transparent">
+      <div className="flex flex-col justify-between h-full bg-white rounded-2xl shadow-lg overflow-hidden border border-transparent">
         {/* Product Card */}
-        <div className="flex items-center justify-center bg-orange-500 text-white text-center">
-          <Image
-            src={product.thumbnail.url}
-            alt={product.productName}
-            width={500}
-            height={500}
-            className="w-full h-auto object-cover aspect-auto object-center"
-            loading="lazy"
-            priority={false}
-          />
-        </div>
-
-        <div className="px-4 pt-4 lg:px-6">
-          <h3 className="text-lg font-bold text-orange-500 text-center">{product.productName}</h3>
-
-          <div className="flex items-center justify-center gap-1.5 mt-2">
-            {product.originalSpeedInMbps && product.finalSpeedInMbps && (
-              <p className="relative text-lg font-semibold text-gray-300 text-center px-0.5">
-                <span className="absolute left-0 right-0 top-1/2 -translate-y-1/2 bg-gray-300 w-full h-0.5 rounded-full" />
-                {product.originalSpeedInMbps} Mbps
-              </p>
-            )}
-            <p className="text-lg font-semibold text-orange-500 text-center">
-              {product.finalSpeedInMbps || product.originalSpeedInMbps} Mbps
-            </p>
+        <div className="">
+          <div className="flex items-center justify-center bg-orange-500 text-white text-center">
+            <Image
+              src={getImageUrl(product)}
+              alt={product.productName}
+              width={500}
+              height={500}
+              className="w-full h-auto object-cover aspect-auto object-center"
+              loading="lazy"
+              priority={false}
+            />
           </div>
-        </div>
 
-        <div className="relative flex flex-col justify-center items-center px-4 lg:px-6 lg:pt-2">
-          <div
-            className={cn(
-              'text-xl sm:text-2xl lg:text-[36px] tracking-[1%] leading-[45px] font-bold text-orange-500 mb-2 sm:mb-3',
-              product.promoPrice ? 'lg:mb-5' : 'lg:mb-0'
-            )}
-          >
-            <span className="relative">
-              {product.promoPrice && (
-                <div className="absolute top-1/2 left-0 transform -translate-y-1/2 bg-orange-500 w-full h-0.5 lg:h-1 rounded-full" />
+          <div className="px-4 pt-4 lg:px-6">
+            <h3 className="text-lg font-bold text-orange-500 text-center">{product.productName}</h3>
+
+            <div className="flex items-center justify-center gap-1.5 mt-2">
+              {product.originalSpeedInMbps && product.finalSpeedInMbps && (
+                <p className="relative text-lg font-semibold text-gray-300 text-center px-0.5">
+                  <span className="absolute left-0 right-0 top-1/2 -translate-y-1/2 bg-gray-300 w-full h-0.5 rounded-full" />
+                  {product.originalSpeedInMbps} Mbps
+                </p>
               )}
-              Rp.{formatPrice(product.originalPrice)}
-            </span>
-            <span className="text-[16px] sm:text-[20px]">
-              /{product.billingCycle === 'Bulanan' ? 'Bulan' : 'Tahun'}
-            </span>
+              <p className="text-lg font-semibold text-orange-500 text-center">
+                {product.finalSpeedInMbps || product.originalSpeedInMbps} Mbps
+              </p>
+            </div>
           </div>
-          {product.promoPrice && (
-            <>
-              {/* <Image
+
+          <div className="relative flex flex-col justify-center items-center px-4 lg:px-6 lg:pt-2">
+            <div
+              className={cn(
+                'text-xl sm:text-2xl lg:text-[36px] tracking-[1%] leading-[45px] font-bold text-orange-500 mb-2 sm:mb-3',
+                product.promoPrice ? 'lg:mb-5' : 'lg:mb-0'
+              )}
+            >
+              <span className="relative">
+                {product.promoPrice && (
+                  <div className="absolute top-1/2 left-0 transform -translate-y-1/2 bg-orange-500 w-full h-0.5 lg:h-1 rounded-full" />
+                )}
+                Rp.{formatPrice(product.originalPrice)}
+              </span>
+              <span className="text-[16px] sm:text-[20px]">
+                /{product.billingCycle === 'Bulanan' ? 'Bulan' : 'Tahun'}
+              </span>
+            </div>
+            {product.promoPrice && (
+              <>
+                {/* <Image
                 src="/icons/arrow-pricing.svg"
                 alt=""
                 width={65}
                 height={65}
                 className="size-[45px] sm:size-[55px] lg:size-[65px] absolute z-10 left-10 sm:left-12 lg:left-9 top-10 lg:top-13"
               /> */}
-              <div className="text-base lg:text-[30px] tracking-[1%] leading-[26px] font-medium text-orange-700 mb-2">
-                Rp.{formatPrice(product.promoPrice)}
-                <span className="text-[16px] sm:text-[20px]">
-                  /{product.billingCycle === 'Bulanan' ? 'Bulan' : 'Tahun'}
-                </span>
+                <div className="text-base lg:text-[30px] tracking-[1%] leading-[26px] font-medium text-orange-700 mb-2">
+                  Rp.{formatPrice(product.promoPrice)}
+                  <span className="text-[16px] sm:text-[20px]">
+                    /{product.billingCycle === 'Bulanan' ? 'Bulan' : 'Tahun'}
+                  </span>
+                </div>
+              </>
+            )}
+            {product.billingCycle === 'Tahunan' && (
+              <div className="w-full mb-2 mt-2 flex justify-center items-center">
+                <div className="text-center font-medium text-orange-700 text-base sm:text-lg lg:text-xl leading-tight">
+                  <span>
+                    Setara
+                    <span className="font-bold mx-1">
+                      Rp.
+                      {calculateMonthlyEquivalent(
+                        product.promoPrice || product.originalPrice
+                      ).toLocaleString('id-ID')}
+                    </span>
+                    <span className="text-xs sm:text-sm">/bulan</span>
+                  </span>
+                </div>
               </div>
-            </>
-          )}
-          <p className="text-sm lg:text-[15px] tracking-[1%] leading-[26px] font-medium text-orange-500">
-            {product.priceHint || 'Mau langganan setahun? Bisa dicicil, kok!'}
-          </p>
-        </div>
+            )}
+            {product.priceHint && (
+              <p className="text-sm lg:text-[15px] tracking-[1%] leading-[26px] font-medium text-orange-500">
+                {product.priceHint}
+              </p>
+            )}
+          </div>
 
-        {/* Feature block between product and broadband */}
-        <div className="mx-4 my-4 rounded-xl bg-orange-50 border border-orange-100 p-4 text-black">
-          <div className="space-y-3">
-            {product.benefits.map((benefit, i) => (
-              <div
-                key={benefit.id}
-                className="flex items-start gap-3"
-              >
-                <span className="mt-0.5 inline-flex h-5 w-5 items-center justify-center rounded-full bg-orange-500 text-white text-xs">
-                  ✓
-                </span>
-                <span className="text-sm text-gray-800">{benefit.name}</span>
-              </div>
-            ))}
+          <div className="mx-4 my-4 rounded-xl bg-orange-50 border border-orange-100 p-4 text-black">
+            <ProductBenefits product={product} />
+            <div className="my-4 h-0.5 w-full bg-orange-300" />
+            <div className="flex items-center justify-around text-orange-600">
+              <span className="text-xs font-semibold border border-orange-400 px-2 py-1 rounded">
+                1080p FULLHD
+              </span>
+              <span className="text-xs font-semibold border border-orange-400 px-2 py-1 rounded">
+                🎮 Gaming
+              </span>
+              <span className="text-xs font-semibold border border-orange-400 px-2 py-1 rounded">
+                ∞ Unlimited
+              </span>
+            </div>
           </div>
         </div>
 
-        {/* Bottom action buttons: Selengkapnya (di atas) dan Subscribe (di bawah) */}
         <div className="px-4 pb-6 flex flex-col gap-3">
-          <button
+          {/* <button
             className="w-full border border-orange-500 text-orange-600 hover:bg-orange-50 font-semibold py-3 rounded-lg flex items-center justify-center gap-2"
             onClick={() => navigate.push('/kategori/rumah')}
           >
             <span>Selengkapnya</span>
             <span className="transition-transform">▾</span>
-          </button>
+          </button> */}
           <button
             onClick={() => navigate.push('/entri-prospek')}
             className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-lg flex items-center justify-center gap-2"
@@ -273,126 +255,121 @@ const ProductSection = ({
         </p>
 
         {/* Toggle Region */}
-        <div className="flex justify-center mb-8">
-          <div className="flex items-center gap-1 bg-white rounded-lg p-1 shadow-md">
-            <button
-              className={cn(
-                'px-3 lg:px-6 py-1 lg:py-2 rounded-md text-white text-sm lg:text-base font-medium lg:font-semibold transition-all ease-in-out duration-300',
-                regionTab === 'Jawa'
-                  ? 'bg-green-600'
-                  : 'bg-white hover:bg-green-200 text-black hover:text-green-600'
-              )}
-              onClick={() => setRegionTab('Jawa')}
-            >
-              Jawa
-            </button>
-            <button
-              className={cn(
-                'px-3 lg:px-6 py-1 lg:py-2 rounded-md text-white text-sm lg:text-base font-medium lg:font-semibold transition-all ease-in-out duration-300',
-                regionTab === 'Sulawesi'
-                  ? 'bg-green-600'
-                  : 'bg-white hover:bg-green-200 text-black hover:text-green-600'
-              )}
-              onClick={() => setRegionTab('Sulawesi')}
-            >
-              Sulawesi
-            </button>
-            <button
-              className={cn(
-                'px-3 lg:px-6 py-1 lg:py-2 rounded-md text-white text-sm lg:text-base font-medium lg:font-semibold transition-all ease-in-out duration-300',
-                regionTab === 'Kalimantan'
-                  ? 'bg-green-600'
-                  : 'bg-white hover:bg-green-200 text-black hover:text-green-600'
-              )}
-              onClick={() => setRegionTab('Kalimantan')}
-            >
-              Kalimantan
-            </button>
-          </div>
+        <div className="flex justify-center">
+          <RegionSelector
+            selectedRegion={selectedRegion}
+            onRegionChange={setSelectedRegion}
+            className="mb-8 mt-6 flex flex-col items-center"
+          />
         </div>
 
         {/* Toggle Month/Year */}
-        <div className="flex justify-center mb-8">
-          <div className="flex items-center gap-1 bg-white rounded-lg p-1 shadow-md">
-            <button
-              className={cn(
-                'px-3 lg:px-6 py-1 lg:py-2 rounded-md text-white text-sm lg:text-base font-medium lg:font-semibold transition-all ease-in-out duration-300',
-                paketTab === 'bulan'
-                  ? 'bg-orange-500'
-                  : 'bg-white hover:bg-orange-200 text-black hover:text-orange-500'
-              )}
-              onClick={() => setPaketTab('bulan')}
-            >
-              Bulan
-            </button>
-            <button
-              className={cn(
-                'px-3 lg:px-6 py-1 lg:py-2 rounded-md text-white text-sm lg:text-base font-medium lg:font-semibold transition-all ease-in-out duration-300',
-                paketTab === 'tahun'
-                  ? 'bg-orange-500'
-                  : 'bg-white hover:bg-orange-200 text-black hover:text-orange-500'
-              )}
-              onClick={() => setPaketTab('tahun')}
-            >
-              Tahun
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <div className="-mt-10 z-10 w-full px-4 lg:px-8 min-h-[800px]">
-        {/* Unified Carousel for both Mobile and Desktop */}
-        <div className="mb-12">
-          <Carousel
-            plugins={[
-              Autoplay({
-                delay: 5000
-              })
-            ]}
-            opts={{
-              align: 'start',
-              loop: true
-            }}
-            className="w-full max-w-full overflow-x-hidden"
-          >
-            <CarouselContent className="-ml-2 md:-ml-4">
-              {loading || fetching
-                ? // Skeleton untuk carousel
-                  [1, 2, 3, 4, 5, 6].map((_, index) => (
-                    <CarouselItem
-                      key={`skeleton-${index}`}
-                      className="pl-2 md:pl-4 basis-full md:basis-1/3"
-                    >
-                      <ProductCardSkeleton />
-                    </CarouselItem>
-                  ))
-                : filteredProducts.map((product: Product) => (
-                    <CarouselItem
-                      key={product.id}
-                      className="pl-2 md:pl-4 basis-full md:basis-1/3"
-                    >
-                      <ProductCard product={product} />
-                    </CarouselItem>
-                  ))}
-            </CarouselContent>
-            <CarouselPrevious className="left-2" />
-            <CarouselNext className="right-2" />
-            {/* <div className="absolute top-1/2 left-2 flex items-center justify-center">
-              <CarouselPrevious className="relative left-0 translate-x-0 hover:translate-x-0 hover:bg-primary/90" />
+        {selectedRegion && (
+          <>
+            <div className="flex justify-center mb-8">
+              <div className="flex items-center gap-1 bg-white rounded-lg p-1 shadow-md">
+                <button
+                  className={cn(
+                    'px-3 lg:px-6 py-1 lg:py-2 rounded-md text-white text-sm lg:text-base font-medium lg:font-semibold transition-all ease-in-out duration-300',
+                    selectedBillingCycle === 'Bulanan'
+                      ? 'bg-orange-500'
+                      : 'bg-white hover:bg-orange-200 text-black hover:text-orange-500'
+                  )}
+                  onClick={() => setSelectedBillingCycle('Bulanan')}
+                >
+                  Bulan
+                </button>
+                <button
+                  className={cn(
+                    'px-3 lg:px-6 py-1 lg:py-2 rounded-md text-white text-sm lg:text-base font-medium lg:font-semibold transition-all ease-in-out duration-300',
+                    selectedBillingCycle === 'Tahunan'
+                      ? 'bg-orange-500'
+                      : 'bg-white hover:bg-orange-200 text-black hover:text-orange-500'
+                  )}
+                  onClick={() => setSelectedBillingCycle('Tahunan')}
+                >
+                  Tahun
+                </button>
+              </div>
             </div>
-            <div className="absolute top-1/2 right-2 flex items-center justify-center">
-              <CarouselNext className="relative right-0 translate-x-0 hover:translate-x-0 hover:bg-primary/90" />
-            </div> */}
-          </Carousel>
-        </div>
 
-        {/* Message ketika tidak ada produk dan tidak loading */}
-        {filteredProducts.length === 0 && !loading && !fetching && (
-          <div className="text-center py-12">
-            <p className="text-gray-500 text-lg">Tidak ada produk tersedia untuk pilihan ini.</p>
-          </div>
+            <SpeedSelector
+              region={selectedRegion}
+              selectedSpeedRange={selectedSpeedRange}
+              onSpeedRangeChange={setSelectedSpeedRange}
+              loading={loading}
+            />
+
+            {/* Clear All Filters */}
+            {(selectedSpeedRange || selectedBillingCycle) && (
+              <div className="flex justify-center">
+                <button
+                  onClick={() => {
+                    setSelectedSpeedRange(null);
+                    setSelectedBillingCycle(null);
+                  }}
+                  className="text-orange-600 hover:text-orange-800 font-medium text-sm bg-white px-4 py-2 rounded-lg shadow-sm hover:shadow-md transition-all"
+                  aria-label="Hapus semua filter"
+                >
+                  Hapus Semua Filter
+                </button>
+              </div>
+            )}
+          </>
         )}
       </div>
+
+      {selectedRegion ? (
+        <div className="-mt-10 z-10 w-full px-4 lg:px-8 min-h-[800px]">
+          <div className="mb-12">
+            <Carousel
+              plugins={[
+                Autoplay({
+                  delay: 5000
+                })
+              ]}
+              opts={{
+                align: 'start',
+                loop: true
+              }}
+              className="w-full max-w-full overflow-x-hidden"
+            >
+              <CarouselContent className="-ml-2 md:-ml-4">
+                {loading
+                  ? // Skeleton untuk carousel
+                    [1, 2, 3, 4, 5, 6].map((_, index) => (
+                      <CarouselItem
+                        key={`skeleton-${index}`}
+                        className="pl-2 md:pl-4 basis-full md:basis-1/3"
+                      >
+                        <ProductCardSkeleton />
+                      </CarouselItem>
+                    ))
+                  : displayedProducts.map((product) => (
+                      <CarouselItem
+                        key={product.id}
+                        className="pl-2 md:pl-4 basis-full md:basis-1/3"
+                      >
+                        <ProductCard product={product} />
+                      </CarouselItem>
+                    ))}
+              </CarouselContent>
+              <CarouselPrevious className="left-2" />
+              <CarouselNext className="right-2" />
+            </Carousel>
+          </div>
+
+          {displayedProducts.length === 0 && !loading && (
+            <div className="text-center py-12">
+              <p className="text-gray-500 text-lg">Tidak ada produk tersedia untuk pilihan ini.</p>
+            </div>
+          )}
+        </div>
+      ) : (
+        <div className="text-center py-16">
+          <p className="text-gray-500 text-lg">Silakan pilih wilayah terlebih dahulu.</p>
+        </div>
+      )}
     </section>
   );
 };

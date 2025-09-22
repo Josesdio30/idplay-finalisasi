@@ -10,8 +10,13 @@ import RegionSelector, { type RegionType } from '../_component/RegionSelector';
 
 export default function Kategori() {
   const [selectedRegion, setSelectedRegion] = useState<RegionType>('');
-  const [selectedSpeedRange, setSelectedSpeedRange] = useState<{ min?: number; max?: number } | null>(null);
-  const [selectedBillingCycle, setSelectedBillingCycle] = useState<'Bulanan' | 'Tahunan' | null>(null);
+  const [selectedSpeedRange, setSelectedSpeedRange] = useState<{
+    min?: number;
+    max?: number;
+  } | null>(null);
+  const [selectedBillingCycle, setSelectedBillingCycle] = useState<'Bulanan' | 'Tahunan' | null>(
+    null
+  );
 
   return (
     <div className="min-h-screen font-sans bg-white">

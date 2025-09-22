@@ -9,8 +9,8 @@ import {
   CarouselNext,
   CarouselPrevious
 } from '@/components/ui/carousel';
-import Autoplay from 'embla-carousel-autoplay';
 import { Metadata, Product } from '../type';
+import Autoplay from 'embla-carousel-autoplay';
 
 interface IProps {
   products: Product[];
@@ -22,7 +22,12 @@ interface IProps {
 type RegionKey = 'Jawa' | 'Sulawesi' | 'Kalimantan' | 'Sumatera';
 type RegionMapping = Record<RegionKey, string[]>;
 
-const ProductSection = ({ products: initialProducts, loading: initialLoading, fetching: initialFetching, pagination: initialPagination }: IProps) => {
+const ProductSection = ({
+  products: initialProducts,
+  loading: initialLoading,
+  fetching: initialFetching,
+  pagination: initialPagination
+}: IProps) => {
   const [paketTab, setPaketTab] = useState<'bulan' | 'tahun'>('bulan');
   const [regionTab, setRegionTab] = useState<RegionKey>('Jawa');
   const [openId, setOpenId] = useState<number | null>(null);
@@ -82,6 +87,53 @@ const ProductSection = ({ products: initialProducts, loading: initialLoading, fe
   };
 
   const filteredProducts = getFilteredProducts();
+
+  // Komponen Skeleton untuk loading state
+  const ProductCardSkeleton = () => {
+    return (
+      <div className="bg-white rounded-2xl shadow-lg overflow-hidden border border-transparent animate-pulse">
+        {/* Skeleton untuk gambar produk */}
+        <div className="w-full h-48 bg-gray-200"></div>
+
+        {/* Skeleton untuk nama produk dan speed */}
+        <div className="px-4 pt-4 lg:px-6">
+          <div className="h-6 bg-gray-200 rounded w-3/4 mx-auto mb-2"></div>
+          <div className="flex items-center justify-center gap-1.5 mt-2">
+            <div className="h-5 bg-gray-200 rounded w-16"></div>
+            <div className="h-5 bg-gray-200 rounded w-16"></div>
+          </div>
+        </div>
+
+        {/* Skeleton untuk harga */}
+        <div className="relative flex flex-col justify-center items-center px-4 lg:px-6 lg:pt-2">
+          <div className="h-8 lg:h-12 bg-gray-200 rounded w-32 mb-2 sm:mb-3 lg:mb-5"></div>
+          <div className="h-6 lg:h-8 bg-gray-200 rounded w-28 mb-2"></div>
+          <div className="h-4 bg-gray-200 rounded w-40"></div>
+        </div>
+
+        {/* Skeleton untuk benefits */}
+        <div className="mx-4 my-4 rounded-xl bg-gray-50 border border-gray-100 p-4">
+          <div className="space-y-3">
+            {[1, 2, 3].map((_, i) => (
+              <div
+                key={i}
+                className="flex items-start gap-3"
+              >
+                <div className="mt-0.5 h-5 w-5 bg-gray-200 rounded-full"></div>
+                <div className="h-4 bg-gray-200 rounded flex-1"></div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Skeleton untuk buttons */}
+        <div className="px-4 pb-6 flex flex-col gap-3">
+          <div className="w-full h-12 bg-gray-200 rounded-lg"></div>
+          <div className="w-full h-12 bg-gray-200 rounded-lg"></div>
+        </div>
+      </div>
+    );
+  };
 
   // Komponen ProductCard untuk reusability
   const ProductCard = ({ product }: { product: Product }) => {
@@ -289,52 +341,56 @@ const ProductSection = ({ products: initialProducts, loading: initialLoading, fe
       </div>
 
       <div className="-mt-10 z-10 w-full px-4 lg:px-8 min-h-[800px]">
-        {loading ? (
-          <p className="text-center">Loading...</p>
-        ) : (
-          <>
-            {/* Mobile Carousel */}
-            <div className="block md:hidden mb-12">
-              <Carousel
-                plugins={[
-                  Autoplay({
-                    delay: 3000
-                  })
-                ]}
-                opts={{
-                  align: 'start',
-                  loop: true
-                }}
-                className="w-full"
-              >
-                <CarouselContent className="-ml-2 md:-ml-4">
-                  {filteredProducts.map((product: Product) => (
+        {/* Unified Carousel for both Mobile and Desktop */}
+        <div className="mb-12">
+          <Carousel
+            plugins={[
+              Autoplay({
+                delay: 5000
+              })
+            ]}
+            opts={{
+              align: 'start',
+              loop: true
+            }}
+            className="w-full max-w-full overflow-x-hidden"
+          >
+            <CarouselContent className="-ml-2 md:-ml-4">
+              {loading || fetching
+                ? // Skeleton untuk carousel
+                  [1, 2, 3, 4, 5, 6].map((_, index) => (
+                    <CarouselItem
+                      key={`skeleton-${index}`}
+                      className="pl-2 md:pl-4 basis-full md:basis-1/3"
+                    >
+                      <ProductCardSkeleton />
+                    </CarouselItem>
+                  ))
+                : filteredProducts.map((product: Product) => (
                     <CarouselItem
                       key={product.id}
-                      className="pl-2 md:pl-4 basis-full"
+                      className="pl-2 md:pl-4 basis-full md:basis-1/3"
                     >
                       <ProductCard product={product} />
                     </CarouselItem>
                   ))}
-                </CarouselContent>
-                <CarouselPrevious className="left-2" />
-                <CarouselNext className="right-2" />
-              </Carousel>
+            </CarouselContent>
+            <CarouselPrevious className="left-2" />
+            <CarouselNext className="right-2" />
+            {/* <div className="absolute top-1/2 left-2 flex items-center justify-center">
+              <CarouselPrevious className="relative left-0 translate-x-0 hover:translate-x-0 hover:bg-primary/90" />
             </div>
+            <div className="absolute top-1/2 right-2 flex items-center justify-center">
+              <CarouselNext className="relative right-0 translate-x-0 hover:translate-x-0 hover:bg-primary/90" />
+            </div> */}
+          </Carousel>
+        </div>
 
-            {/* Desktop Grid */}
-            <div className="hidden md:grid grid-cols-1 md:grid-cols-3 gap-5 lg:gap-12 mb-12">
-              {filteredProducts.map((product: Product) => (
-                <ProductCard
-                  key={product.id}
-                  product={product}
-                />
-              ))}
-            </div>
-          </>
-        )}
-        {filteredProducts.length === 0 && !loading && (
-          <p className="text-center">Tidak ada produk tersedia untuk pilihan ini.</p>
+        {/* Message ketika tidak ada produk dan tidak loading */}
+        {filteredProducts.length === 0 && !loading && !fetching && (
+          <div className="text-center py-12">
+            <p className="text-gray-500 text-lg">Tidak ada produk tersedia untuk pilihan ini.</p>
+          </div>
         )}
       </div>
     </section>

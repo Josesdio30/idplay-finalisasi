@@ -26,7 +26,7 @@ const ServicesSection = () => {
       image: '/imgs/card2.jpg',
       gradient: 'from-green-700/70 to-transparent',
       colSpan: 'md:col-span-2'
-    },
+    }
     // {
     //   id: 3,
     //   title: 'Add-Ons',
@@ -77,14 +77,14 @@ const ServicesSection = () => {
           <Carousel
             plugins={[
               Autoplay({
-                delay: 3000
+                delay: 5000
               })
             ]}
             opts={{
               align: 'start',
               loop: true
             }}
-            className="w-full"
+            className="w-full max-w-full overflow-x-hidden"
           >
             <CarouselContent className="-ml-2 md:-ml-4">
               {services.map((service) => (

@@ -16,13 +16,7 @@ export default function DiscoverSection() {
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
           <h2 className="text-white text-xl md:text-3xl mb-6 drop-shadow-lg">Explore More with IDPlay</h2>
           <Link href="/entri-prospek">
-            {/* <button className="bg-white text-gray-900 text-xs md:text-sm px-6 md:px-8 py-2 md:py-3 rounded-xl shadow hover:bg-gray-100 transition">
-              Cek Coverage Sekarang
-            </button> */}
-            <button
-              className="bg-white text-gray-900 text-xs md:text-sm px-6 md:px-8 py-2 md:py-3 rounded-xl shadow hover:bg-gray-100 transition"
-              onClick={() => window.open('https://form.jotform.com/251138666667064', '_blank')}
-            >
+            <button className="bg-white text-gray-900 text-xs md:text-sm px-6 md:px-8 py-2 md:py-3 rounded-xl shadow hover:bg-gray-100 transition">
               Cek Coverage Sekarang
             </button>
           </Link>

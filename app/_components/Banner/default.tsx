@@ -52,10 +52,17 @@ const DefaultBanner = ({ setShowBanner }: IProps) => {
 
             <div>
               <div className="flex flex-col lg:flex-row gap-1 lg:gap-2 mt-2 lg:mt-4">
-                <Button
+                {/* <Button
                   onClick={() => {
                     navigate.push('/entri-prospek');
                   }}
+                  className="rounded-full bg-orange-500 hover:bg-orange-600 border border-orange-500 text-white h-auto lg:h-9 px-2 lg:px-8 py-1 lg:py-3 font-medium transition-colors flex items-center justify-center gap-1 lg:gap-2 text-[10px] lg:text-base"
+                >
+                  <MdEmail className="w-2 h-2 lg:w-4 lg:h-4" />
+                  Langganan Sekarang!
+                </Button> */}
+                <Button
+                  onClick={() => window.open('https://form.jotform.com/251138666667064', '_blank')}
                   className="rounded-full bg-orange-500 hover:bg-orange-600 border border-orange-500 text-white h-auto lg:h-9 px-2 lg:px-8 py-1 lg:py-3 font-medium transition-colors flex items-center justify-center gap-1 lg:gap-2 text-[10px] lg:text-base"
                 >
                   <MdEmail className="w-2 h-2 lg:w-4 lg:h-4" />

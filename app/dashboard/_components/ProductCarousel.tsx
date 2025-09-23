@@ -54,9 +54,15 @@ const ProductCarousel = ({ products, note, setNote, onSubmit }: IProps) => {
                 </p>
                 <p className="mt-2 text-2xl font-bold">{formatCurrency(product.Price)}</p>
                 <p className="text-xs text-gray-500">{product.Product_Name}</p>
-                <button
+                {/* <button
                   className="mt-3 w-full rounded bg-orange-500 px-3 py-2 text-white hover:bg-orange-600"
                   onClick={() => navigate.push('/entri-prospek')}
+                >
+                  Langganan Sekarang
+                </button> */}
+                <button
+                  className="mt-3 w-full rounded bg-orange-500 px-3 py-2 text-white hover:bg-orange-600"
+                  onClick={() => window.open('https://form.jotform.com/251138666667064', '_blank')}
                 >
                   Langganan Sekarang
                 </button>

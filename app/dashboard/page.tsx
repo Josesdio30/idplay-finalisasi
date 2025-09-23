@@ -137,13 +137,12 @@ export default function Dashboard() {
       setSelectedTaskId(user.task_id[0]);
       fetchBillingDetail(user.task_id[0], user.token);
       fetchProducts(user.token);
-      fetchCustomerDashboard(user.task_id[0], user.token); // Initial fetch
+      fetchCustomerDashboard(user.task_id[0], user.token);
     }
 
     fetchBillingList(user.token);
   }, [isLoggedIn, user, isAuthLoading, router]);
 
-  // Fetch customer dashboard data
   const fetchCustomerDashboard = async (taskId: string, token: string) => {
     setIsLoadingCustomerDashboard(true);
     try {
@@ -183,7 +182,7 @@ export default function Dashboard() {
         setBillingTasks(data.data);
         if (!selectedTaskId && data.data.length > 0) {
           setSelectedTaskId(data.data[0].task_id);
-          fetchCustomerDashboard(data.data[0].task_id, token); // Fetch dashboard for first task
+          fetchCustomerDashboard(data.data[0].task_id, token);
         }
       } else {
         setBillingTasks([]);
@@ -200,7 +199,7 @@ export default function Dashboard() {
     setIsLoading(true);
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}transaction/ca/${taskId}`,
+        `${process.env.NEXT_PUBLIC_BASE_URL}web/transaction/histories?task_id=${taskId}`,
         {
           method: "GET",
           headers: { Authorization: `Bearer ${token}` },
@@ -209,16 +208,11 @@ export default function Dashboard() {
       const data = await response.json();
       if (data.status === "success" && Array.isArray(data.data)) {
         const mapped = data.data.map((item: any) => ({
-          Payment_Date: item.Inv_Date || item.Due_Date || "-",
-          Sub_Product: item.Sub_Product,
-          Payment_Method: item.Bank_Acc || "-",
-          Total: item.Total ?? item.total ?? 0,
-          AR_Status:
-            (typeof item.AR_Remain === "number"
-              ? item.AR_Remain
-              : parseFloat(item.AR_Remain)) > 0
-              ? "Belum Lunas"
-              : "Lunas",
+          Payment_Date: item.Paid_At || "-",
+          Sub_Product: item.Task_ID || "-",
+          Payment_Method: "-",
+          Total: item.Total ?? 0,
+          AR_Status: item.AR_Paid >= item.Total ? "Lunas" : "Belum Lunas",
         }));
         setTransactionData(mapped);
       } else {
@@ -226,6 +220,7 @@ export default function Dashboard() {
       }
     } catch (error) {
       console.error("Error fetching transaction data:", error);
+      setTransactionData([]);
     } finally {
       setIsLoading(false);
     }
@@ -291,9 +286,10 @@ export default function Dashboard() {
   const handleTaskIdChange = async (taskId: string) => {
     setSelectedTaskId(taskId);
     if (user?.token) {
-      setIsLoadingCustomerDashboard(true); // Mulai loading saat ganti Task ID
+      setIsLoadingCustomerDashboard(true);
       await fetchBillingDetail(taskId, user.token);
-      await fetchCustomerDashboard(taskId, user.token); // Pastikan fetch selesai
+      await fetchTransactionData(taskId, user.token);
+      await fetchCustomerDashboard(taskId, user.token);
     }
   };
 
@@ -382,7 +378,6 @@ export default function Dashboard() {
               </SelectContent>
             </Select>
           </div>
-          {/* Customer Dashboard Section */}
           <div className="bg-white p-4 rounded-xl shadow-lg">
             <h3 className="text-lg font-semibold mb-3">Layanan yang dipakai</h3>
             {isLoadingCustomerDashboard ? (
@@ -517,131 +512,11 @@ export default function Dashboard() {
               <p className="text-gray-500">Tidak ada data</p>
             )}
           </div>
-
-          {/* <div className="bg-white p-4 rounded-xl shadow-lg">
-            <h3 className="text-lg font-semibold mb-4">Upgrade Paket Internet</h3>
-            {isLoadingProducts ? (
-              <div className="space-y-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {[...Array(2)].map((_, index) => (
-                    <div key={index} className="rounded-lg p-4">
-                      <Skeleton
-                        className="h-4 w-24 mb-2 bg-gray-200 animate-pulse"
-                      />
-                      <Skeleton
-                        className="h-8 w-32 mb-2 bg-gray-200 animate-pulse"
-                      />
-                      <Skeleton
-                        className="h-3 w-36 mb-3 bg-gray-200 animate-pulse"
-                      />
-                      <Skeleton
-                        className="h-10 w-full mb-2 bg-gray-200 animate-pulse"
-                      />
-                      <Skeleton
-                        className="h-10 w-full mb-3 bg-gray-200 animate-pulse"
-                      />
-                      <div className="space-y-1">
-                        <Skeleton
-                          className="h-3 w-full bg-gray-200 animate-pulse"
-                        />
-                        <Skeleton
-                          className="h-3 w-full bg-gray-200 animate-pulse"
-                        />
-                        <Skeleton
-                          className="h-3 w-3/4 bg-gray-200 animate-pulse"
-                        />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                <div className="mt-4">
-                  <Skeleton
-                    className="h-20 w-full mb-2 bg-gray-200 animate-pulse"
-                  />
-                  <Skeleton
-                    className="h-10 w-20 bg-gray-200 animate-pulse"
-                  />
-                </div>
-              </div>
-            ) : products.length > 0 ? (
-              <ProductCarousel
-                products={products}
-                note={note}
-                setNote={setNote}
-                onSubmit={submitNote}
-              />
-            ) : (
-              <div className="text-center py-8">
-                <p className="text-gray-500 mb-4">
-                  Tidak ada paket upgrade tersedia
-                </p>
-                <div className="mt-4">
-                  <textarea
-                    className="w-full p-2 rounded"
-                    placeholder="Note"
-                    value={note}
-                    onChange={(e) => setNote(e.target.value)}
-                  />
-                  <button
-                    className="mt-2 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
-                    onClick={submitNote}
-                  >
-                    Submit
-                  </button>
-                </div>
-              </div>
-            )}
-          </div> */}
         </div>
 
-        {/* Right Column */}
         <div className="space-y-6 flex-1">
           <div className="">
             <SpeedTest customerDashboard={customerDashboard} />
-
-            {/* <div className="bg-white p-4 rounded-xl shadow-lg">
-              <h3 className="text-lg font-semibold mb-2 text-center">Average Data Usage</h3>
-              {isLoadingCustomerDashboard ? (
-                <div className="space-y-4">
-                  <Skeleton className="h-12 w-48" />
-                  <Skeleton className="h-4 w-16" />
-                  <div className="mt-4 space-y-2">
-                    {[...Array(3)].map((_, index) => (
-                      <div
-                        key={index}
-                        className="flex items-center justify-between"
-                      >
-                        <Skeleton className="h-4 w-24" />
-                        <Skeleton className="h-4 w-16" />
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ) : (
-                <>
-                  <p className="text-3xl font-bold text-center">
-                    {customerDashboard?.GB_in
-                      ? `${(customerDashboard.GB_in / 1000).toFixed(1)} Terabytes`
-                      : '0 Terabytes'}
-                  </p>
-                  <p className="text-gray-500 text-center">/ Bulan</p>
-                  <div className="mt-9 space-y-2 text-sm">
-                    <div className="flex items-center justify-between">
-                      <span className="text-gray-600">Streaming/music</span>
-                      <span className="font-medium">500 Gb</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-gray-600">Gaming</span>
-                      <span className="font-medium">50 Gb</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-gray-600">Downloads</span>
-                      <span className="font-medium">700 Gb</span>
-                    </div>
-                  </div>
-                </>
-              )}
-            </div> */}
           </div>
 
           <div className="bg-white p-4 rounded-xl shadow-lg">

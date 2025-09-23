@@ -1,3 +1,5 @@
+import { Product } from '@/types/product';
+
 // export Interface untuk format thumbnail
 export interface ThumbnailFormat {
   ext: string;
@@ -69,27 +71,6 @@ export interface ProductRegional {
   publishedAt: string;
 }
 
-// export Interface utama untuk Product
-export interface Product {
-  id: number;
-  documentId: string;
-  productCode: string;
-  productName: string;
-  finalSpeedInMbps: number;
-  originalSpeedInMbps: number;
-  originalPrice: number;
-  promoPrice: number;
-  billingCycle: string;
-  priceHint: string;
-  createdAt: string;
-  updatedAt: string;
-  publishedAt: string;
-  thumbnail: ProductThumbnail;
-  productCategories: ProductCategory[];
-  benefits: ProductBenefit[];
-  regionals: ProductRegional[];
-}
-
 // export Interface untuk Banner
 export interface Banner {
   id: number;
@@ -123,7 +104,6 @@ export interface StrapiApiResponse {
   data: Product[];
   meta: Metadata;
 }
-
 
 export interface StrapiApiResponseBanner<T> {
   data: T;

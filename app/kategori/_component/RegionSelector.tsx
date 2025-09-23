@@ -16,9 +16,10 @@ interface RegionOption {
 interface RegionSelectorProps {
   onRegionChange: (region: RegionType) => void;
   selectedRegion: RegionType;
+  className?: string;
 }
 
-function RegionSelectorContent({ onRegionChange, selectedRegion }: RegionSelectorProps) {
+function RegionSelectorContent({ onRegionChange, selectedRegion, className }: RegionSelectorProps) {
   const [regionOptions, setRegionOptions] = useState<RegionOption[]>([]);
   const [isLoadingRegions, setIsLoadingRegions] = useState(true);
   const [fetchError, setFetchError] = useState<string | null>(null);
@@ -33,12 +34,12 @@ function RegionSelectorContent({ onRegionChange, selectedRegion }: RegionSelecto
         if (regionsData && Array.isArray(regionsData)) {
           const formattedRegions: RegionOption[] = regionsData.map((regional: Regional) => ({
             value: regional.region,
-            label: regional.region,
+            label: regional.region
           }));
           setRegionOptions(formattedRegions);
 
           const regionFromQuery = searchParams.get('region');
-          if (regionFromQuery && formattedRegions.some(r => r.value === regionFromQuery)) {
+          if (regionFromQuery && formattedRegions.some((r) => r.value === regionFromQuery)) {
             startTransition(() => onRegionChange(regionFromQuery));
           }
         }
@@ -58,9 +59,9 @@ function RegionSelectorContent({ onRegionChange, selectedRegion }: RegionSelecto
   };
 
   return (
-    <div className="mb-12 mt-6 flex flex-col items-center">
+    <div className={cn('mb-12 mt-6 flex flex-col items-center', className)}>
       <h3 className="text-xl font-bold text-gray-800 mb-4">Pilih Wilayah Anda:</h3>
-      
+
       {fetchError ? (
         <p className="text-red-500 text-sm mb-4">{fetchError}</p>
       ) : isLoadingRegions || isPending ? (
@@ -92,18 +93,28 @@ function RegionSelectorContent({ onRegionChange, selectedRegion }: RegionSelecto
   );
 }
 
-export default function RegionSelector({ onRegionChange, selectedRegion }: RegionSelectorProps) {
+export default function RegionSelector({
+  onRegionChange,
+  selectedRegion,
+  className
+}: RegionSelectorProps) {
   return (
-    <Suspense fallback={
-      <div className="mb-12 mt-6 flex flex-col items-center">
-        <h3 className="text-xl font-bold text-gray-800 mb-4">Pilih Wilayah Anda:</h3>
-        <div className="flex items-center gap-2 bg-white rounded-lg p-2 shadow-md">
-          <div className="w-6 h-6 border-2 border-gray-300 border-t-orange-500 rounded-full animate-spin" />
-          <span className="text-gray-500 text-sm">Memuat wilayah...</span>
+    <Suspense
+      fallback={
+        <div className={cn('mb-12 mt-6 flex flex-col items-center', className)}>
+          <h3 className="text-xl font-bold text-gray-800 mb-4">Pilih Wilayah Anda:</h3>
+          <div className="flex items-center gap-2 bg-white rounded-lg p-2 shadow-md">
+            <div className="w-6 h-6 border-2 border-gray-300 border-t-orange-500 rounded-full animate-spin" />
+            <span className="text-gray-500 text-sm">Memuat wilayah...</span>
+          </div>
         </div>
-      </div>
-    }>
-      <RegionSelectorContent onRegionChange={onRegionChange} selectedRegion={selectedRegion} />
+      }
+    >
+      <RegionSelectorContent
+        onRegionChange={onRegionChange}
+        selectedRegion={selectedRegion}
+        className={className}
+      />
     </Suspense>
   );
 }

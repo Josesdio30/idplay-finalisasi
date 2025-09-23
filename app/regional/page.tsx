@@ -18,7 +18,7 @@ const RegionalPage = () => {
   useEffect(() => {
     const fetchRegions = async () => {
       try {
-        const response = await fetch('https://inspiring-power-f8fa08a4a5.strapiapp.com/api/regionals/');
+        const response = await fetch(`${process.env.NEXT_PUBLIC_CMS_URL}/api/regionals/`);
         const data = await response.json();
         if (data.data && Array.isArray(data.data)) {
           const uniqueRegions = data.data.map((item: { documentId: string; region: string }) => ({

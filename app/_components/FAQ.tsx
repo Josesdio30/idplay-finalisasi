@@ -50,7 +50,15 @@ const FAQ: React.FC = () => {
                 className="w-full rounded-full px-4 py-5 lg:p-7 text-black placeholder:text-black text-sm lg:text-lg"
                 placeholder="Masukkan E-mail Anda"
               />
-              <Button className="absolute top-1/2 -translate-y-1/2 right-2 lg:right-3 text-sm lg:text-base rounded-full bg-[#00a63e] text-white hover:bg-[#00a63e]/60 h-auto py-1 lg:py-2">
+              <Button
+                onClick={() => {
+                  const emailInput = (document.querySelector<HTMLInputElement>("input[placeholder='Masukkan E-mail Anda']"));
+                  if (emailInput?.value) {
+                    window.location.href = `mailto:cx.ays@supercorridor.co.id?subject=Konsultasi%20Gratis&body=Email%20saya:%20${emailInput.value}`;
+                  }
+                }}
+                className="absolute top-1/2 -translate-y-1/2 right-2 lg:right-3 text-sm lg:text-base rounded-full bg-[#00a63e] text-white hover:bg-[#00a63e]/60 h-auto py-1 lg:py-2"
+              >
                 Submit
               </Button>
             </div>

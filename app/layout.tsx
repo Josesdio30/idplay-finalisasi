@@ -46,7 +46,7 @@ export default function RootLayout({
           position="top-right"
         />
         <a
-          href="https://wa.me/6281234567890?text=Hello%20there!"
+          href="https://wa.me/6282289986477?text=Hello%20there!"
           target="_blank"
           rel="noopener noreferrer"
           className="fixed bottom-6 right-6 z-50 group"

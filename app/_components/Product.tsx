@@ -257,14 +257,14 @@ const ProductSection = () => {
     <section className="relative container mx-auto w-full ">
       <div className="py-14 rounded-2xl bg-[#FFEFE6]">
         <h2 className="text-xl lg:text-4xl font-medium tracking-[6%] leading-[29px] text-center mb-4 lg:mb-10 text-black">
-          Mulai <span className="text-orange-500">Berlangganan</span>
+          Yuk, <span className="text-orange-500">Mulai Berlangganan!</span>
         </h2>
         <p className="text-base lg:text-lg font-medium text-center text-gray-600 mb-8">
-          Harga Jelas, Tanpa Biaya Tersembunyi.
+          Harga transparan, no tipu-tipu.
           <br />
-          Pilih paket yang sesuai dengan kebutuhan.
+          Pilih paket yang pas buat kamu, dijamin gak bikin dompet nangis!
           <br />
-          Tanpa biaya tambahan, tanpa kejutan—hanya harga jujur untuk layanan yang andal.
+          Gak pake ribet, cuma internet cepat yang siap nemenin tiap hari.
         </p>
 
         {/* Toggle Region */}

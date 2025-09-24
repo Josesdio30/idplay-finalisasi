@@ -11,18 +11,18 @@ const ServicesSection = () => {
   const services = [
     {
       id: 1,
-      title: 'For Home',
+      title: 'Internetan di rumah jadi makin seru!',
       description:
-        "As a home internet provider, fast and stable connectivity is key to your family's comfort and productivity.",
+        "Mau nonton, main game, atau video call seharian? Semua bisa, tanpa buffering, tanpa emosi. Internet cepat yang bikin suasana rumah makin happy!",
       image: '/imgs/card1.jpg',
       gradient: 'from-[#FE5E00] to-[#FE5E00]/0',
       colSpan: 'md:col-span-2'
     },
     {
       id: 2,
-      title: 'For Business',
+      title: 'Internet kencang, bisnis pun tenang!',
       description:
-        'Add-ons are optional features that enhance your main service — offering more control, speed, or coverage based on your needs.',
+        'Koneksi super cepat, stabil, dan support responsif kapan aja. Bikin kerja makin lancar, meeting anti putus-putus, dan semua sistem jalan mulus',
       image: '/imgs/card2.jpg',
       gradient: 'from-green-700/70 to-transparent',
       colSpan: 'md:col-span-2'
@@ -68,8 +68,7 @@ const ServicesSection = () => {
           Layanan Kami?
         </h2>
         <p className="text-center text-gray-500 text-base lg:text-lg leading-[161%] tracking-[10%] font-base mb-10">
-          Internet cepat dan andal dengan teknologi terbaru. <br /> Koneksi stabil untuk semua
-          kebutuhan digital Anda.
+          Internet cepat dan stabil yang siap nemenin semua aktivitas kamu mulai dari streaming, kerja, sampai main game, semua lancer.<br /> Didukung teknologi terbaru, biar kamu bisa online tanpa drama, kapan pun kamu butuh!
         </p>
 
         {/* Mobile Carousel */}

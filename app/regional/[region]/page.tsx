@@ -141,7 +141,7 @@ const RegionalPageDetail = () => {
           // Fetch products
           const billingCycle = paketTab === 'bulan' ? 'Bulanan' : 'Tahunan';
           const productResponse = await fetch(
-            `https://inspiring-power-f8fa08a4a5.strapiapp.com/api/products?filters[regionals][region][$eq]=${encodeURIComponent(region)}&filters[billingCycle][$eq]=${encodeURIComponent(billingCycle)}&populate=*`
+            `${process.env.NEXT_PUBLIC_CMS_URL}/api/products?filters[regionals][region][$eq]=${encodeURIComponent(region)}&filters[billingCycle][$eq]=${encodeURIComponent(billingCycle)}&populate=*`
           );
           const productData = await productResponse.json();
           if (productData.data) {
@@ -149,7 +149,7 @@ const RegionalPageDetail = () => {
           } else {
             // Fallback fetch without region filter
             const fallbackResponse = await fetch(
-              `https://inspiring-power-f8fa08a4a5.strapiapp.com/api/products?filters[billingCycle][$eq]=${encodeURIComponent(billingCycle)}&populate=*`
+              `${process.env.NEXT_PUBLIC_CMS_URL}/api/products?filters[billingCycle][$eq]=${encodeURIComponent(billingCycle)}&populate=*`
             );
             const fallbackData = await fallbackResponse.json();
             if (fallbackData.data) {

@@ -78,7 +78,7 @@ const CompareProduct = () => {
               <Box className="w-6 h-6" />
               <h3 className="text-sm sm:text-base font-bold mt-1">Si Oranye</h3>
             </div>
-            <div className="px-2 py-2 text-center font-medium whitespace-nowrap min-w-[120px]">
+            <div className="px-2 py-2 text-center font-medium whitespace-nowrap">
               Sebagian menggunakan HFC
             </div>
             <div className="px-2 py-2 flex justify-center items-center whitespace-nowrap min-w-[120px]">

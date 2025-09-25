@@ -211,28 +211,9 @@ const KecepatanBanner = ({
                           {getRecommendedSpeed().price}
                         </div>
                       </div>
-                      {/* <button
-                        className="text-white font-medium transition-colors text-sm lg:text-base flex items-center gap-2 cursor-pointer"
-                        onClick={() => router.push('/entri-prospek')}
-                      >
-                        Langsung Berlangganan
-                        <svg
-                          className="w-4 h-4"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M9 5l7 7-7 7"
-                          />
-                        </svg>
-                      </button> */}
                       <button
                         className="text-white font-medium transition-colors text-sm lg:text-base flex items-center gap-2 cursor-pointer"
-                        onClick={() => window.open('https://form.jotform.com/251138666667064', '_blank')}
+                        onClick={() => router.push('/entri-prospek')}
                       >
                         Langsung Berlangganan
                         <svg

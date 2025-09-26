@@ -59,11 +59,11 @@ const RegionalPage = () => {
       {/* Header Section */}
       <div className="relative container mx-auto pt-14">
         <Image
-          src="/category/hero-rumah.svg"
+          src="/category/67.png"
           width={1000}
-          height={400} // Sesuaikan tinggi agar responsif
+          height={400}
           alt="Kategori Rumah"
-          className="w-full h-auto object-cover"
+          className="w-full h-auto object-cover rounded-2xl"
         />
       </div>
 

@@ -2,8 +2,10 @@ import { Button } from '@/components/ui/button';
 import { MapPin, Network, Wifi } from 'lucide-react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { FaPhone } from 'react-icons/fa';
+import { FaPhone, FaInfinity } from 'react-icons/fa';
 import { MdEmail } from 'react-icons/md';
+import { HiOutlineUser } from 'react-icons/hi';
+import { GiNetworkBars } from 'react-icons/gi';
 
 interface IProps {
   setShowBanner: (show: boolean) => void;
@@ -31,25 +33,27 @@ const DefaultBanner = ({ setShowBanner }: IProps) => {
             </h2>
             <div className="flex flex-col gap-1 lg:gap-2 my-2 lg:my-6">
               <div className="flex items-center gap-1 lg:gap-2">
-                <Network className="w-3 h-3 lg:w-4 lg:h-4 text-green-700" />
+                {/* Kuota UNLIMITED */}
+                <FaInfinity className="w-4 h-4 text-green-700" />
                 <span className="text-green-700 font-semibold text-xs lg:text-base">
                   Kuota UNLIMITED
                 </span>
               </div>
               <div className="flex items-center gap-1 lg:gap-2">
-                <MapPin className="w-3 h-3 lg:w-4 lg:h-4 text-green-700" />
+                {/* Stabil dengan 100% Fiber Optik */}
+                <GiNetworkBars className="w-4 h-4 text-green-700" />
                 <span className="text-green-700 font-semibold text-xs lg:text-base">
                   Stabil dengan 100% Fiber Optik
                 </span>
               </div>
               <div className="flex items-center gap-1 lg:gap-2">
-                <Wifi className="w-3 h-3 lg:w-4 lg:h-4 text-green-700" />
+                {/* Customer Service 24/7 */}
+                <HiOutlineUser className="w-4 h-4 text-green-700" />
                 <span className="text-green-700 font-semibold text-xs lg:text-base">
                   Customer Service 24/7
                 </span>
               </div>
             </div>
-
             <div>
               <div className="flex flex-col lg:flex-row gap-1 lg:gap-2 mt-2 lg:mt-4">
                 <Button

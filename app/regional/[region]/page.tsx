@@ -7,7 +7,7 @@ import {
   CarouselContent,
   CarouselItem,
   CarouselNext,
-  CarouselPrevious
+  CarouselPrevious,
 } from '@/components/ui/carousel';
 import Autoplay from 'embla-carousel-autoplay';
 import ArticleCard from '@/app/article/_components/cards/ArticleCard';
@@ -230,33 +230,40 @@ const RegionalPageDetail = () => {
               product.promoPrice ? 'lg:mb-5' : 'lg:mb-0'
             )}
           >
-            <span className="relative">
-              {product.promoPrice && (
-                <div className="absolute top-1/2 left-0 transform -translate-y-1/2 bg-orange-500 w-full h-0.5 lg:h-1 rounded-full" />
-              )}
-              Rp.{formatPrice(product.originalPrice)}
-            </span>
-            <span className="text-[16px] sm:text-[20px]">
-              /{product.billingCycle === 'Bulanan' ? 'Bulan' : 'Tahun'}
-            </span>
-          </div>
-          {product.promoPrice && (
-            <>
-              {/* <Image
-                src="/icons/arrow-pricing.svg"
-                alt=""
-                width={65}
-                height={65}
-                className="size-[45px] sm:size-[55px] lg:size-[65px] absolute z-10 left-10 sm:left-12 lg:left-9 top-10 lg:top-13"
-              /> */}
-              <div className="text-base lg:text-[30px] tracking-[1%] leading-[26px] font-medium text-orange-700 mb-2">
-                Rp.{formatPrice(product.promoPrice)}
-                <span className="text-[16px] sm:text-[20px]">
-                  /{product.billingCycle === 'Bulanan' ? 'Bulan' : 'Tahun'}
-                </span>
+            {product.promoPrice && (
+              <div className="flex flex-col items-center justify-center gap-1">
+                <div className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-400 leading-tight flex items-center">
+                  <span
+                    className="line-through mr-1"
+                    style={{ textDecorationThickness: '2px' }} // Sesuai dengan ProductFacts
+                  >
+                    Rp.{formatPrice(product.originalPrice)}
+                  </span>
+                  <span className="text-sm sm:text-base">
+                    /{product.billingCycle === 'Bulanan' ? 'bulan' : 'tahun'}
+                  </span>
+                </div>
+                <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-orange-500 leading-tight flex items-center">
+                  <span className="text-md sm:text-3xl lg:text-4xl font-bold text-orange-500 whitespace-nowrap">
+                    Rp.{formatPrice(product.promoPrice)}
+                  </span>
+                  <span className="text-md sm:text-lg ml-1 whitespace-nowrap">
+                    /{product.billingCycle === 'Bulanan' ? 'bulan' : 'tahun'}
+                  </span>
+                </div>
               </div>
-            </>
-          )}
+            )}
+            {!product.promoPrice && (
+              <div className="flex flex-row items-center justify-center gap-2 flex-wrap">
+                <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-orange-500 leading-tight flex items-center">
+                  Rp.{formatPrice(product.originalPrice)}
+                  <span className="text-lg sm:text-xl ml-1">
+                    /{product.billingCycle === 'Bulanan' ? 'bulan' : 'tahun'}
+                  </span>
+                </div>
+              </div>
+            )}
+          </div>
           <p className="text-sm lg:text-[15px] tracking-[1%] leading-[26px] font-medium text-orange-500">
             {product.priceHint || 'Mau langganan setahun? Bisa dicicil, kok!'}
           </p>

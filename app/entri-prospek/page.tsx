@@ -1,12 +1,12 @@
 'use client';
 
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState, Suspense } from 'react';
 import { GoogleMap, Marker, useJsApiLoader } from '@react-google-maps/api';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Loader2, MapPin, Search } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 
 type UserLocation = {
@@ -30,15 +30,57 @@ type Product = {
   price: number;
 };
 
+interface UTMParams {
+  utm_source: string;
+  utm_medium: string;
+  utm_campaign: string;
+  utm_term: string;
+  utm_content: string;
+}
+
 const mapContainerStyle = {
   width: '100%',
   height: '380px',
   borderRadius: '12px'
 };
 
-export default function EntriProspekPage() {
+function EntriProspekForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { isLoggedIn, isLoading, user } = useAuth();
+  
+  // UTM State
+  const [utmParams, setUtmParams] = useState<UTMParams>({
+    utm_source: '',
+    utm_medium: '',
+    utm_campaign: '',
+    utm_term: '',
+    utm_content: '',
+  });
+
+  // Capture UTM from URL and store in sessionStorage
+  useEffect(() => {
+    const params: UTMParams = {
+      utm_source: searchParams.get('utm_source') || '',
+      utm_medium: searchParams.get('utm_medium') || '',
+      utm_campaign: searchParams.get('utm_campaign') || '',
+      utm_term: searchParams.get('utm_term') || '',
+      utm_content: searchParams.get('utm_content') || '',
+    };
+
+    // Jika ada UTM di URL, simpan ke sessionStorage
+    if (params.utm_source || params.utm_medium || params.utm_campaign) {
+      sessionStorage.setItem('utm_params', JSON.stringify(params));
+      setUtmParams(params);
+    } else {
+      // Coba ambil dari sessionStorage jika tidak ada di URL
+      const stored = sessionStorage.getItem('utm_params');
+      if (stored) {
+        setUtmParams(JSON.parse(stored));
+      }
+    }
+  }, [searchParams]);
+
   const [currentLocation, setCurrentLocation] = useState<UserLocation | null>(null);
   const [searchValue, setSearchValue] = useState('');
   const [suggestions, setSuggestions] = useState<PlacePrediction[]>([]);
@@ -52,7 +94,7 @@ export default function EntriProspekPage() {
   const [fullname, setFullname] = useState('');
   const [email, setEmail] = useState('');
   const [address, setAddress] = useState('');
-  const [phone, setPhone] = useState('62'); // Default dengan "62"
+  const [phone, setPhone] = useState('62');
   const [ktp, setKtp] = useState('');
   const [referralCode, setReferralCode] = useState('');
   const [provinsi, setProvinsi] = useState('');
@@ -263,7 +305,7 @@ export default function EntriProspekPage() {
     }
 
     // Validasi nomor WhatsApp
-    const phoneNumber = phone.replace(/\D/g, ''); // Hapus semua karakter non-digit
+    const phoneNumber = phone.replace(/\D/g, '');
     if (!phoneNumber.startsWith('62') || phoneNumber.length < 10 || phoneNumber.length > 13) {
       alert('Nomor WhatsApp harus diawali dengan 62 dan panjang total 10-13 digit');
       setSubmitting(false);
@@ -273,9 +315,11 @@ export default function EntriProspekPage() {
     try {
       const latlng = currentLocation ? `${currentLocation.lat}, ${currentLocation.lng}` : '';
       const redirectUrl = new URL("https://oss.supercorridor.co.id/idplayform/thankyou.php");
+      
+      // Form Data
       redirectUrl.searchParams.set("key", "98733234567643fgtfr4eerty77t53w424356t7y8524354657687864534wert6yu7jmngrdWF$$z5678yun");
       redirectUrl.searchParams.set("namalengkap", fullname);
-      redirectUrl.searchParams.set("nowhatsapp5", phoneNumber); // Gunakan nomor tanpa format
+      redirectUrl.searchParams.set("nowhatsapp5", phoneNumber);
       redirectUrl.searchParams.set("email", email);
       redirectUrl.searchParams.set("alamatlengkap", address);
       redirectUrl.searchParams.set("provinsi80", provinsi);
@@ -284,6 +328,34 @@ export default function EntriProspekPage() {
       redirectUrl.searchParams.set("pilihpaket", selectedProduct);
       redirectUrl.searchParams.set("typea86", latlng);
       redirectUrl.searchParams.set("typea88", selectedProduct);
+      
+      // UTM Parameters - Tambahkan ke redirect URL
+      if (utmParams.utm_source) {
+        redirectUrl.searchParams.set("utm_source", utmParams.utm_source);
+      }
+      if (utmParams.utm_medium) {
+        redirectUrl.searchParams.set("utm_medium", utmParams.utm_medium);
+      }
+      if (utmParams.utm_campaign) {
+        redirectUrl.searchParams.set("utm_campaign", utmParams.utm_campaign);
+      }
+      if (utmParams.utm_term) {
+        redirectUrl.searchParams.set("utm_term", utmParams.utm_term);
+      }
+      if (utmParams.utm_content) {
+        redirectUrl.searchParams.set("utm_content", utmParams.utm_content);
+      }
+      
+      // Referral Code jika ada
+      if (referralCode) {
+        redirectUrl.searchParams.set("referral_code", referralCode);
+      }
+
+      // Clear UTM dari sessionStorage setelah submit
+      sessionStorage.removeItem('utm_params');
+
+      console.log('Redirect URL with UTM:', redirectUrl.toString());
+      
       window.location.href = redirectUrl.toString();
     } catch (err) {
       alert("Terjadi kesalahan saat redirect");
@@ -293,152 +365,181 @@ export default function EntriProspekPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white">
-      <div className="mx-auto w-full max-w-5xl px-4 py-8">
-        <h1 className="text-2xl font-bold text-orange-600">Entri Prospek Retail</h1>
-        <p className="text-gray-600 mt-1">Pilih lokasi Anda pada peta lalu isi data prospek.</p>
+    <div className="mx-auto w-full max-w-5xl px-4 py-8">
+      <h1 className="text-2xl font-bold text-orange-600">Entri Prospek Retail</h1>
+      <p className="text-gray-600 mt-1">Pilih lokasi Anda pada peta lalu isi data prospek.</p>
 
-        <div className="mt-6 grid grid-cols-1 gap-8 lg:grid-cols-2">
-          <div className="space-y-4">
-            {/* search bar + map tetap sama */}
-            <div className="relative">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-4 w-4" />
-                <Input
-                  value={searchValue}
-                  onChange={(e) => handleSearchChange(e.target.value)}
-                  placeholder="Cari alamat atau lokasi..."
-                  className="pl-10 pr-10 py-2 w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-                  onFocus={() => {
-                    if (suggestions.length > 0) setShowSuggestions(true);
-                  }}
-                  onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
-                />
-                {isSearching && (
-                  <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 h-4 w-4 animate-spin" />
-                )}
-              </div>
-              {showSuggestions && suggestions.length > 0 && (
-                <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-300 rounded-lg shadow-lg z-[60] max-h-60 overflow-y-auto">
-                  {suggestions.map((s) => (
-                    <div
-                      key={s.place_id}
-                      onClick={() => handleSuggestionSelect(s)}
-                      className="px-4 py-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0 flex items-start gap-3"
-                    >
-                      <MapPin className="h-4 w-4 text-gray-400 mt-0.5 flex-shrink-0" />
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-gray-900 truncate">{s.structured_formatting.main_text}</p>
-                        <p className="text-xs text-gray-500 truncate">{s.structured_formatting.secondary_text}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-              <p className="text-xs text-gray-500 mt-1">Ketik alamat untuk mencari lokasi.</p>
-            </div>
-            {MapComponent}
-            <div className="space-y-1">
-              {selectedAddress && (
-                <p className="text-sm text-gray-700"><span className="font-medium">Alamat dipilih:</span> {selectedAddress}</p>
-              )}
-              {currentLocation && (
-                <p className="text-xs text-gray-500">Koordinat: {currentLocation.lat.toFixed(6)}, {currentLocation.lng.toFixed(6)}</p>
-              )}
-            </div>
+      {/* Debug: Tampilkan UTM yang tertangkap (hapus di production) */}
+      {/* {(utmParams.utm_source || utmParams.utm_medium || utmParams.utm_campaign) && (
+        <div className="mt-4 p-3 bg-blue-50 rounded-lg text-xs text-blue-700">
+          <p className="font-semibold mb-1">📊 UTM Tracking Detected:</p>
+          <div className="flex flex-wrap gap-2">
+            {utmParams.utm_source && <span className="bg-blue-100 px-2 py-1 rounded">Source: {utmParams.utm_source}</span>}
+            {utmParams.utm_medium && <span className="bg-blue-100 px-2 py-1 rounded">Medium: {utmParams.utm_medium}</span>}
+            {utmParams.utm_campaign && <span className="bg-blue-100 px-2 py-1 rounded">Campaign: {utmParams.utm_campaign}</span>}
+            {utmParams.utm_term && <span className="bg-blue-100 px-2 py-1 rounded">Term: {utmParams.utm_term}</span>}
+            {utmParams.utm_content && <span className="bg-blue-100 px-2 py-1 rounded">Content: {utmParams.utm_content}</span>}
           </div>
+        </div>
+      )} */}
 
-          {/* Form tetap sama, hanya handleSubmit beda */}
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap</label>
-                <Input value={fullname} onChange={(e) => setFullname(e.target.value)} placeholder="Nama lengkap" required />
+      <div className="mt-6 grid grid-cols-1 gap-8 lg:grid-cols-2">
+        <div className="space-y-4">
+          {/* Search bar */}
+          <div className="relative">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <Input
+                value={searchValue}
+                onChange={(e) => handleSearchChange(e.target.value)}
+                placeholder="Cari alamat atau lokasi..."
+                className="pl-10 pr-10 py-2 w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                onFocus={() => {
+                  if (suggestions.length > 0) setShowSuggestions(true);
+                }}
+                onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
+              />
+              {isSearching && (
+                <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 h-4 w-4 animate-spin" />
+              )}
+            </div>
+            {showSuggestions && suggestions.length > 0 && (
+              <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-300 rounded-lg shadow-lg z-[60] max-h-60 overflow-y-auto">
+                {suggestions.map((s) => (
+                  <div
+                    key={s.place_id}
+                    onClick={() => handleSuggestionSelect(s)}
+                    className="px-4 py-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0 flex items-start gap-3"
+                  >
+                    <MapPin className="h-4 w-4 text-gray-400 mt-0.5 flex-shrink-0" />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-gray-900 truncate">{s.structured_formatting.main_text}</p>
+                      <p className="text-xs text-gray-500 truncate">{s.structured_formatting.secondary_text}</p>
+                    </div>
+                  </div>
+                ))}
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Nomor Whatsapp</label>
-                <Input
-                  value={phone}
-                  onChange={(e) => {
-                    const value = e.target.value.replace(/\D/g, ''); // Hapus semua non-digit
-                    if (value.startsWith('62')) {
-                      if (value.length <= 13) setPhone(value); // Maks 13 digit total
-                    } else if (value === '' || value.length <= 11) {
-                      setPhone('62' + value); // Tambah "62" jika belum ada
-                    }
-                  }}
-                  placeholder="6281234567890"
-                  required
-                />
-              </div>
+            )}
+            <p className="text-xs text-gray-500 mt-1">Ketik alamat untuk mencari lokasi.</p>
+          </div>
+          {MapComponent}
+          <div className="space-y-1">
+            {selectedAddress && (
+              <p className="text-sm text-gray-700"><span className="font-medium">Alamat dipilih:</span> {selectedAddress}</p>
+            )}
+            {currentLocation && (
+              <p className="text-xs text-gray-500">Koordinat: {currentLocation.lat.toFixed(6)}, {currentLocation.lng.toFixed(6)}</p>
+            )}
+          </div>
+        </div>
+
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap</label>
+              <Input value={fullname} onChange={(e) => setFullname(e.target.value)} placeholder="Nama lengkap" required />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Nomor Whatsapp</label>
               <Input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="email@contoh.com"
+                value={phone}
+                onChange={(e) => {
+                  const value = e.target.value.replace(/\D/g, '');
+                  if (value.startsWith('62')) {
+                    if (value.length <= 13) setPhone(value);
+                  } else if (value === '' || value.length <= 11) {
+                    setPhone('62' + value);
+                  }
+                }}
+                placeholder="6281234567890"
                 required
               />
             </div>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+            <Input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="email@contoh.com"
+              required
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Alamat</label>
+            <Input value={address} onChange={(e) => setAddress(e.target.value)} placeholder="Alamat pemasangan" required />
+          </div>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Alamat</label>
-              <Input value={address} onChange={(e) => setAddress(e.target.value)} placeholder="Alamat pemasangan" required />
-            </div>
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Kode Pos</label>
-                <Input value={zipCode} onChange={(e) => setZipCode(e.target.value)} placeholder="15111" required />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Produk</label>
-                <Select
-                  value={selectedProduct}
-                  onValueChange={setSelectedProduct}
-                  disabled={!zipCode || isProductLoading || products.length === 0}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder={isProductLoading ? "Memuat produk..." : "Pilih produk"} />
-                  </SelectTrigger>
-                  <SelectContent className="bg-white border border-gray-300 rounded-lg shadow-lg z-[50] max-h-60 overflow-y-auto">
-                    {products.map((product) => (
-                      <SelectItem
-                        key={product.product_code}
-                        value={product.product_code}
-                        className="hover:bg-gray-100 cursor-pointer"
-                      >
-                        {product.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Kode Pos</label>
+              <Input value={zipCode} onChange={(e) => setZipCode(e.target.value)} placeholder="15111" required />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Kode Referral (opsional)</label>
-              <Input
-                value={referralCode}
-                onChange={(e) => setReferralCode(e.target.value)}
-                placeholder="Kode referral (6 digit alpha-numeric)"
-                maxLength={6}
-              />
+              <label className="block text-sm font-medium text-gray-700 mb-1">Produk</label>
+              <Select
+                value={selectedProduct}
+                onValueChange={setSelectedProduct}
+                disabled={!zipCode || isProductLoading || products.length === 0}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder={isProductLoading ? "Memuat produk..." : "Pilih produk"} />
+                </SelectTrigger>
+                <SelectContent className="bg-white border border-gray-300 rounded-lg shadow-lg z-[50] max-h-60 overflow-y-auto">
+                  {products.map((product) => (
+                    <SelectItem
+                      key={product.product_code}
+                      value={product.product_code}
+                      className="hover:bg-gray-100 cursor-pointer"
+                    >
+                      {product.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Kode Referral (opsional)</label>
+            <Input
+              value={referralCode}
+              onChange={(e) => setReferralCode(e.target.value)}
+              placeholder="Kode referral (6 digit alpha-numeric)"
+              maxLength={6}
+            />
+          </div>
 
-            <Button
-              type="submit"
-              disabled={submitting || !currentLocation || !selectedProduct}
-              className="bg-orange-600 hover:bg-orange-700 text-white"
-            >
-              {submitting ? (
-                <span className="inline-flex items-center gap-2"><Loader2 className="h-4 w-4 animate-spin" /> Mengirim...</span>
-              ) : (
-                'Berlangganan'
-              )}
-            </Button>
-          </form>
-        </div>
+          <Button
+            type="submit"
+            disabled={submitting || !currentLocation || !selectedProduct}
+            className="w-full bg-orange-600 hover:bg-orange-700 text-white"
+          >
+            {submitting ? (
+              <span className="inline-flex items-center gap-2"><Loader2 className="h-4 w-4 animate-spin" /> Mengirim...</span>
+            ) : (
+              'Berlangganan'
+            )}
+          </Button>
+        </form>
       </div>
+    </div>
+  );
+}
+
+export default function EntriProspekPage() {
+  return (
+    <div className="min-h-screen bg-white">
+      <Suspense fallback={
+        <div className="mx-auto w-full max-w-5xl px-4 py-8">
+          <div className="animate-pulse">
+            <div className="h-8 bg-gray-200 rounded w-1/3 mb-4"></div>
+            <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+          </div>
+        </div>
+      }>
+        <EntriProspekForm />
+      </Suspense>
     </div>
   );
 }

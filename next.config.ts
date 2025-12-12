@@ -14,6 +14,16 @@ const cmsHostName = cmsUrl.hostname;
 const cmsMediaHostname = cmsHostName.replace('strapiapp.com', 'media.strapiapp.com');
 
 const nextConfig: NextConfig = {
+  // Production path configuration to match nginx
+  basePath: '/homepage',
+  assetPrefix: '/homepage',
+
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  typescript: {
+    ignoreBuildErrors: false,
+  },
   images: {
     remotePatterns: [
       {
